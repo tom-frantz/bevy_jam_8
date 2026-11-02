@@ -1,6 +1,6 @@
 use bevy::{
     app::Plugin,
-    ecs::{hierarchy::Children, system::Commands},
+    ecs::{component::Component, hierarchy::Children, system::Commands},
     scene::{CommandsSceneExt, bsn},
     state::{state::OnEnter, state_scoped::DespawnOnExit},
     ui::{Node, Val, widget::Text},
@@ -28,4 +28,28 @@ fn enter_crafting_screen(mut commands: Commands) {
         ]
         DespawnOnExit<InGameScreen>(InGameScreen::Crafting)
     });
+}
+
+#[derive(Clone, Debug)]
+enum Item {
+    Water,
+    Oil,
+
+    FireCrystal,
+    PixieDust,
+    FrogTears,
+
+    ArcaneSolute,
+    GlowMoss,
+
+    DivinationOil,
+    CrystalLens,
+
+    MagicLens,
+}
+
+#[derive(Clone, Debug, Component)]
+struct InventoryItem {
+    amount: usize,
+    item: Item,
 }

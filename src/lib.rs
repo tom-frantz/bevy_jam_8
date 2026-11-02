@@ -11,6 +11,8 @@ use bevy::{
     },
 };
 
+use crate::world_map::IslandId;
+
 mod crafting;
 mod encounters;
 mod nights;
@@ -73,5 +75,13 @@ fn debug_start_game(
     mut ingame_state: ResMut<NextState<InGameScreen>>,
 ) {
     app_state.set(AppState::InGame);
-    ingame_state.set(InGameScreen::NightTime)
+    ingame_state.set(InGameScreen::WorldMap);
+}
+
+#[derive(SubStates, Clone, PartialEq, Eq, Hash, Debug, Default)]
+#[source(AppState = AppState::InGame)]
+enum PlayerLocation {
+    Island(IslandId),
+    #[default]
+    Home,
 }
