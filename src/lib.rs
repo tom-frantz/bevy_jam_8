@@ -68,6 +68,10 @@ fn spawn_camera(mut commands: Commands) {
     });
 }
 
-fn debug_start_game(mut app_state: ResMut<NextState<AppState>>) {
+fn debug_start_game(
+    mut app_state: ResMut<NextState<AppState>>,
+    mut ingame_state: ResMut<NextState<InGameScreen>>,
+) {
     app_state.set(AppState::InGame);
+    ingame_state.set(InGameScreen::NightTime)
 }
