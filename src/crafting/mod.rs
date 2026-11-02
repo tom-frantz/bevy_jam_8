@@ -5,6 +5,7 @@ use bevy::{
     state::{state::OnEnter, state_scoped::DespawnOnExit},
     ui::{Node, Val, widget::Text},
 };
+use serde::Deserialize;
 
 use crate::InGameScreen;
 
@@ -18,8 +19,8 @@ impl Plugin for CraftingPlugin {
 
 /// The type of an item. This is not very useful in of itself, but is a 'factor'
 /// as to what an item actually is.
-#[derive(Clone, Debug, Component, PartialEq, Eq)]
-enum Item {
+#[derive(Deserialize, Copy, Clone, Debug, Component, PartialEq, Eq)]
+pub enum Item {
     Water,
     Oil,
 

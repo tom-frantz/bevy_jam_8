@@ -1,21 +1,20 @@
 use bevy::{
     app::{Plugin, Startup, Update},
-    asset::{AssetApp, AssetServer, Assets, Handle},
+    asset::{Asset, AssetApp, AssetServer, Assets, Handle},
     ecs::{
         hierarchy::Children,
         resource::Resource,
         system::{Commands, Res, ResMut},
     },
     log::info,
+    reflect::TypePath,
     scene::{CommandsSceneExt, bsn},
     state::{state::OnEnter, state_scoped::DespawnOnExit},
     ui::{Node, Val, widget::Text},
 };
+use serde::Deserialize;
 
-use crate::{
-    InGameScreen,
-    encounters::deserialize::{Encounter, TomlEncLoader},
-};
+use crate::{InGameScreen, encounters::deserialize::TomlEncLoader};
 
 mod deserialize;
 
@@ -30,6 +29,36 @@ impl Plugin for EncounterPlugin {
         app.add_systems(Startup, load_assets);
         app.add_systems(Update, print_on_load);
     }
+}
+
+use crate::crafting::Item;
+
+#[derive(Asset, TypePath, Debug, Deserialize)]
+pub struct Encounter {
+    pub name: String,
+    pub context_items: Vec<Context>,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct Context {
+    pub name: String,
+    pub text: String,
+    pub choices: Vec<Choice>,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct Choice {
+    pub text: String,
+    pub goto_context: Option<String>, // TODO how to map this to a context.name?
+    pub requires: Option<Vec<Item>>,
+    pub execute: Option<Vec<Execute>>,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub enum Execute {
+    AddItem(Item),
+    LoseItem(Item),
+    Leave,
 }
 
 #[derive(Resource, Default)]
