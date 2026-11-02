@@ -35,6 +35,10 @@ pub enum Item {
     CrystalLens,
 
     MagicLens,
+
+    // TODO remove
+    Mushroom,
+    Stone,
 }
 
 /// A list of aspects an item can possess. This is just the name of the aspect
