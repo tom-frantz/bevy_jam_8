@@ -22,7 +22,7 @@ use bevy::{
     ui::{Node, Val, widget::Text},
 };
 
-use crate::{AppState, InGameScreen};
+use crate::{AppState, InGameScreen, PlayerLocation};
 
 pub struct WorldMapPlugin;
 
@@ -32,12 +32,12 @@ impl Plugin for WorldMapPlugin {
             cmds.insert_resource(BroomFuel::default())
         })
         .add_systems(OnEnter(InGameScreen::WorldMap), enter_world_map)
-        .add_systems(
-            OnExit(todo!("PLAYER STATE HERE, NOT SCREEN")),
-            top_up_broom_fuel,
-        );
+        .add_systems(OnExit(PlayerLocation::Home), top_up_broom_fuel);
     }
 }
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct IslandId(usize);
 
 #[derive(Debug, Resource)]
 pub struct BroomFuel {
