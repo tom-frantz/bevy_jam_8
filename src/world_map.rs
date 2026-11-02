@@ -1,10 +1,12 @@
 use bevy::{
     app::Plugin,
     ecs::{
+        component::Component,
+        event::EntityEvent,
         hierarchy::Children,
         observer::On,
         resource::Resource,
-        system::{Commands, command::insert_resource},
+        system::{Commands, Query, ResMut, command::insert_resource},
     },
     log::info,
     math::Vec3,
@@ -15,7 +17,7 @@ use bevy::{
     scene::{CommandsSceneExt, Scene, bsn, bsn_list, on},
     sprite::Sprite,
     state::{
-        state::{OnEnter, OnExit},
+        state::{NextState, OnEnter, OnExit},
         state_scoped::DespawnOnExit,
     },
     transform::components::Transform,
@@ -36,7 +38,7 @@ impl Plugin for WorldMapPlugin {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash, Component)]
 pub struct IslandId(usize);
 
 #[derive(Debug, Resource)]
@@ -45,7 +47,9 @@ pub struct BroomFuel {
 }
 
 /// Once the night is over, the broom should be back in action c:
-fn top_up_broom_fuel() {}
+fn top_up_broom_fuel() {
+    // TODO actually top up broom fuel
+}
 
 impl Default for BroomFuel {
     fn default() -> Self {
@@ -70,16 +74,19 @@ fn enter_world_map(mut commands: Commands) {
         Pickable::IGNORE
         --
         @island()
+        IslandId(0)
         Transform {
             translation: Vec3::new(50., 100., 0.)
         }
         --
         @island()
+        IslandId(1)
         Transform {
             translation: Vec3::new(300., 0., 0.)
         }
         --
         @island()
+        IslandId(2)
         Transform {
             translation: Vec3::new(-200., -100., 0.)
         }
@@ -89,6 +96,7 @@ fn enter_world_map(mut commands: Commands) {
 
 fn island() -> impl Scene {
     bsn! {
+        DespawnOnExit<InGameScreen>(InGameScreen::WorldMap)
         Transform
         Sprite { image: "floating_island.png" }
         Pickable
@@ -96,6 +104,19 @@ fn island() -> impl Scene {
     }
 }
 
-fn island_click_observer(_event: On<PointerPress>) {
-    info!("This is getting pretty frisky!")
+fn island_click_observer(
+    event: On<PointerPress>,
+    islands: Query<&IslandId>,
+    mut next_state: ResMut<NextState<PlayerLocation>>,
+    mut next_screen: ResMut<NextState<InGameScreen>>,
+) {
+    info!("This is getting pretty frisky!");
+    let island_id = islands
+        .get(event.event_target())
+        .expect("Clicked on an island without an island ID");
+
+    // TODO broom fuel consumption
+    next_state.set(PlayerLocation::Island(*island_id));
+    // TODO the setup for the encounter on the island
+    next_screen.set(InGameScreen::Encounter);
 }
