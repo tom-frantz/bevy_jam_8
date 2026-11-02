@@ -1,6 +1,11 @@
 use bevy::{
     app::Plugin,
-    ecs::{hierarchy::Children, observer::On, system::Commands},
+    ecs::{
+        hierarchy::Children,
+        observer::On,
+        resource::Resource,
+        system::{Commands, command::insert_resource},
+    },
     log::info,
     math::Vec3,
     picking::{
@@ -9,18 +14,42 @@ use bevy::{
     },
     scene::{CommandsSceneExt, Scene, bsn, bsn_list, on},
     sprite::Sprite,
-    state::{state::OnEnter, state_scoped::DespawnOnExit},
+    state::{
+        state::{OnEnter, OnExit},
+        state_scoped::DespawnOnExit,
+    },
     transform::components::Transform,
     ui::{Node, Val, widget::Text},
 };
 
-use crate::InGameScreen;
+use crate::{AppState, InGameScreen};
 
 pub struct WorldMapPlugin;
 
 impl Plugin for WorldMapPlugin {
     fn build(&self, app: &mut bevy::app::App) {
-        app.add_systems(OnEnter(InGameScreen::WorldMap), enter_world_map);
+        app.add_systems(OnEnter(AppState::InGame), |mut cmds: Commands| {
+            cmds.insert_resource(BroomFuel::default())
+        })
+        .add_systems(OnEnter(InGameScreen::WorldMap), enter_world_map)
+        .add_systems(
+            OnExit(todo!("PLAYER STATE HERE, NOT SCREEN")),
+            top_up_broom_fuel,
+        );
+    }
+}
+
+#[derive(Debug, Resource)]
+pub struct BroomFuel {
+    distance: usize,
+}
+
+/// Once the night is over, the broom should be back in action c:
+fn top_up_broom_fuel() {}
+
+impl Default for BroomFuel {
+    fn default() -> Self {
+        Self { distance: 10 }
     }
 }
 
