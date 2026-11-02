@@ -1,5 +1,4 @@
 use bevy::{
-    a11y::ActionRequest,
     app::{Plugin, Startup, Update},
     asset::{Asset, AssetApp, AssetServer, Assets, Handle},
     color::palettes::tailwind,
@@ -9,11 +8,12 @@ use bevy::{
         hierarchy::Children,
         query::With,
         resource::Resource,
-        system::{Commands, In, IntoSystem, Local, Query, Res, ResMut},
+        system::{Commands, In, IntoSystem, Query, Res, ResMut},
     },
-    log::info,
+    input::{ButtonInput, keyboard::KeyCode},
+    log::debug,
     reflect::TypePath,
-    scene::{CommandsSceneExt, Scene, bsn},
+    scene::{CommandsSceneExt, EntityCommandsSceneExt, Scene, bsn},
     state::{state::OnEnter, state_scoped::DespawnOnExit},
     ui::{BackgroundColor, FlexDirection, Node, UiRect, Val, widget::Text},
 };
@@ -28,24 +28,49 @@ pub struct EncounterPlugin;
 impl Plugin for EncounterPlugin {
     fn build(&self, app: &mut bevy::app::App) {
         app.init_resource::<Encounters>();
+        app.init_resource::<CurrentEncounter>();
         app.init_asset::<Encounter>();
         app.init_asset_loader::<TomlEncLoader>();
         app.add_systems(OnEnter(InGameScreen::Encounter), enter_encounter_screen);
         app.add_systems(Startup, load_assets);
-        app.add_systems(Update, print_on_load);
-        // app.add_systems(Update, get_some_choice_event.pipe(on_choice_select));
+        app.add_systems(Update, check_encounter_input.pipe(on_choice_select));
     }
+}
+const KEYS: [KeyCode; 9] = [
+    KeyCode::Digit1,
+    KeyCode::Digit2,
+    KeyCode::Digit3,
+    KeyCode::Digit4,
+    KeyCode::Digit5,
+    KeyCode::Digit6,
+    KeyCode::Digit7,
+    KeyCode::Digit8,
+    KeyCode::Digit9,
+];
+
+fn check_encounter_input(
+    input: Res<ButtonInput<KeyCode>>,
+    current_encounter: Res<CurrentEncounter>,
+) -> Option<Choice> {
+    let choices: &Vec<Choice> = &current_encounter.current_context.choices;
+    for (index, choice) in choices.iter().enumerate() {
+        if input.just_pressed(KEYS[index]) {
+            debug!("Got input");
+            return Some(choice.clone());
+        }
+    }
+    None
 }
 
 use crate::crafting::Item;
 
-#[derive(Asset, TypePath, Clone, Debug, Deserialize)]
+#[derive(Asset, TypePath, Default, Clone, Debug, Deserialize)]
 pub struct Encounter {
     pub name: String,
     pub context_items: Vec<Context>,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Default, Deserialize, Clone)]
 pub struct Context {
     pub name: String,
     pub text: String,
@@ -80,59 +105,64 @@ fn load_assets(mut encounters: ResMut<Encounters>, asset_server: Res<AssetServer
     encounters.handle = asset_server.load("encounters/encounter_template.enc.toml")
 }
 
-fn print_on_load(
-    mut local_check: Local<bool>,
-    mut encounters: ResMut<Encounters>,
-    custom_assets: Res<Assets<Encounter>>,
-) {
-    let enc = custom_assets.get(&encounters.handle);
-
-    if enc.is_none() {
-        info!("Custom Asset Not Ready");
-        return;
-    }
-    if *local_check == true {
-        return;
-    }
-    *local_check = true;
-    let e = enc.unwrap();
-    info!(e.name);
-    for context in &e.context_items {
-        info!(context.name);
-        info!(context.text);
-        for choice in &context.choices {
-            info!(choice.text)
-        }
-    }
-}
-
-#[derive(Resource, Debug, Clone)]
-pub struct CurrentEncounter(Encounter);
-
-fn get_some_choice_event(mut commands: Commands) -> Choice {
-    Choice {
-        text: "hello".to_string(),
-        goto_context: None,
-        requires: None,
-        execute: None,
-    }
+// TODO make this an option?
+#[derive(Resource, Default, Debug, Clone)]
+pub struct CurrentEncounter {
+    encounter: Encounter,
+    current_context: Context,
 }
 
 #[derive(Component, Debug, Clone, Default)]
 struct ChatBoxMarker;
 
 fn on_choice_select(
-    choice_selected: In<Choice>,
-    current_encounter: ResMut<CurrentEncounter>,
+    choice_selected: In<Option<Choice>>,
+    mut current_encounter: ResMut<CurrentEncounter>,
     mut commands: Commands,
-    q: Query<(Entity,), With<ChatBoxMarker>>,
+    mut q: Query<Entity, With<ChatBoxMarker>>,
 ) {
-    let chatbox = q.single_mut();
-    todo!("Fix me, Luke!")
+    if let Some(choice_selected) = &*choice_selected {
+        if let Some(execute) = &choice_selected.execute {
+            for action in execute {
+                debug!("Action to execute: {action:?}")
+            }
+        }
+        if let Some(goto_context) = &choice_selected.goto_context {
+            debug!("Goto: {goto_context:?}");
+            let target_context = current_encounter
+                .encounter
+                .context_items
+                .iter()
+                .find(|item| &item.name == goto_context)
+                .expect("should exist")
+                .clone();
+            current_encounter.current_context = target_context.clone();
+            let chatbox = q.single_mut().expect("Should be only one chatbox");
+            let new_context_scene = set_scene_context(&target_context);
+
+            commands
+                .entity(chatbox)
+                .despawn_children()
+                .apply_scene(new_context_scene);
+        }
+    }
 }
 
 /// When moving to the encounter screen, run this system once to setup everything.
-fn enter_encounter_screen(mut commands: Commands) {
+fn enter_encounter_screen(
+    mut commands: Commands,
+    encounter: Res<Encounters>,
+    mut current_encounter: ResMut<CurrentEncounter>,
+    encounters: Res<Assets<Encounter>>,
+) {
+    let enc = encounters
+        .get(&encounter.handle)
+        .expect("ahhhhh too many frogs");
+    current_encounter.encounter = enc.clone();
+    let initial_context = enc.context_items.first().expect("AHH");
+    current_encounter.current_context = initial_context.clone();
+    let my_enc = set_scene_context(initial_context);
+
     commands.spawn_scene(bsn! {
         Node {
             width: Val::Percent(100.),
@@ -147,25 +177,36 @@ fn enter_encounter_screen(mut commands: Commands) {
                 Text("Background goes here.")
             ]
             --
-            Node {
-                width: Val::Px(600.),
-                padding: UiRect::all(Val::Px(40.)),
-                flex_direction: FlexDirection::Column
-            }
-            BackgroundColor(tailwind::GRAY_600)
-            ChatBoxMarker
-            Children [
-                @flavour_text("This is some yummy worldbuilding!")
-                --
-                @action_text("This is something that happened to your character")
-                --
-                @choice("Choice 1: Grumpy boys need a hug too")
-                --
-                @choice("Choice 2: fuckin' deck the mushroom")
-            ]
+            @my_enc
         ]
         DespawnOnExit<InGameScreen>(InGameScreen::Encounter)
     });
+}
+
+fn set_scene_context(context: &Context) -> impl Scene {
+    let choices = context
+        .choices
+        .iter()
+        .enumerate()
+        .map(|(index, choice)| (index + 1, choice))
+        .map(|(index, choice)| choice_scene(format!("{index}. {}", choice.text.clone())))
+        .collect::<Vec<_>>();
+    bsn! {
+        Node {
+            width: Val::Px(600.),
+            padding: UiRect::all(Val::Px(40.)),
+            flex_direction: FlexDirection::Column
+        }
+        BackgroundColor(tailwind::GRAY_600)
+        ChatBoxMarker
+        Children [
+            @flavour_text(context.text.clone())
+            // --
+            // @action_text("This is something that happened to your character")
+            --
+            {choices}
+        ]
+    }
 }
 
 fn flavour_text(msg: impl Into<String>) -> impl Scene {
@@ -180,7 +221,7 @@ fn action_text(msg: impl Into<String>) -> impl Scene {
     }
 }
 
-fn choice(msg: impl Into<String>) -> impl Scene {
+fn choice_scene(msg: impl Into<String>) -> impl Scene {
     bsn! {
         Text(msg)
     }
