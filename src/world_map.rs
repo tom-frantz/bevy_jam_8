@@ -1,6 +1,7 @@
 use bevy::{
     app::Plugin,
     ecs::{
+        component::Component,
         hierarchy::Children,
         observer::On,
         resource::Resource,
@@ -36,7 +37,7 @@ impl Plugin for WorldMapPlugin {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash, Component)]
 pub struct IslandId(usize);
 
 #[derive(Debug, Resource)]
@@ -70,16 +71,19 @@ fn enter_world_map(mut commands: Commands) {
         Pickable::IGNORE
         --
         @island()
+        IslandId(0)
         Transform {
             translation: Vec3::new(50., 100., 0.)
         }
         --
         @island()
+        IslandId(1)
         Transform {
             translation: Vec3::new(300., 0., 0.)
         }
         --
         @island()
+        IslandId(2)
         Transform {
             translation: Vec3::new(-200., -100., 0.)
         }
