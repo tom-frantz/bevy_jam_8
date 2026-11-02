@@ -9,13 +9,13 @@ use bevy::{
         hierarchy::Children,
         query::With,
         resource::Resource,
-        system::{Commands, In, IntoSystem, Query, Res, ResMut},
+        system::{Commands, In, IntoSystem, Local, Query, Res, ResMut},
     },
     log::info,
     reflect::TypePath,
     scene::{CommandsSceneExt, Scene, bsn},
     state::{state::OnEnter, state_scoped::DespawnOnExit},
-    ui::{BackgroundColor, Node, UiRect, Val, widget::Text},
+    ui::{BackgroundColor, FlexDirection, Node, UiRect, Val, widget::Text},
 };
 use serde::Deserialize;
 
@@ -80,13 +80,21 @@ fn load_assets(mut encounters: ResMut<Encounters>, asset_server: Res<AssetServer
     encounters.handle = asset_server.load("encounters/encounter_template.enc.toml")
 }
 
-fn print_on_load(mut encounters: ResMut<Encounters>, custom_assets: Res<Assets<Encounter>>) {
+fn print_on_load(
+    mut local_check: Local<bool>,
+    mut encounters: ResMut<Encounters>,
+    custom_assets: Res<Assets<Encounter>>,
+) {
     let enc = custom_assets.get(&encounters.handle);
 
     if enc.is_none() {
         info!("Custom Asset Not Ready");
         return;
     }
+    if *local_check == true {
+        return;
+    }
+    *local_check = true;
     let e = enc.unwrap();
     info!(e.name);
     for context in &e.context_items {
@@ -132,13 +140,17 @@ fn enter_encounter_screen(mut commands: Commands) {
             padding: UiRect::all(Val::Px(40.))
         }
         Children [
-            Node
+            Node {
+                flex_grow: 1.0
+            }
             Children [
                 Text("Background goes here.")
             ]
             --
             Node {
-                width: Val::Px(400.)
+                width: Val::Px(600.),
+                padding: UiRect::all(Val::Px(40.)),
+                flex_direction: FlexDirection::Column
             }
             BackgroundColor(tailwind::GRAY_600)
             ChatBoxMarker
@@ -165,13 +177,11 @@ fn flavour_text(msg: impl Into<String>) -> impl Scene {
 fn action_text(msg: impl Into<String>) -> impl Scene {
     bsn! {
         Text(msg)
-
     }
 }
 
 fn choice(msg: impl Into<String>) -> impl Scene {
     bsn! {
         Text(msg)
-
     }
 }

@@ -31,7 +31,9 @@ impl Plugin for JamPlugin {
             world_map::WorldMapPlugin,
         ));
 
-        app.init_state::<AppState>().add_sub_state::<InGameScreen>();
+        app.init_state::<AppState>()
+            .add_sub_state::<InGameScreen>()
+            .add_sub_state::<PlayerLocation>();
 
         app.add_systems(Startup, spawn_camera)
             .add_systems(Startup, debug_start_game);
