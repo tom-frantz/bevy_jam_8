@@ -4,7 +4,7 @@ use bevy::{
     ecs::{
         hierarchy::Children,
         resource::Resource,
-        system::{Commands, Res, ResMut},
+        system::{Commands, In, IntoSystem, Res, ResMut},
     },
     log::info,
     reflect::TypePath,
@@ -28,12 +28,13 @@ impl Plugin for EncounterPlugin {
         app.add_systems(OnEnter(InGameScreen::Encounter), enter_encounter_screen);
         app.add_systems(Startup, load_assets);
         app.add_systems(Update, print_on_load);
+        app.add_systems(Update, get_some_choice_event.pipe(on_choice_select));
     }
 }
 
 use crate::crafting::Item;
 
-#[derive(Asset, TypePath, Debug, Deserialize)]
+#[derive(Asset, TypePath, Clone, Debug, Deserialize)]
 pub struct Encounter {
     pub name: String,
     pub context_items: Vec<Context>,
@@ -52,6 +53,10 @@ pub struct Choice {
     pub goto_context: Option<String>, // TODO how to map this to a context.name?
     pub requires: Option<Vec<Item>>,
     pub execute: Option<Vec<Execute>>,
+}
+
+impl Choice {
+    pub fn when_chosen(&self) {}
 }
 
 #[derive(Debug, Deserialize, Clone)]
@@ -86,6 +91,26 @@ fn print_on_load(mut encounters: ResMut<Encounters>, custom_assets: Res<Assets<E
             info!(choice.text)
         }
     }
+}
+
+#[derive(Resource, Debug, Clone)]
+pub struct CurrentEncounter(Encounter);
+
+fn get_some_choice_event(mut commands: Commands) -> Choice {
+    Choice {
+        text: "hello".to_string(),
+        goto_context: None,
+        requires: None,
+        execute: None,
+    }
+}
+
+fn on_choice_select(
+    choice_selected: In<Choice>,
+    current_encounter: ResMut<CurrentEncounter>,
+    mut commands: Commands,
+) {
+    todo!("Fix me, Luke!")
 }
 
 /// When moving to the encounter screen, run this system once to setup everything.
