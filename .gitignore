@@ -4,3 +4,4 @@
 /.cargo/.crates.toml
 /.direnv/
 /jam_notes/.obsidian
+.DS_Store
