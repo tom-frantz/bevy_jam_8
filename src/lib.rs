@@ -29,6 +29,7 @@ mod nights;
 mod world_map;
 
 mod asset_helpers;
+mod draggable;
 
 pub struct JamPlugin;
 
@@ -42,6 +43,9 @@ impl Plugin for JamPlugin {
             encounters::EncounterPlugin,
             nights::NightsPlugin,
             world_map::WorldMapPlugin,
+            draggable::DraggablePlugin,
+            drawing::DrawingPlugin,
+            tracked_ui_node::TrackedUiNodePlugin,
         ));
 
         app.init_state::<AppState>()
@@ -105,6 +109,10 @@ fn spawn_ui_overlay(mut commands: Commands) {
             ImageNode {
                 image: "philosophers_stone.png"
             }
+            Node {
+                max_width: Val::Px(100.)
+
+            }
             on(|_: On<PointerClick>, mut screen: ResMut<NextState<InGameScreen>>| {
                 screen.set(InGameScreen::Crafting);
             })
@@ -112,12 +120,20 @@ fn spawn_ui_overlay(mut commands: Commands) {
             ImageNode {
                 image: "map.png"
             }
+            Node {
+                max_width: Val::Px(100.)
+
+            }
             on(|_: On<PointerClick>, mut screen: ResMut<NextState<InGameScreen>>| {
                 screen.set(InGameScreen::WorldMap);
             })
             --
             ImageNode {
                 image: "encounter.png"
+            }
+            Node {
+                max_width: Val::Px(100.)
+
             }
             on(|_: On<PointerClick>, mut screen: ResMut<NextState<InGameScreen>>| {
                 screen.set(InGameScreen::Encounter);
