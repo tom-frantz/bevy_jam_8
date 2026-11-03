@@ -25,6 +25,8 @@ mod encounters;
 mod nights;
 mod world_map;
 
+mod asset_helpers;
+
 pub struct JamPlugin;
 
 impl Plugin for JamPlugin {

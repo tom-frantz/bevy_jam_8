@@ -347,12 +347,6 @@ fn handle_choice(
                         let new_inv_item = InventoryItem {
                             amount: 1,
                             item: item.clone(),
-                            // TODO figure out how to get aspects
-                            aspects: ItemAspect {
-                                primary: AspectValue(Aspects::Earth, 1),
-                                secondary: None,
-                                tertiary: None,
-                            },
                         };
                         commands.spawn_empty().insert(new_inv_item);
                     }

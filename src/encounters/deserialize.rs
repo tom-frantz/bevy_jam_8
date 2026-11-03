@@ -2,21 +2,11 @@ use bevy::{
     asset::{AssetLoader, LoadContext, io::Reader},
     reflect::TypePath,
 };
-use thiserror::Error;
 
-use crate::encounters::Encounter;
+use crate::{asset_helpers::DeError, encounters::Encounter};
 
 #[derive(Default, TypePath)]
 pub struct TomlEncLoader;
-
-#[non_exhaustive]
-#[derive(Debug, Error)]
-pub enum DeError {
-    #[error("Could not load asset: {0}")]
-    Io(#[from] std::io::Error),
-    #[error("Could not parse toml: {0}")]
-    FailedToParseToml(#[from] toml::de::Error),
-}
 
 impl AssetLoader for TomlEncLoader {
     type Asset = Encounter;
