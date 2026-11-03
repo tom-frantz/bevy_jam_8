@@ -1,20 +1,29 @@
 use bevy::{
     app::{Plugin, Startup, Update},
     asset::{Asset, AssetApp, AssetServer, Assets, Handle},
-    color::palettes::tailwind,
+    color::{Color, palettes::tailwind},
     ecs::{
         component::Component,
         entity::Entity,
+        event::EntityEvent,
         hierarchy::Children,
+        observer::On,
         query::With,
         resource::Resource,
         system::{Commands, In, IntoSystem, Query, Res, ResMut},
     },
     input::{ButtonInput, keyboard::KeyCode},
     log::debug,
+    picking::{
+        Pickable,
+        events::{
+             , PointerLeave, PointerOver, PointerPress,
+        },
+    },
     reflect::TypePath,
-    scene::{CommandsSceneExt, EntityCommandsSceneExt, Scene, bsn},
+    scene::{CommandsSceneExt, EntityCommandsSceneExt, Scene, bsn, on},
     state::{state::OnEnter, state_scoped::DespawnOnExit},
+    text::TextColor,
     ui::{BackgroundColor, FlexDirection, Node, UiRect, Val, widget::Text},
 };
 use serde::Deserialize;
@@ -50,7 +59,9 @@ const KEYS: [KeyCode; 9] = [
 
 fn check_encounter_input(
     input: Res<ButtonInput<KeyCode>>,
-    current_encounter: Res<CurrentEncounter>,
+    mut current_encounter: ResMut<CurrentEncounter>,
+    mut commands: Commands,
+    mut q: Query<Entity, With<ChatBoxMarker>>,
 ) -> Option<Choice> {
     let choices: &Vec<Choice> = &current_encounter.current_context.choices;
     for (index, choice) in choices.iter().enumerate() {
@@ -77,7 +88,7 @@ pub struct Context {
     pub choices: Vec<Choice>,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Component, Default, Debug, Deserialize, Clone)]
 pub struct Choice {
     pub text: String,
     pub goto_context: Option<String>, // TODO how to map this to a context.name?
@@ -122,29 +133,7 @@ fn on_choice_select(
     mut q: Query<Entity, With<ChatBoxMarker>>,
 ) {
     if let Some(choice_selected) = &*choice_selected {
-        if let Some(execute) = &choice_selected.execute {
-            for action in execute {
-                debug!("Action to execute: {action:?}")
-            }
-        }
-        if let Some(goto_context) = &choice_selected.goto_context {
-            debug!("Goto: {goto_context:?}");
-            let target_context = current_encounter
-                .encounter
-                .context_items
-                .iter()
-                .find(|item| &item.name == goto_context)
-                .expect("should exist")
-                .clone();
-            current_encounter.current_context = target_context.clone();
-            let chatbox = q.single_mut().expect("Should be only one chatbox");
-            let new_context_scene = set_scene_context(&target_context);
-
-            commands
-                .entity(chatbox)
-                .despawn_children()
-                .apply_scene(new_context_scene);
-        }
+        handle_choice(choice_selected.clone(), current_encounter, commands, q)
     }
 }
 
@@ -189,7 +178,7 @@ fn set_scene_context(context: &Context) -> impl Scene {
         .iter()
         .enumerate()
         .map(|(index, choice)| (index + 1, choice))
-        .map(|(index, choice)| choice_scene(format!("{index}. {}", choice.text.clone())))
+        .map(|(index, choice)| choice_scene(index, choice))
         .collect::<Vec<_>>();
     bsn! {
         Node {
@@ -221,8 +210,77 @@ fn action_text(msg: impl Into<String>) -> impl Scene {
     }
 }
 
-fn choice_scene(msg: impl Into<String>) -> impl Scene {
+fn choice_scene(index: usize, choice: &Choice) -> impl Scene {
+    let text = format!("{index}. {}", choice.text);
+    let c = choice.clone();
     bsn! {
-        Text(msg)
+        Pickable
+        c
+        Text(text)
+        TextColor(Color::srgb(1.0, 1.0, 1.0))
+        on(choice_click_observer)
+        on(choice_pointer_enter_observer)
+        on(choice_pointer_exit_observer)
+    }
+}
+
+fn choice_click_observer(
+    event: On<PointerPress>,
+    choices: Query<&Choice>,
+    mut current_encounter: ResMut<CurrentEncounter>,
+    mut commands: Commands,
+    mut q: Query<Entity, With<ChatBoxMarker>>,
+) {
+    let selected_choice_entity = event.event_target();
+    let selected_choice = choices.get(selected_choice_entity).expect("exists").clone();
+    handle_choice(selected_choice, current_encounter, commands, q)
+}
+
+fn choice_pointer_enter_observer(
+    event: On<PointerOver>,
+    mut choices: Query<(&Choice, &mut TextColor)>,
+) {
+    let mut selected_choice_entity = event.event_target();
+    let (_, mut text) = choices.get_mut(selected_choice_entity).expect("exists");
+    *text = TextColor(Color::srgb(0.8, 0.5, 0.2));
+}
+
+fn choice_pointer_exit_observer(
+    event: On<PointerLeave>,
+    mut choices: Query<(&Choice, &mut TextColor)>,
+) {
+    let mut selected_choice_entity = event.event_target();
+    let (_, mut text) = choices.get_mut(selected_choice_entity).expect("exists");
+    *text = TextColor(Color::srgb(1.0, 1.0, 1.0));
+}
+
+fn handle_choice(
+    choice_selected: Choice,
+    mut current_encounter: ResMut<CurrentEncounter>,
+    mut commands: Commands,
+    mut q: Query<Entity, With<ChatBoxMarker>>,
+) {
+    if let Some(execute) = &choice_selected.execute {
+        for action in execute {
+            debug!("Action to execute: {action:?}")
+        }
+    }
+    if let Some(goto_context) = &choice_selected.goto_context {
+        debug!("Goto: {goto_context:?}");
+        let target_context = current_encounter
+            .encounter
+            .context_items
+            .iter()
+            .find(|item| &item.name == goto_context)
+            .expect("should exist")
+            .clone();
+        current_encounter.current_context = target_context.clone();
+        let chatbox = q.single_mut().expect("Should be only one chatbox");
+        let new_context_scene = set_scene_context(&target_context);
+
+        commands
+            .entity(chatbox)
+            .despawn_children()
+            .apply_scene(new_context_scene);
     }
 }
