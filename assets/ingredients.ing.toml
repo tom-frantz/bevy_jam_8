@@ -1,0 +1,12 @@
+[[ingredients]]
+name="Struberry"
+[ingredients.aspects]
+primary=["Fire", 3]
+# secondary=[Water, 1]
+
+[[ingredients]]
+name="Froge Piss"
+[ingredients.aspects]
+primary=["Water", 1]
+secondary=["Fire", 1]
+
