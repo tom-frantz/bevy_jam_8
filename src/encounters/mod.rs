@@ -13,12 +13,10 @@ use bevy::{
         system::{Commands, In, IntoSystem, Query, Res, ResMut},
     },
     input::{ButtonInput, keyboard::KeyCode},
-    log::debug,
+    log::{debug, info},
     picking::{
         Pickable,
-        events::{
-             , PointerLeave, PointerOver, PointerPress,
-        },
+        events::{PointerLeave, PointerOver, PointerPress},
     },
     reflect::TypePath,
     scene::{CommandsSceneExt, EntityCommandsSceneExt, Scene, bsn, on},
@@ -28,7 +26,11 @@ use bevy::{
 };
 use serde::Deserialize;
 
-use crate::{InGameScreen, encounters::deserialize::TomlEncLoader};
+use crate::{
+    InGameScreen,
+    crafting::{AspectValue, Aspects, InventoryItem, ItemAspect},
+    encounters::deserialize::TomlEncLoader,
+};
 
 mod deserialize;
 
@@ -59,9 +61,7 @@ const KEYS: [KeyCode; 9] = [
 
 fn check_encounter_input(
     input: Res<ButtonInput<KeyCode>>,
-    mut current_encounter: ResMut<CurrentEncounter>,
-    mut commands: Commands,
-    mut q: Query<Entity, With<ChatBoxMarker>>,
+    current_encounter: Res<CurrentEncounter>,
 ) -> Option<Choice> {
     let choices: &Vec<Choice> = &current_encounter.current_context.choices;
     for (index, choice) in choices.iter().enumerate() {
@@ -91,13 +91,15 @@ pub struct Context {
 #[derive(Component, Default, Debug, Deserialize, Clone)]
 pub struct Choice {
     pub text: String,
-    pub goto_context: Option<String>, // TODO how to map this to a context.name?
-    pub requires: Option<Vec<Item>>,
+    pub goto_context: Option<String>,
+    pub requires: Option<Requires>,
     pub execute: Option<Vec<Execute>>,
 }
 
-impl Choice {
-    pub fn when_chosen(&self) {}
+#[derive(Debug, Deserialize, Clone)]
+pub struct Requires {
+    alt_text: String,
+    req_items: Vec<Item>,
 }
 
 #[derive(Debug, Deserialize, Clone)]
@@ -131,9 +133,16 @@ fn on_choice_select(
     mut current_encounter: ResMut<CurrentEncounter>,
     mut commands: Commands,
     mut q: Query<Entity, With<ChatBoxMarker>>,
+    mut items: Query<&mut InventoryItem>,
 ) {
     if let Some(choice_selected) = &*choice_selected {
-        handle_choice(choice_selected.clone(), current_encounter, commands, q)
+        handle_choice(
+            choice_selected.clone(),
+            current_encounter,
+            commands,
+            q,
+            items,
+        )
     }
 }
 
@@ -143,6 +152,7 @@ fn enter_encounter_screen(
     encounter: Res<Encounters>,
     mut current_encounter: ResMut<CurrentEncounter>,
     encounters: Res<Assets<Encounter>>,
+    mut items: Query<(&mut InventoryItem)>,
 ) {
     let enc = encounters
         .get(&encounter.handle)
@@ -150,7 +160,7 @@ fn enter_encounter_screen(
     current_encounter.encounter = enc.clone();
     let initial_context = enc.context_items.first().expect("AHH");
     current_encounter.current_context = initial_context.clone();
-    let my_enc = set_scene_context(initial_context);
+    let my_enc = set_scene_context(initial_context, items);
 
     commands.spawn_scene(bsn! {
         Node {
@@ -172,14 +182,29 @@ fn enter_encounter_screen(
     });
 }
 
-fn set_scene_context(context: &Context) -> impl Scene {
+fn set_scene_context(context: &Context, mut items: Query<(&mut InventoryItem)>) -> impl Scene {
     let choices = context
         .choices
         .iter()
         .enumerate()
         .map(|(index, choice)| (index + 1, choice))
-        .map(|(index, choice)| choice_scene(index, choice))
+        .map(|(index, choice)| {
+            let fulfilled_requirements = if let Some(reqs) = &choice.requires {
+                reqs.req_items.iter().all(|req_item| {
+                    items
+                        .iter_mut()
+                        .find(|inventory_item| {
+                            (&inventory_item.item == req_item) && (inventory_item.amount > 0)
+                        })
+                        .is_some()
+                })
+            } else {
+                true
+            };
+            choice_scene(index, choice, fulfilled_requirements)
+        })
         .collect::<Vec<_>>();
+
     bsn! {
         Node {
             width: Val::Px(600.),
@@ -210,13 +235,21 @@ fn action_text(msg: impl Into<String>) -> impl Scene {
     }
 }
 
-fn choice_scene(index: usize, choice: &Choice) -> impl Scene {
-    let text = format!("{index}. {}", choice.text);
+fn choice_scene(index: usize, choice: &Choice, fulfilled_requirements: bool) -> impl Scene {
+    let text = if !fulfilled_requirements {
+        // Should exist
+        let reqs = choice.requires.clone().unwrap();
+        reqs.alt_text
+    } else {
+        choice.text.clone()
+    };
+
+    let enumarated_choice_text = format!("{index}. {text}");
     let c = choice.clone();
     bsn! {
         Pickable
         c
-        Text(text)
+        Text(enumarated_choice_text)
         TextColor(Color::srgb(1.0, 1.0, 1.0))
         on(choice_click_observer)
         on(choice_pointer_enter_observer)
@@ -230,10 +263,11 @@ fn choice_click_observer(
     mut current_encounter: ResMut<CurrentEncounter>,
     mut commands: Commands,
     mut q: Query<Entity, With<ChatBoxMarker>>,
+    mut items: Query<&mut InventoryItem>,
 ) {
     let selected_choice_entity = event.event_target();
     let selected_choice = choices.get(selected_choice_entity).expect("exists").clone();
-    handle_choice(selected_choice, current_encounter, commands, q)
+    handle_choice(selected_choice, current_encounter, commands, q, items)
 }
 
 fn choice_pointer_enter_observer(
@@ -259,14 +293,66 @@ fn handle_choice(
     mut current_encounter: ResMut<CurrentEncounter>,
     mut commands: Commands,
     mut q: Query<Entity, With<ChatBoxMarker>>,
+    mut items: Query<(&mut InventoryItem)>,
 ) {
-    if let Some(execute) = &choice_selected.execute {
-        for action in execute {
-            debug!("Action to execute: {action:?}")
+    if let Some(requires) = &choice_selected.requires {
+        info!("Requirements: {requires:?}");
+        // check if the player has the requirements
+        let has_requirements = requires.req_items.iter().all(|req_item| {
+            items
+                .iter_mut()
+                .find(|inventory_item| {
+                    (&inventory_item.item == req_item) && (inventory_item.amount > 0)
+                })
+                .is_some()
+        });
+        if !has_requirements {
+            return;
         }
     }
+
+    if let Some(execute) = &choice_selected.execute {
+        for action in execute {
+            match action {
+                Execute::AddItem(item) => {
+                    info!("Got item: {item:?}");
+                    if let Some(mut existing_item) = items
+                        .iter_mut()
+                        .find(|inventory_item| &inventory_item.item == item)
+                    {
+                        existing_item.amount += 1;
+                    } else {
+                        let new_inv_item = InventoryItem {
+                            amount: 1,
+                            item: item.clone(),
+                            // TODO figure out how to get aspects
+                            aspects: ItemAspect {
+                                primary: AspectValue(Aspects::Earth, 1),
+                                secondary: None,
+                                tertiary: None,
+                            },
+                        };
+                        commands.spawn_empty().insert(new_inv_item);
+                    }
+                }
+                Execute::LoseItem(item) => {
+                    info!("Lost item: {item:?}");
+                    if let Some(mut existing_item) = items
+                        .iter_mut()
+                        .find(|inventory_item| &inventory_item.item == item)
+                    {
+                        if existing_item.amount > 0 {
+                            existing_item.amount -= 1;
+                        }
+                    }
+                }
+                Execute::Leave => todo!(),
+            }
+        }
+    }
+
     if let Some(goto_context) = &choice_selected.goto_context {
-        debug!("Goto: {goto_context:?}");
+        info!("Goto: {goto_context:?}");
         let target_context = current_encounter
             .encounter
             .context_items
@@ -276,7 +362,7 @@ fn handle_choice(
             .clone();
         current_encounter.current_context = target_context.clone();
         let chatbox = q.single_mut().expect("Should be only one chatbox");
-        let new_context_scene = set_scene_context(&target_context);
+        let new_context_scene = set_scene_context(&target_context, items);
 
         commands
             .entity(chatbox)

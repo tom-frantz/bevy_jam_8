@@ -10,7 +10,6 @@ text = "Within the crumbling stone structure you see a lone researcher poring ov
   [[context_items.choices]]
   text = "Examine the far wall"
   goto_context = "ruins_wall"
-  [[context_items.choices.execute]]
   
   [[context_items.choices]]
   text = "Leave"
@@ -35,7 +34,7 @@ The researcher, now only a few inches away from your face seems to catch themsel
 name = "researcher_questaccept"
 text = "<r>’Thank you! Take your time, I still have some texts to decipher for now. Just bring it by once it’s ready.</r>’"
   [[context_items.choices]]
-  text = "Return
+  text = "Return"
   goto_context = "enter_accepted"
 
 [[context_items]]
@@ -44,11 +43,12 @@ text = "You approach the wall. The stone relief appears to be depicting an objec
   [[context_items.choices]]
   text = "Take a few of the flowers"
   goto_context = "pickup_heliopals"
-AddItem="Heliopal"
+  [[context_items.choices.execute]]
+  AddItem="Heliopal"
 
 [[context_items]]
 name = "pickup_heliopals"
 text = "You carefully remove a few of the flowers and stow them away"
   [[context_items.choices]]
   text = "Return"
-  goto_context = "enter"
+  goto_context = "enter_first"

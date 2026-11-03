@@ -35,6 +35,7 @@ pub enum Item {
     CrystalLens,
 
     MagicLens,
+    Heliopal,
 
     // TODO remove
     Mushroom,
@@ -44,7 +45,7 @@ pub enum Item {
 /// A list of aspects an item can possess. This is just the name of the aspect
 /// itself, the value must be associated with it
 #[derive(Clone, Debug, Component, PartialEq, Eq)]
-enum Aspects {
+pub enum Aspects {
     Fire,
     Earth,
     Air,
@@ -53,22 +54,22 @@ enum Aspects {
 
 /// An aspect and a level associated with it. More useful.
 #[derive(Clone, Debug, Component, PartialEq, Eq)]
-struct AspectValue(Aspects, u8);
+pub struct AspectValue(pub Aspects, pub u8);
 
 /// Describes all the aspects, and their levels for a given item.
 #[derive(Clone, Debug, Component, PartialEq, Eq)]
-struct ItemAspect {
-    primary: AspectValue,
-    secondary: Option<AspectValue>,
-    tertiary: Option<AspectValue>,
+pub struct ItemAspect {
+    pub primary: AspectValue,
+    pub secondary: Option<AspectValue>,
+    pub tertiary: Option<AspectValue>,
 }
 
 // What item, with what aspects, and how much of it is available.
 #[derive(Clone, Debug, Component)]
-struct InventoryItem {
-    amount: usize,
-    item: Item,
-    aspects: ItemAspect,
+pub struct InventoryItem {
+    pub amount: usize,
+    pub item: Item,
+    pub aspects: ItemAspect,
 }
 
 /// When moving to the crafting screen, run this system once to setup everything.

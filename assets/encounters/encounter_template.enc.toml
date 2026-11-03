@@ -1,48 +1,57 @@
 name = "Mushroom Forest"
 
+# Opening Scene
 [[context_items]]
 name = "enter"
 text = "You see a forest of mushrooms"
-  [[context_items.choices]]
-  text = "Scream into the forest at the top of your lungs"
-  goto_context = "screamed"
+[[context_items.choices]]
+text = "Scream into the forest at the top of your lungs"
+goto_context = "screamed"
 
-  [[context_items.choices]]
-  text = "Take a mushroom"
-  goto_context = "got_shroom"
-  [[context_items.choices.execute]]
-  AddItem= "Mushroom"
+[[context_items.choices]]
+text = "Take a mushroom"
+goto_context = "got_shroom"
+[[context_items.choices.execute]]
+AddItem= "Mushroom"
 
-  [[context_items.choices]]
-  text = "Throw a stone"
-  requires = ["Stone"]
-  goto_context = "throw_stone"
-  [[context_items.choices.execute]]
-  LoseItem= "Stone"
+[[context_items.choices]]
+text = "Throw a mushroom"
+goto_context = "throw_shroom"
+[context_items.choices.requires]
+alt_text= "If only I had a mushroom to throw"
+req_items= ["Mushroom"]
+[[context_items.choices.execute]]
+LoseItem = "Mushroom"
 
-  [[context_items.choices]]
-  text = "Leave"
-  [[context_items.choices.execute]]
-  Leave = {}
+[[context_items.choices]]
+text = "Leave"
+[[context_items.choices.execute]]
+Leave = {}
 
+
+# Screaming Scene
 [[context_items]]
 name = "screamed"
 text = "You scream at the top of your lungs"
-  [[context_items.choices]]
-  text = "continue..."
-  goto_context = "enter"
+[[context_items.choices]]
+text = "continue..."
+goto_context = "enter"
 
+
+# Collecting mushroom scene
 [[context_items]]
 name = "got_shroom"
 text = "You pick up a mushroom"
-  [[context_items.choices]]
-  text = "continue..."
-  goto_context = "enter"
+[[context_items.choices]]
+text = "continue..."
+goto_context = "enter"
 
+
+# Throwing a mushroom scene
 [[context_items]]
-name = "throw_stone"
-text = "You throw a stone. Nice!"
-  [[context_items.choices]]
-  text = "continue..."
-  goto_context = "enter"
+name = "throw_shroom"
+text = "You throw a mushroom. Nice!"
+[[context_items.choices]]
+text = "continue..."
+goto_context = "enter"
 
