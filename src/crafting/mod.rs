@@ -1,10 +1,7 @@
 use bevy::{
-    app::Plugin,
-    color::palettes::tailwind,
-    ecs::{component::Component, hierarchy::Children, system::Commands},
-    scene::{CommandsSceneExt, bsn},
-    state::{state::OnEnter, state_scoped::DespawnOnExit},
-    ui::{BackgroundColor, FlexDirection, Node, Val, widget::Text},
+    app::Plugin, color::palettes::tailwind, ecs::{component::Component, hierarchy::Children, system::Commands}, scene::{CommandsSceneExt, bsn}, state::{
+        app::AppExtStates, state::{ComputedStates, OnEnter, States}, state_scoped::DespawnOnExit,
+    }, ui::{BackgroundColor, FlexDirection, Node, Val, widget::Text},
 };
 use serde::Deserialize;
 
@@ -14,13 +11,18 @@ pub struct CraftingPlugin;
 
 impl Plugin for CraftingPlugin {
     fn build(&self, app: &mut bevy::app::App) {
+        app.init_state::<CraftingState>().add_computed_state::<ChosenCatalystState>();
         app.add_systems(OnEnter(InGameScreen::Crafting), enter_crafting_screen);
     }
 }
 
+//
+// INGREDIENT ZONE
+//
+
 /// The type of an item. This is not very useful in of itself, but is a 'factor'
 /// as to what an item actually is.
-#[derive(Deserialize, Copy, Clone, Debug, Component, PartialEq, Eq)]
+#[derive(Deserialize, Copy, Clone, Debug, Component, PartialEq, Eq, Hash)]
 pub enum Item {
     Water,
     Oil,
@@ -45,7 +47,7 @@ pub enum Item {
 
 /// A list of aspects an item can possess. This is just the name of the aspect
 /// itself, the value must be associated with it
-#[derive(Clone, Debug, Component, PartialEq, Eq)]
+ #[derive(Clone, Debug, Component, PartialEq, Eq)]
 pub enum Aspects {
     Fire,
     Earth,
@@ -54,11 +56,11 @@ pub enum Aspects {
 }
 
 /// An aspect and a level associated with it. More useful.
-#[derive(Clone, Debug, Component, PartialEq, Eq)]
+#[derive(Clone, Debug, Component, PartialEq, Eq, Hash)]
 pub struct AspectValue(pub Aspects, pub u8);
 
 /// Describes all the aspects, and their levels for a given item.
-#[derive(Clone, Debug, Component, PartialEq, Eq)]
+#[derive(Clone, Debug, Component, PartialEq, Eq, Hash)]
 pub struct ItemAspect {
     pub primary: AspectValue,
     pub secondary: Option<AspectValue>,
@@ -66,11 +68,71 @@ pub struct ItemAspect {
 }
 
 // What item, with what aspects, and how much of it is available.
-#[derive(Clone, Debug, Component)]
+#[derive(Clone, Debug, Component, PartialEq, Eq, Hash)]
 pub struct InventoryItem {
     pub amount: usize,
     pub item: Item,
     pub aspects: ItemAspect,
+}
+
+//
+// CRAFTING WITH CATALYSTS
+//
+
+#[derive(Clone, Debug, Component, PartialEq, Eq, Default, Hash)]
+pub enum Catalysts {
+    #[default]
+    Refine,
+    Combine,
+    Subtract,
+}
+
+#[derive(Clone, Debug, Component, PartialEq, Eq, Default, Hash)]
+pub struct RefineState {
+    items: Vec<InventoryItem>,
+}
+
+#[derive(Clone, Debug, Component, PartialEq, Eq, Default, Hash)]
+pub struct CombineState {}
+
+#[derive(Clone, Debug, Component, PartialEq, Eq, Default, Hash)]
+pub struct SubtractState {}
+
+/// Manages the players chosen catalyst and also the ingredients and any jazz
+/// necessary for crafting recipes. 
+#[derive(Clone, PartialEq, Eq, Hash, Debug, States)]
+pub enum CraftingState {
+    Refine(RefineState),
+    Combine(CombineState),
+    Subtract(SubtractState),
+}
+
+/// Use this when determining state changes between different catalysts. 
+#[derive(Clone, PartialEq, Eq, Hash, Debug)]
+struct ChosenCatalystState(Catalysts)
+
+impl ComputedStates for ChosenCatalystState {
+    /// We set the source state to be the state, or a tuple of states,
+    /// we want to depend on. You can also wrap each state in an Option,
+    /// if you want the computed state to execute even if the state doesn't
+    /// currently exist in the world.
+    type SourceStates = CraftingState;
+
+    /// We then define the compute function, which takes in
+    /// your SourceStates
+    fn compute(sources: CraftingState) -> Option<Self> {
+        match sources {
+            CraftingState::Refine(_) => Some(Self(Catalysts::Refine)),
+            CraftingState::Combine(_) => Some(Self(Catalysts::Combine)),
+            CraftingState::Subtract(_) => Some(Self(Catalysts::Subtract)),
+        }
+    }
+}
+
+impl Default for CraftingState {
+    fn default() -> Self {
+        Self::Refine(RefineState::default())
+    }
 }
 
 /// When moving to the crafting screen, run this system once to setup everything.
