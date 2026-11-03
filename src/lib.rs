@@ -2,13 +2,20 @@ use bevy::{
     DefaultPlugins,
     app::{App, Plugin, Startup},
     camera::Camera2d,
-    ecs::system::{Commands, ResMut},
+    ecs::{
+        component::Component,
+        hierarchy::Children,
+        observer::On,
+        system::{Commands, ResMut},
+    },
+    picking::{Pickable, events::PointerClick},
     prelude::States,
-    scene::{CommandsSceneExt, bsn},
+    scene::{CommandsSceneExt, bsn, on},
     state::{
         app::AppExtStates,
-        state::{NextState, SubStates},
+        state::{NextState, OnEnter, SubStates},
     },
+    ui::{AlignItems, FlexDirection, JustifyContent, Node, Val, ZIndex, widget::ImageNode},
 };
 
 use crate::world_map::IslandId;
@@ -36,7 +43,8 @@ impl Plugin for JamPlugin {
             .add_sub_state::<PlayerLocation>();
 
         app.add_systems(Startup, spawn_camera)
-            .add_systems(Startup, debug_start_game);
+            .add_systems(Startup, debug_start_game)
+            .add_systems(OnEnter(AppState::InGame), spawn_ui_overlay);
     }
 }
 
@@ -69,6 +77,46 @@ enum InGameScreen {
 fn spawn_camera(mut commands: Commands) {
     commands.spawn_scene(bsn! {
         Camera2d
+    });
+}
+
+#[derive(Component, Default, Clone, Copy, Debug)]
+pub struct UiContainer;
+
+fn spawn_ui_overlay(mut commands: Commands) {
+    commands.spawn_scene(bsn! {
+        UiContainer
+        Node {
+            width: Val::Percent(100.),
+            height: Val::Percent(100.),
+            flex_direction: FlexDirection::Row,
+            align_items: AlignItems::FlexEnd,
+            justify_content: JustifyContent::FlexEnd
+        }
+        ZIndex(1000)
+        Pickable::IGNORE
+        Children [
+            ImageNode {
+                image: "philosophers_stone.png"
+            }
+            on(|_: On<PointerClick>, mut screen: ResMut<NextState<InGameScreen>>| {
+                screen.set(InGameScreen::Crafting);
+            })
+            --
+            ImageNode {
+                image: "map.png"
+            }
+            on(|_: On<PointerClick>, mut screen: ResMut<NextState<InGameScreen>>| {
+                screen.set(InGameScreen::WorldMap);
+            })
+            --
+            ImageNode {
+                image: "encounter.png"
+            }
+            on(|_: On<PointerClick>, mut screen: ResMut<NextState<InGameScreen>>| {
+                screen.set(InGameScreen::Encounter);
+            })
+        ]
     });
 }
 
