@@ -3,7 +3,8 @@ name="Struberry"
 description="A gemlike strawberry that glimmers with the fire of a ruby"
 [ingredients.aspects]
 primary=["Fire", 3]
-# secondary=[Water, 1]
+# secondary=["Water", 1]
+# tertiary=["Air", 1]
 
 [[ingredients]]
 name="Crystal Water"

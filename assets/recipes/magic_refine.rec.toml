@@ -1,3 +1,5 @@
 name = "Rubirical Refinement"
 [crafting_state.Refine]
-items = ["Struby", "Struby", "Struby"]
+# [crafting_state.Combine]
+# [crafting_state.Subtract]
+items = ["Struberry", "Struberry", "Struberry"]

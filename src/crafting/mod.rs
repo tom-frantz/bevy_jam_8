@@ -43,8 +43,8 @@ use crate::{
     InGameScreen,
     crafting::assets::{IngredientAssetLoader, Ingredients, Recipe},
     draggable::Draggable,
-    drawing::DrawingPath,
     tracked_ui_node::TransformPropogatedUiNode,
+    drawing::DrawingPath,
 };
 
 mod assets;
@@ -446,11 +446,13 @@ fn philosophers_stone_scene(catalyst: Catalysts) -> impl Scene {
 
 fn on_philosophers_start_drag(
     _event: On<PointerDragStart>,
+    mut commands: Commands,
     crafting_state: Res<State<CraftingState>>,
     mut next_state: ResMut<NextState<CraftingState>>,
 ) {
     info!("on_philosophers_start_drag");
     next_state.set(crafting_state.reset_crafting_state());
+    commands.insert_resource(DrawingPath::new());
 }
 
 fn on_ingredient_drag_through(
@@ -481,7 +483,7 @@ fn on_philosophers_end_drag_successful(
 ) {
     info!("on_philosophers_end_drag_successful");
     let crafting = crafting_state.try_craft();
-    dbg!(crafting);
+    todo!()
 }
 
 /// Called after `on_philosophers_end_drag_successful`, regardless of it it reaches back to the right spot
@@ -495,4 +497,5 @@ fn on_philosophers_end_drag_finalise(
     for entity in &ingredients {
         commands.entity(entity).remove::<AddedToCrafting>();
     }
+    commands.remove_resource::<DrawingPath>();
 }

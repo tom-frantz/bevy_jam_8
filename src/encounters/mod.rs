@@ -70,6 +70,7 @@ pub struct Context {
 pub struct Choice {
     pub text: String,
     #[serde(default)]
+    // Don't show this again if true
     pub is_completed: bool,
     pub goto_context: Option<String>,
     pub requires: Option<Requires>,
