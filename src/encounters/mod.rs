@@ -10,10 +10,10 @@ use bevy::{
         observer::On,
         query::With,
         resource::Resource,
-        system::{Commands, In, IntoSystem, Query, Res, ResMut},
+        system::{Commands, Query, Res, ResMut},
     },
     input::{ButtonInput, keyboard::KeyCode},
-    log::{debug, info},
+    log::info,
     picking::{
         Pickable,
         events::{PointerLeave, PointerOver, PointerPress},
@@ -28,7 +28,7 @@ use serde::Deserialize;
 
 use crate::{
     InGameScreen,
-    crafting::{AspectValue, Aspects, InventoryItem, ItemAspect},
+    crafting::{AspectValue, Aspects, InventoryItem, Item, ItemAspect},
     encounters::deserialize::TomlEncLoader,
 };
 
@@ -44,39 +44,13 @@ impl Plugin for EncounterPlugin {
         app.init_asset_loader::<TomlEncLoader>();
         app.add_systems(OnEnter(InGameScreen::Encounter), enter_encounter_screen);
         app.add_systems(Startup, load_assets);
-        app.add_systems(Update, check_encounter_input.pipe(on_choice_select));
+        app.add_systems(Update, check_encounter_keyboard_input);
     }
 }
-const KEYS: [KeyCode; 9] = [
-    KeyCode::Digit1,
-    KeyCode::Digit2,
-    KeyCode::Digit3,
-    KeyCode::Digit4,
-    KeyCode::Digit5,
-    KeyCode::Digit6,
-    KeyCode::Digit7,
-    KeyCode::Digit8,
-    KeyCode::Digit9,
-];
-
-fn check_encounter_input(
-    input: Res<ButtonInput<KeyCode>>,
-    current_encounter: Res<CurrentEncounter>,
-) -> Option<Choice> {
-    let choices: &Vec<Choice> = &current_encounter.current_context.choices;
-    for (index, choice) in choices.iter().enumerate() {
-        if input.just_pressed(KEYS[index]) {
-            debug!("Got input");
-            return Some(choice.clone());
-        }
-    }
-    None
-}
-
-use crate::crafting::Item;
 
 #[derive(Asset, TypePath, Default, Clone, Debug, Deserialize)]
 pub struct Encounter {
+    // TODO print at top of screen?
     pub name: String,
     pub context_items: Vec<Context>,
 }
@@ -128,21 +102,30 @@ pub struct CurrentEncounter {
 #[derive(Component, Debug, Clone, Default)]
 struct ChatBoxMarker;
 
-fn on_choice_select(
-    choice_selected: In<Option<Choice>>,
-    mut current_encounter: ResMut<CurrentEncounter>,
-    mut commands: Commands,
-    mut q: Query<Entity, With<ChatBoxMarker>>,
-    mut items: Query<&mut InventoryItem>,
+const KEYS: [KeyCode; 9] = [
+    KeyCode::Digit1,
+    KeyCode::Digit2,
+    KeyCode::Digit3,
+    KeyCode::Digit4,
+    KeyCode::Digit5,
+    KeyCode::Digit6,
+    KeyCode::Digit7,
+    KeyCode::Digit8,
+    KeyCode::Digit9,
+];
+
+fn check_encounter_keyboard_input(
+    input: Res<ButtonInput<KeyCode>>,
+    current_encounter: ResMut<CurrentEncounter>,
+    commands: Commands,
+    q: Query<Entity, With<ChatBoxMarker>>,
+    items: Query<&mut InventoryItem>,
 ) {
-    if let Some(choice_selected) = &*choice_selected {
-        handle_choice(
-            choice_selected.clone(),
-            current_encounter,
-            commands,
-            q,
-            items,
-        )
+    let choices: &Vec<Choice> = &current_encounter.current_context.choices;
+    for (index, choice) in choices.iter().enumerate() {
+        if input.just_pressed(KEYS[index]) {
+            return handle_choice(choice.clone(), current_encounter, commands, q, items);
+        }
     }
 }
 
@@ -152,13 +135,16 @@ fn enter_encounter_screen(
     encounter: Res<Encounters>,
     mut current_encounter: ResMut<CurrentEncounter>,
     encounters: Res<Assets<Encounter>>,
-    mut items: Query<(&mut InventoryItem)>,
+    items: Query<&mut InventoryItem>,
 ) {
     let enc = encounters
         .get(&encounter.handle)
-        .expect("ahhhhh too many frogs");
+        .expect("Encounter handle doesn't exist");
     current_encounter.encounter = enc.clone();
-    let initial_context = enc.context_items.first().expect("AHH");
+    let initial_context = enc
+        .context_items
+        .first()
+        .expect("Encounter doesn't have any context items");
     current_encounter.current_context = initial_context.clone();
     let my_enc = set_scene_context(initial_context, items);
 
@@ -182,7 +168,7 @@ fn enter_encounter_screen(
     });
 }
 
-fn set_scene_context(context: &Context, mut items: Query<(&mut InventoryItem)>) -> impl Scene {
+fn set_scene_context(context: &Context, mut items: Query<&mut InventoryItem>) -> impl Scene {
     let choices = context
         .choices
         .iter()
@@ -229,16 +215,12 @@ fn flavour_text(msg: impl Into<String>) -> impl Scene {
     }
 }
 
-fn action_text(msg: impl Into<String>) -> impl Scene {
-    bsn! {
-        Text(msg)
-    }
-}
-
 fn choice_scene(index: usize, choice: &Choice, fulfilled_requirements: bool) -> impl Scene {
     let text = if !fulfilled_requirements {
-        // Should exist
-        let reqs = choice.requires.clone().unwrap();
+        let reqs = choice
+            .requires
+            .clone()
+            .expect("Didn't meet nonexistent requirements, uh oh!");
         reqs.alt_text
     } else {
         choice.text.clone()
@@ -257,16 +239,20 @@ fn choice_scene(index: usize, choice: &Choice, fulfilled_requirements: bool) -> 
     }
 }
 
+/// Handler for clicking a choice
 fn choice_click_observer(
     event: On<PointerPress>,
     choices: Query<&Choice>,
-    mut current_encounter: ResMut<CurrentEncounter>,
-    mut commands: Commands,
-    mut q: Query<Entity, With<ChatBoxMarker>>,
-    mut items: Query<&mut InventoryItem>,
+    current_encounter: ResMut<CurrentEncounter>,
+    commands: Commands,
+    q: Query<Entity, With<ChatBoxMarker>>,
+    items: Query<&mut InventoryItem>,
 ) {
     let selected_choice_entity = event.event_target();
-    let selected_choice = choices.get(selected_choice_entity).expect("exists").clone();
+    let selected_choice = choices
+        .get(selected_choice_entity)
+        .expect("No choice present for click target")
+        .clone();
     handle_choice(selected_choice, current_encounter, commands, q, items)
 }
 
@@ -274,8 +260,10 @@ fn choice_pointer_enter_observer(
     event: On<PointerOver>,
     mut choices: Query<(&Choice, &mut TextColor)>,
 ) {
-    let mut selected_choice_entity = event.event_target();
-    let (_, mut text) = choices.get_mut(selected_choice_entity).expect("exists");
+    let selected_choice_entity = event.event_target();
+    let (_, mut text) = choices
+        .get_mut(selected_choice_entity)
+        .expect("No choice present for hover target");
     *text = TextColor(Color::srgb(0.8, 0.5, 0.2));
 }
 
@@ -283,8 +271,10 @@ fn choice_pointer_exit_observer(
     event: On<PointerLeave>,
     mut choices: Query<(&Choice, &mut TextColor)>,
 ) {
-    let mut selected_choice_entity = event.event_target();
-    let (_, mut text) = choices.get_mut(selected_choice_entity).expect("exists");
+    let selected_choice_entity = event.event_target();
+    let (_, mut text) = choices
+        .get_mut(selected_choice_entity)
+        .expect("No choice present for leave hover target");
     *text = TextColor(Color::srgb(1.0, 1.0, 1.0));
 }
 
@@ -293,7 +283,7 @@ fn handle_choice(
     mut current_encounter: ResMut<CurrentEncounter>,
     mut commands: Commands,
     mut q: Query<Entity, With<ChatBoxMarker>>,
-    mut items: Query<(&mut InventoryItem)>,
+    mut items: Query<&mut InventoryItem>,
 ) {
     if let Some(requires) = &choice_selected.requires {
         info!("Requirements: {requires:?}");
@@ -358,7 +348,7 @@ fn handle_choice(
             .context_items
             .iter()
             .find(|item| &item.name == goto_context)
-            .expect("should exist")
+            .expect("goto_target doesn't exist")
             .clone();
         current_encounter.current_context = target_context.clone();
         let chatbox = q.single_mut().expect("Should be only one chatbox");
