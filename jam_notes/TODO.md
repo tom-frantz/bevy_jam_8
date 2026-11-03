@@ -12,7 +12,7 @@ The whole thing basically
 - [ ] Menus
 - [ ] Framework
 - [ ] Recipes and ingredients
-- [ ] UI 
+- [ ] UI
 
 # Night Time
 - [ ] Reset broom
