@@ -1,9 +1,10 @@
 use bevy::{
     app::Plugin,
+    color::palettes::tailwind,
     ecs::{component::Component, hierarchy::Children, system::Commands},
     scene::{CommandsSceneExt, bsn},
     state::{state::OnEnter, state_scoped::DespawnOnExit},
-    ui::{Node, Val, widget::Text},
+    ui::{BackgroundColor, FlexDirection, Node, Val, widget::Text},
 };
 use serde::Deserialize;
 
@@ -77,10 +78,25 @@ fn enter_crafting_screen(mut commands: Commands) {
     commands.spawn_scene(bsn! {
         Node {
             width: Val::Percent(100.),
-            height: Val::Percent(100.)
+            height: Val::Percent(100.),
+            flex_direction: FlexDirection::Row
         }
         Children [
-            Text("Hello, Crafting Screen")
+            Node {
+                width: Val::Percent(50.),
+            }
+            BackgroundColor(tailwind::BLUE_500)
+            Children [
+                Text("Philosopher's StoneZone")
+            ]
+            --
+            Node {
+                width: Val::Percent(50.),
+            }
+            BackgroundColor(tailwind::GRAY_600)
+            Children [
+                Text("BOok of ingredients")
+            ]
         ]
         DespawnOnExit<InGameScreen>(InGameScreen::Crafting)
     });
