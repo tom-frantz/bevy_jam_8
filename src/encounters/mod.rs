@@ -65,6 +65,8 @@ pub struct Context {
 #[derive(Component, Default, Debug, Deserialize, Clone)]
 pub struct Choice {
     pub text: String,
+    #[serde(default)]
+    pub is_completed: bool,
     pub goto_context: Option<String>,
     pub requires: Option<Requires>,
     pub execute: Option<Vec<Execute>>,
@@ -80,6 +82,7 @@ pub struct Requires {
 pub enum Execute {
     AddItem(Item),
     LoseItem(Item),
+    MarkComplete,
     Leave,
 }
 
@@ -92,11 +95,25 @@ fn load_assets(mut encounters: ResMut<Encounters>, asset_server: Res<AssetServer
     encounters.handle = asset_server.load("encounters/encounter_template.enc.toml")
 }
 
+#[derive(Component, Debug, Clone, Copy)]
+struct ChoiceIndex(usize);
+
 // TODO make this an option?
 #[derive(Resource, Default, Debug, Clone)]
 pub struct CurrentEncounter {
     encounter: Encounter,
-    current_context: Context,
+    // index into Encounter resource
+    current_context_index: usize,
+}
+
+impl CurrentEncounter {
+    fn current_context(&self) -> &Context {
+        &self.encounter.context_items[self.current_context_index]
+    }
+
+    fn current_context_mut(&mut self) -> &mut Context {
+        &mut self.encounter.context_items[self.current_context_index]
+    }
 }
 
 #[derive(Component, Debug, Clone, Default)]
@@ -121,10 +138,12 @@ fn check_encounter_keyboard_input(
     q: Query<Entity, With<ChatBoxMarker>>,
     items: Query<&mut InventoryItem>,
 ) {
-    let choices: &Vec<Choice> = &current_encounter.current_context.choices;
-    for (index, choice) in choices.iter().enumerate() {
+    if current_encounter.encounter.context_items.is_empty() {
+        return;
+    }
+    for index in 0..current_encounter.current_context().choices.len() {
         if input.just_pressed(KEYS[index]) {
-            return handle_choice(choice.clone(), current_encounter, commands, q, items);
+            return handle_choice(index, current_encounter, commands, q, items);
         }
     }
 }
@@ -141,12 +160,8 @@ fn enter_encounter_screen(
         .get(&encounter.handle)
         .expect("Encounter handle doesn't exist");
     current_encounter.encounter = enc.clone();
-    let initial_context = enc
-        .context_items
-        .first()
-        .expect("Encounter doesn't have any context items");
-    current_encounter.current_context = initial_context.clone();
-    let my_enc = set_scene_context(initial_context, items);
+    current_encounter.current_context_index = 0;
+    let my_enc = set_scene_context(current_encounter.current_context(), items);
 
     commands.spawn_scene(bsn! {
         Node {
@@ -173,8 +188,9 @@ fn set_scene_context(context: &Context, mut items: Query<&mut InventoryItem>) ->
         .choices
         .iter()
         .enumerate()
-        .map(|(index, choice)| (index + 1, choice))
-        .map(|(index, choice)| {
+        .filter(|(_, choice)| !choice.is_completed)
+        .enumerate()
+        .map(|(display_index, (real_index, choice))| {
             let fulfilled_requirements = if let Some(reqs) = &choice.requires {
                 reqs.req_items.iter().all(|req_item| {
                     items
@@ -187,7 +203,12 @@ fn set_scene_context(context: &Context, mut items: Query<&mut InventoryItem>) ->
             } else {
                 true
             };
-            choice_scene(index, choice, fulfilled_requirements)
+            choice_scene(
+                display_index + 1,
+                real_index,
+                choice,
+                fulfilled_requirements,
+            )
         })
         .collect::<Vec<_>>();
 
@@ -215,7 +236,12 @@ fn flavour_text(msg: impl Into<String>) -> impl Scene {
     }
 }
 
-fn choice_scene(index: usize, choice: &Choice, fulfilled_requirements: bool) -> impl Scene {
+fn choice_scene(
+    display_index: usize,
+    real_index: usize,
+    choice: &Choice,
+    fulfilled_requirements: bool,
+) -> impl Scene {
     let text = if !fulfilled_requirements {
         let reqs = choice
             .requires
@@ -226,11 +252,13 @@ fn choice_scene(index: usize, choice: &Choice, fulfilled_requirements: bool) -> 
         choice.text.clone()
     };
 
-    let enumarated_choice_text = format!("{index}. {text}");
+    let enumarated_choice_text = format!("{display_index}. {text}");
     let c = choice.clone();
+    let choice_index = ChoiceIndex(real_index);
     bsn! {
         Pickable
         c
+        choice_index
         Text(enumarated_choice_text)
         TextColor(Color::srgb(1.0, 1.0, 1.0))
         on(choice_click_observer)
@@ -242,18 +270,18 @@ fn choice_scene(index: usize, choice: &Choice, fulfilled_requirements: bool) -> 
 /// Handler for clicking a choice
 fn choice_click_observer(
     event: On<PointerPress>,
-    choices: Query<&Choice>,
+    choices: Query<&ChoiceIndex>,
     current_encounter: ResMut<CurrentEncounter>,
     commands: Commands,
     q: Query<Entity, With<ChatBoxMarker>>,
     items: Query<&mut InventoryItem>,
 ) {
     let selected_choice_entity = event.event_target();
-    let selected_choice = choices
+    let choice_index = choices
         .get(selected_choice_entity)
-        .expect("No choice present for click target")
-        .clone();
-    handle_choice(selected_choice, current_encounter, commands, q, items)
+        .expect("No choice index fo choice")
+        .0;
+    handle_choice(choice_index, current_encounter, commands, q, items)
 }
 
 fn choice_pointer_enter_observer(
@@ -279,12 +307,14 @@ fn choice_pointer_exit_observer(
 }
 
 fn handle_choice(
-    choice_selected: Choice,
+    choice_index: usize,
     mut current_encounter: ResMut<CurrentEncounter>,
     mut commands: Commands,
     mut q: Query<Entity, With<ChatBoxMarker>>,
     mut items: Query<&mut InventoryItem>,
 ) {
+    let choice_selected = current_encounter.current_context().choices[choice_index].clone();
+
     if let Some(requires) = &choice_selected.requires {
         info!("Requirements: {requires:?}");
         // check if the player has the requirements
@@ -336,6 +366,10 @@ fn handle_choice(
                         }
                     }
                 }
+                Execute::MarkComplete => {
+                    current_encounter.current_context_mut().choices[choice_index].is_completed =
+                        true;
+                }
                 Execute::Leave => todo!(),
             }
         }
@@ -343,16 +377,15 @@ fn handle_choice(
 
     if let Some(goto_context) = &choice_selected.goto_context {
         info!("Goto: {goto_context:?}");
-        let target_context = current_encounter
+        let target_index = current_encounter
             .encounter
             .context_items
             .iter()
-            .find(|item| &item.name == goto_context)
-            .expect("goto_target doesn't exist")
-            .clone();
-        current_encounter.current_context = target_context.clone();
+            .position(|item| &item.name == goto_context)
+            .expect("goto_target doesn't exist");
+        current_encounter.current_context_index = target_index;
         let chatbox = q.single_mut().expect("Should be only one chatbox");
-        let new_context_scene = set_scene_context(&target_context, items);
+        let new_context_scene = set_scene_context(current_encounter.current_context(), items);
 
         commands
             .entity(chatbox)
