@@ -29,10 +29,14 @@ use serde::Deserialize;
 use crate::{
     InGameScreen,
     crafting::{AspectValue, Aspects, InventoryItem, Item, ItemAspect},
-    encounters::deserialize::TomlEncLoader,
+    encounters::{
+        deserialize::TomlEncLoader,
+        fancy_textify::{FancyTextColor, render_text_scene},
+    },
 };
 
 mod deserialize;
+mod fancy_textify;
 
 pub struct EncounterPlugin;
 
@@ -230,10 +234,8 @@ fn set_scene_context(context: &Context, mut items: Query<&mut InventoryItem>) ->
     }
 }
 
-fn flavour_text(msg: impl Into<String>) -> impl Scene {
-    bsn! {
-        Text(msg)
-    }
+fn flavour_text(msg: String) -> impl Scene {
+    render_text_scene(msg)
 }
 
 fn choice_scene(
@@ -292,7 +294,7 @@ fn choice_pointer_enter_observer(
     let (_, mut text) = choices
         .get_mut(selected_choice_entity)
         .expect("No choice present for hover target");
-    *text = TextColor(Color::srgb(0.8, 0.5, 0.2));
+    *text = TextColor(FancyTextColor::HIGHLIGHT.to_bevy_color());
 }
 
 fn choice_pointer_exit_observer(
@@ -303,7 +305,7 @@ fn choice_pointer_exit_observer(
     let (_, mut text) = choices
         .get_mut(selected_choice_entity)
         .expect("No choice present for leave hover target");
-    *text = TextColor(Color::srgb(1.0, 1.0, 1.0));
+    *text = TextColor(FancyTextColor::DEFAULT.to_bevy_color());
 }
 
 fn handle_choice(

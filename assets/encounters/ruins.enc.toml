@@ -2,7 +2,7 @@ name = "Remote Ruins"
 
 [[context_items]]
 name = "enter_first"
-text = "Within the crumbling stone structure you see a lone researcher poring over some documents in the corner. The far wall is adorned with a damaged stone relief and lit from below by a soft glow"
+text = "<r>Within<r> <o>the<o> <m>crumbling<m> <g>stone<g> <y>structure<y> <n>you<n> <p>see<p> a lone <m>researcher<m> poring over some documents in the corner. The far wall is adorned with a damaged stone relief and lit from below by a soft glow"
   [[context_items.choices]]
   text = "Approach the researcher"
   goto_context = "researcher_questgive"
@@ -18,9 +18,9 @@ text = "Within the crumbling stone structure you see a lone researcher poring ov
 
 [[context_items]]
 name = "researcher_questgive"
-text = """As you approach the researcher glances up at you with a slightly startled look. <r>’Oh my, a visitor! I’m sorry, I must’ve been so absorbed in my work that I didn’t see you come in. These ruins are fascinating, aren’t they?’</r>. They lean forward excitedly as they continue:  <r>’My working hypothesis is that they were built as a place of worship by an ancient civilisation. The stonework in the undamaged sections is so precise, their tools must have been far more advanced than any we can produce today!’</r>
+text = """As you approach the researcher glances up at you with a slightly startled look. <r>’Oh my, a visitor! I’m sorry, I must’ve been so absorbed in my work that I didn’t see you come in. These ruins are fascinating, aren’t they?’<r>. They lean forward excitedly as they continue:  <r>’My working hypothesis is that they were built as a place of worship by an ancient civilisation. The stonework in the undamaged sections is so precise, their tools must have been far more advanced than any we can produce today!’<r>
 
-The researcher, now only a few inches away from your face seems to catch themselves, taking a quick step back and nervously dusting their clothes with their hands. <r>’…Ah, but I’ve gotten ahead of myself. My research has hit a proverbial and literal brick wall recently, so without any more hard data my theories are running a little wild. Say, now that I get a better look at you, those are alchemist's tools, right? I can’t explore further until I can breach this wall behind me. If you can help me out, I’ll share my research and let you take anything with unique alchemical properties, uh, assuming they have no archeological value of course! And lest you worry, this wall isn’t part of the original structure, my guess is that it’s barely a hundred years old… But that is to say, would you lend me a hand?’</r>"""
+The researcher, now only a few inches away from your face seems to catch themselves, taking a quick step back and nervously dusting their clothes with their hands. <r>’…Ah, but I’ve gotten ahead of myself. My research has hit a proverbial and literal brick wall recently, so without any more hard data my theories are running a little wild. Say, now that I get a better look at you, those are alchemist's tools, right? I can’t explore further until I can breach this wall behind me. If you can help me out, I’ll share my research and let you take anything with unique alchemical properties, uh, assuming they have no archeological value of course! And lest you worry, this wall isn’t part of the original structure, my guess is that it’s barely a hundred years old… But that is to say, would you lend me a hand?’<r>"""
   [[context_items.choices]]
   text = "‘Sure!’"
   goto_context = "researcher_questaccept"
@@ -32,7 +32,7 @@ The researcher, now only a few inches away from your face seems to catch themsel
 
 [[context_items]]
 name = "researcher_questaccept"
-text = "<r>’Thank you! Take your time, I still have some texts to decipher for now. Just bring it by once it’s ready.</r>’"
+text = "<r>’Thank you! Take your time, I still have some texts to decipher for now. Just bring it by once it’s ready.<r>’"
   [[context_items.choices]]
   text = "Return"
   goto_context = "enter_accepted"

@@ -3,7 +3,7 @@ name = "Mushroom Forest"
 # Opening Scene
 [[context_items]]
 name = "enter"
-text = "You see a forest of mushrooms"
+text = "You <y>see<y> a forest of <r>mushrooms<r>"
 [[context_items.choices]]
 text = "Scream into the forest at the top of your lungs"
 goto_context = "screamed"
