@@ -18,7 +18,10 @@ use bevy::{
     ui::{AlignItems, FlexDirection, JustifyContent, Node, Val, ZIndex, widget::ImageNode},
 };
 
-use crate::world_map::IslandId;
+use crate::{
+    asset_helpers::{DefaultPluginImageExt, set_default_font},
+    world_map::IslandId,
+};
 
 mod crafting;
 mod encounters;
@@ -31,9 +34,10 @@ pub struct JamPlugin;
 
 impl Plugin for JamPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins(DefaultPlugins);
+        app.add_plugins(DefaultPlugins.set_image_plugin());
 
         app.add_plugins((
+            set_default_font,
             crafting::CraftingPlugin,
             encounters::EncounterPlugin,
             nights::NightsPlugin,
