@@ -122,8 +122,9 @@ text = "Sitting neatly on the counter is a small sheet of parchment. A contract 
 text = "Not yet implemented!"
 goto_context = "crab_questcomplete1"
 [context_items.choices.requires]
-alt_text= "I need some way to read the invisible ink!"
+alt_text= "(I need some way to read the invisible ink...)"
 req_items= ["magic_lens"]
+[[context_items.choices.execute]]
 
 # crab_contract choice 2
 [[context_items.choices]]
