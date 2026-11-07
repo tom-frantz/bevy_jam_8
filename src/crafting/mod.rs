@@ -1,6 +1,7 @@
 use bevy::{
     app::{Plugin, Startup},
     asset::{AssetApp, AssetServer, Handle, LoadedFolder},
+    color::palettes::css,
     ecs::{
         component::Component,
         entity::Entity,
@@ -10,12 +11,15 @@ use bevy::{
         query::With,
         resource::Resource,
         system::{Commands, Query, Res, ResMut},
+        template::FromTemplate,
     },
     log::info,
     math::{Vec2, Vec3},
     picking::{
         Pickable,
-        events::{PointerDragDrop, PointerDragEnd, PointerDragEnter, PointerDragStart},
+        events::{
+            PointerClick, PointerDragDrop, PointerDragEnd, PointerDragEnter, PointerDragStart,
+        },
     },
     scene::{CommandsSceneExt, Scene, bsn, bsn_list, on},
     sprite::Sprite,
@@ -24,14 +28,23 @@ use bevy::{
         state::{ComputedStates, NextState, OnEnter, State, States},
         state_scoped::DespawnOnExit,
     },
+    text::TextColor,
     transform::components::Transform,
+    ui::{
+        FlexDirection, Node,
+        Val::{self},
+        widget::{ImageNode, Text},
+    },
+    ui_widgets::Button,
 };
 use serde::Deserialize;
 
 use crate::{
     InGameScreen,
-    crafting::assets::{Ingredient, IngredientAssetLoader, Ingredients, Recipe},
+    crafting::assets::{IngredientAssetLoader, Ingredients, Recipe},
     draggable::Draggable,
+    drawing::DrawingPath,
+    tracked_ui_node::TransformPropogatedUiNode,
 };
 
 mod assets;
@@ -266,19 +279,132 @@ fn enter_crafting_screen(mut commands: Commands) {
         @ingredient_scene(Item::Struby)
         --
         @book_scene()
+        // --
+        // @page_scene()
         --
         @philosophers_stone_scene(Catalysts::Refine)
     });
 }
 
+#[derive(Component, FromTemplate, Clone, Debug)]
+struct BookContainerEntity(Entity);
+
 fn book_scene() -> impl Scene {
+    const LEFT_PAGE_X_OFFSET: f32 = -300.0;
+    const RIGHT_PAGE_X_OFFSET: f32 = 0.0;
+    const TOP_PAGE_Y_OFFSET: f32 = 200.0;
+    const MID_PAGE_Y_OFFSET: f32 = 0.0;
+
+    // TODO sync with new asset when we get it
+
     bsn! {
         @Draggable
         Sprite { image: "book-68.png"}
         Transform {
-            translation: Vec3::new(0., 0., -1.0)
+            translation: Vec3::new(0., 0., -10.0)
         }
+        #BookContainer
+        Children [
+            #LeftPageTop
+            Transform {
+                translation: Vec3::new(LEFT_PAGE_X_OFFSET, TOP_PAGE_Y_OFFSET, 0.0)
+            }
+            @page_scene()
+            --
+            #LeftPageBottom
+            Transform {
+                translation: Vec3::new(LEFT_PAGE_X_OFFSET, MID_PAGE_Y_OFFSET, 0.0)
+            }
+            @page_scene()
+            --
+            #RightPageTop
+            Transform {
+                translation: Vec3::new(RIGHT_PAGE_X_OFFSET, TOP_PAGE_Y_OFFSET, 0.0)
+            }
+            @page_scene()
+            --
+            #RightPageBottom
+            Transform {
+                translation: Vec3::new(RIGHT_PAGE_X_OFFSET, MID_PAGE_Y_OFFSET, 0.0)
+            }
+            @page_scene()
+            --
+            Transform {
+                translation: Vec3::new(LEFT_PAGE_X_OFFSET, -175.0, 0.0)
+            }
+            TransformPropogatedUiNode [
+                Button
+                Node
+                Children [
+                    Text("< Back")
+                    @book_text()
+                ]
+                BookContainerEntity(#BookContainer)
+                on(|click: On<PointerClick>, book_container: Query<&BookContainerEntity>, mut commands: Commands | {
+                    let entity = book_container.get(click.event_target()).expect("Must have `BookContainerEntity` on button");
+                    dbg!(entity);
+                })
+            ]
+            --
+            Transform {
+                translation: Vec3::new(300., -150.0, 0.0)
+            }
+            TransformPropogatedUiNode [
+                Button
+                Node
+                Children [
+                    Text("Next >")
+                    @book_text()
+                ]
+            ]
+
+        ]
         DespawnOnExit<InGameScreen>(InGameScreen::Crafting)
+    }
+}
+
+fn book_text() -> impl Scene {
+    bsn! {
+        TextColor(css::BLACK)
+    }
+}
+
+#[derive(Component, Default, Clone, Debug)]
+struct IngredientNoteNode;
+
+fn page_scene() -> impl Scene {
+    bsn! {
+        TransformPropogatedUiNode [
+            IngredientNoteNode
+            Node {
+                top: Val::Px(50.),
+                left: Val::Px(50.)
+            }
+            Children [
+                Node {
+                    max_width: Val::Px(100.),
+                    max_height: Val::Px(100.),
+                    flex_direction: FlexDirection::Row
+                }
+                ImageNode {
+                    image: "ingredient_images/struby.png"
+                }
+                --
+                Node {
+                    flex_direction: FlexDirection::Column
+                }
+                Children [
+                    Text("Title")
+                    @book_text()
+                    --
+                    Text("Description")
+                    @book_text()
+                    --
+                    Text("aspects")
+                    @book_text()
+                ]
+            ]
+        ]
     }
 }
 
@@ -289,7 +415,7 @@ fn ingredient_scene(item: Item) -> impl Scene {
     let item_sprite = item.sprite();
     bsn! {
         Transform {
-            translation: Vec3::new(0.0, 0.0, 1.0)
+            translation: Vec3::new(0.0, 0.0, 10.0)
         }
         @Draggable
         @item_sprite

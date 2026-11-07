@@ -29,7 +29,10 @@ mod nights;
 mod world_map;
 
 mod asset_helpers;
+mod camera_utils;
 mod draggable;
+mod drawing;
+mod tracked_ui_node;
 
 pub struct JamPlugin;
 
