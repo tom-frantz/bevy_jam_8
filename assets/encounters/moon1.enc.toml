@@ -1,0 +1,132 @@
+name = "Mushroom Forest"
+
+
+# arrival
+[[context_items]]
+name = "arrival"
+text = "As you rise upward above even the highest clouds, the boundless blue of sky retreats into myriad pinprick constellations against an inky canvas, the gentle breeze replaced by a silent and serene calm. Now at its level, you spot nestled upon the crescent moon a small cottage with windows lit by warm orange and a chimney lazily billowing a thin trail of smoke. On the the very tip of the moon's pointed arc you can see strange yellow flickering. You drift towards the dwelling and step off your broom as you consider what to do next."
+
+# arrival choice 1
+[[context_items.choices]]
+text = "Drift towards the front door of the cottage"
+goto_context = "house1"
+[[context_items.choices.execute]]
+
+# arrival choice 2
+[[context_items.choices]]
+text = "Check out the flicker (not yet implemented)"
+goto_context = ""
+[[context_items.choices.execute]]
+
+# arrival choice 3
+[[context_items.choices]]
+text = "Leave"
+goto_context = "map"
+[[context_items.choices.execute]]
+
+# house1
+[[context_items]]
+name = "house1"
+text = "The cottage appears totally normal, somehow making it stand out even more against the ethereal surrounds. While it's construction appears rather old, upon closer inspection it has clearly been maintained."
+
+# house1 choice 1
+[[context_items.choices]]
+text = "Give the door a polite knock"
+goto_context = "house2"
+[[context_items.choices.execute]]
+
+# house2
+[[context_items]]
+name = "house2"
+text = "Your rhythmic taps echo happily across the frame, and as the sounds fade prepare yourself for whatever sort of person would choose to live in such seclusion."
+
+# house2 choice 1
+[[context_items.choices]]
+text = "Wait for someone to answer the door"
+goto_context = "housewait1"
+[[context_items.choices.execute]]
+
+# housewait1
+[[context_items]]
+name = "housewait1"
+text = "You wait patiently, tapping your foot slowly..."
+
+# housewait1 choice 1
+[[context_items.choices]]
+text = "Continue waiting"
+goto_context = "housewait2"
+[[context_items.choices.execute]]
+
+# housewait2
+[[context_items]]
+name = "housewait2"
+text = "As the moments stretch by you find yourself focusing your hearing for any signs of a response from the occupant, anticipating a footfall or shuffle of some sort."
+
+# housewait2 choice 1
+[[context_items.choices]]
+text = "Continue waiting..."
+goto_context = "house3"
+[[context_items.choices.execute]]
+
+# house3
+[[context_items]]
+name = "house3"
+text = "You're about to give up on anyone answering when the door begins to shift ever so slowly, hinges squeaking. Almost painfully slowly, the door opens inward, bathing you in the orange glow from inside to reveal... Nothing. You stare blankly for a moment at the cottage's interior before a faint tapping draws your eyes to the floor in front of you, where a somewhat impatient crab is rapping one of its pincers against the door. As you make eye contact it stops its tapping and instead gestures behind it. An invitation inside. Probably."
+
+# house3 choice 1
+[[context_items.choices]]
+text = "Follow the crab inside"
+goto_context = crab_questgive1""
+[[context_items.choices.execute]]
+
+# crab_questgive1
+[[context_items]]
+name = "crab_questgive1"
+text = "You stand inside the cottage facing the crab. It rests upon a low coffee table that bears a fancy looking globe and a pile of torn papers. Now that you get a better look at it the crab appears restless, its many legs tapping the tabletop in place while it clicks its pincers impatiently, occasionally picking a scrap of paper from the mound to shred further. Knowing it has your attention, the crab begins gesturing feverishly between the shredded papers and the globe, rapidly tapping its pincer the blue expanses a few times whenever it swings to the latter."
+
+# crab_questgive1 choice 1
+[[context_items.choices]]
+text = "Examine the pile of paper scraps"
+goto_context = "crab_questgive2"
+[[context_items.choices.execute]]
+
+# crab_questgive2
+[[context_items]]
+name = "crab_questgive2"
+text = "Peering over at the papers in order to understand what the crab is trying to communicate, it doesn't take long to piece together that it's some sort of painting depicting the moon itself. Moon then globe. Moon then globe..."
+
+# crab_questgive2 choice 1
+[[context_items.choices]]
+text = "'You want... to leave the moon and go to the ocean?'"
+goto_context = ""
+[[context_items.choices.execute]]
+
+# crab_questgive3
+[[context_items]]
+name = "crab_questgive3"
+text = "The crab hops from one side to the other, snapping its pincers in the air happily. That's probably a yes. <m>'I have a broom! I could give you a ride down if you want'<m> you offer. Rather than answer directly, the crab instead gestures across the room to the kitchen counter, the joy from its previous success at communication all but faded away. "
+
+# crab_questgive3 choice 1
+[[context_items.choices]]
+text = "Check out whats on the counter"
+goto_context = "crab_contract"
+[[context_items.choices.execute]]
+
+# crab_contract
+[[context_items]]
+name = "crab_contract"
+text = "Sitting neatly on the counter is a small sheet of parchment. A contract to serve as the live-in caretaker for the lunar cottage is penned neatly in a shimmering script. A line at the bottom bears the squiggly signature of a "Kray Z. Crabb". Interestingly, the section that should detail the method for the contract's termination leaves an odd blank line and a half in the middle of the document. Running your hand along the page you clearly feel the magic from alchemical ink even in the missing portion. There must be something written there that you can't see!"
+
+# crab_contract choice 1
+[[context_items.choices]]
+text = "Not yet implemented!"
+goto_context = "crab_questcomplete1"
+[context_items.choices.requires]
+alt_text= "I need some way to read the invisible ink!"
+req_items= ["magic_lens"]
+
+# crab_contract choice 2
+[[context_items.choices]]
+text = "Leave"
+goto_context = "map"
+[[context_items.choices.execute]]
