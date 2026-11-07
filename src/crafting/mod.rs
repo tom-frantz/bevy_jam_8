@@ -66,12 +66,18 @@ pub struct RecipeAssets(Handle<LoadedFolder>);
 #[derive(Copy, Clone, Debug, Component, PartialEq, Eq, Hash, Deserialize)]
 pub enum Item {
     Struby,
+    Heliopal,
+    Mushroom,
 }
 
 impl Item {
     pub fn sprite(&self) -> impl Scene {
+        use Item::*;
+
         let (dimensions, path): (Vec2, &str) = match self {
-            Self::Struby => (Vec2::new(208., 293.), "struby.png"),
+            Struby => (Vec2::new(208., 293.), "struby.png"),
+            Heliopal => (Vec2::new(0.0, 0.0), "heliopal.png"),
+            Mushroom => (Vec2::new(0.0, 0.0), "mushroom.png"),
         };
 
         let image = format!("ingredient_images/{path}");
@@ -181,10 +187,6 @@ impl SubtractState {
     }
 }
 
-trait AddIngredient {
-    fn add_ingredient(&self, ingredient: Item) -> Self {}
-}
-
 /// Manages the players chosen catalyst and also the ingredients and any jazz
 /// necessary for crafting recipes.
 #[derive(Clone, PartialEq, Eq, Hash, Debug, States, Deserialize)]
@@ -215,7 +217,10 @@ impl CraftingState {
         }
     }
 
-    pub fn try_craft(&self) -> Result<Self, ()> {}
+    pub fn try_craft(&self) -> Result<Self, ()> {
+        dbg!(self);
+        Err(())
+    }
 }
 
 /// Use this when determining state changes between different catalysts.
@@ -288,7 +293,7 @@ fn ingredient_scene(item: Item) -> impl Scene {
         }
         @Draggable
         @item_sprite
-        // item TODO
+        item
         on(on_ingredient_drag_through)
         DespawnOnExit<InGameScreen>(InGameScreen::Crafting)
     }
@@ -345,11 +350,12 @@ fn on_ingredient_drag_through(
 }
 
 fn on_philosophers_end_drag_successful(
-    mut event: On<PointerDragDrop>,
+    _event: On<PointerDragDrop>,
     crafting_state: Res<State<CraftingState>>,
 ) {
     info!("on_philosophers_end_drag_successful");
     let crafting = crafting_state.try_craft();
+    dbg!(crafting);
 }
 
 /// Called after `on_philosophers_end_drag_successful`, regardless of it it reaches back to the right spot

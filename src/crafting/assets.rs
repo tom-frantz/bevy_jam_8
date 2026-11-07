@@ -18,6 +18,7 @@ pub struct Ingredients {
 #[derive(Debug, Clone, Deserialize)]
 pub struct Ingredient {
     name: String,
+    description: String,
     aspects: ItemAspect,
 }
 

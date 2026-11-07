@@ -76,7 +76,7 @@ text = "You're about to give up on anyone answering when the door begins to shif
 # house3 choice 1
 [[context_items.choices]]
 text = "Follow the crab inside"
-goto_context = crab_questgive1""
+goto_context = "crab_questgive1"
 [[context_items.choices.execute]]
 
 # crab_questgive1
@@ -115,7 +115,7 @@ goto_context = "crab_contract"
 # crab_contract
 [[context_items]]
 name = "crab_contract"
-text = "Sitting neatly on the counter is a small sheet of parchment. A contract to serve as the live-in caretaker for the lunar cottage is penned neatly in a shimmering script. A line at the bottom bears the squiggly signature of a "Kray Z. Crabb". Interestingly, the section that should detail the method for the contract's termination leaves an odd blank line and a half in the middle of the document. Running your hand along the page you clearly feel the magic from alchemical ink even in the missing portion. There must be something written there that you can't see!"
+text = "Sitting neatly on the counter is a small sheet of parchment. A contract to serve as the live-in caretaker for the lunar cottage is penned neatly in a shimmering script. A line at the bottom bears the squiggly signature of a \"Kray Z. Crabb\". Interestingly, the section that should detail the method for the contract's termination leaves an odd blank line and a half in the middle of the document. Running your hand along the page you clearly feel the magic from alchemical ink even in the missing portion. There must be something written there that you can't see!"
 
 # crab_contract choice 1
 [[context_items.choices]]
