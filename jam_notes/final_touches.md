@@ -31,6 +31,8 @@
 - [ ] Grandpa
   - [ ] Includes crafting tutorial
 
+---
+
 # Programming
 ## Done
 - [v] Body of the encounter work
@@ -42,8 +44,10 @@
 - [ ] Finish book
 - [ ] Broom fuel
 - [ ] Final wiring.
-- [ ] Flags across encounters. (first time visit)
-- [ ] Descriptions for ingedients  
+- [ ] Flags across encounters. (to load new flags) (first time visit)
+- [ ] Flags to display options
+- [ ] Descriptions for ingedients
+
 
 ---
 
