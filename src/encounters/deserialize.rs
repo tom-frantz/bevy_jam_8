@@ -30,3 +30,34 @@ impl AssetLoader for TomlEncLoader {
         &["enc.toml"] // Handle files ending in .enc.toml
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use std::{
+        fs::{read_dir, read_to_string},
+        path::Path,
+    };
+
+    use toml;
+
+    use super::*;
+
+    #[test]
+    fn encounters_parse() {
+        for entry in read_dir(Path::new("assets/encounters")).unwrap() {
+            let path = entry.unwrap().path();
+            if !path.is_file() {
+                continue;
+            }
+            let asset: Result<Encounter, _> = toml::from_str(&read_to_string(path).unwrap());
+
+            if let Err(val) = &asset {
+                dbg!(val);
+            };
+            if let Ok(val) = &asset {
+                dbg!(val);
+            }
+            assert!(asset.is_ok())
+        }
+    }
+}

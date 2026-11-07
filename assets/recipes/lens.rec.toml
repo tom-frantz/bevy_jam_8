@@ -1,0 +1,4 @@
+name = "Rubirical Refinement"
+[crafting_state.Refine]
+items = ["Struby", "Struby", "Struby"]
+
