@@ -1,3 +1,8 @@
+use std::{
+    fmt::Display,
+    ops::{Deref, DerefMut},
+};
+
 use bevy::{
     app::{Plugin, Startup},
     asset::{AssetApp, AssetServer, Handle, LoadedFolder},
@@ -11,7 +16,7 @@ use bevy::{
         query::With,
         resource::Resource,
         system::{Commands, Query, Res, ResMut},
-        template::FromTemplate,
+        template::{FromTemplate, template},
     },
     log::info,
     math::{Vec2, Vec3},
@@ -21,7 +26,7 @@ use bevy::{
             PointerClick, PointerDragDrop, PointerDragEnd, PointerDragEnter, PointerDragStart,
         },
     },
-    scene::{CommandsSceneExt, Scene, bsn, bsn_list, on},
+    scene::{CommandsSceneExt, EntityCommandsSceneExt, Scene, bsn, bsn_list, on},
     sprite::Sprite,
     state::{
         app::AppExtStates,
@@ -43,8 +48,8 @@ use crate::{
     InGameScreen,
     crafting::assets::{IngredientAssetLoader, Ingredients, Recipe},
     draggable::Draggable,
-    tracked_ui_node::TransformPropogatedUiNode,
     drawing::DrawingPath,
+    tracked_ui_node::TransformPropogatedUiNode,
 };
 
 mod assets;
@@ -59,16 +64,56 @@ impl Plugin for CraftingPlugin {
             .init_asset_loader::<IngredientAssetLoader>()
             .add_systems(Startup, load_crafting_assets);
 
+        #[cfg(feature = "dev")]
+        {
+            app.add_systems(Startup, load_debug_ingredients);
+        }
         app.init_state::<CraftingState>()
             .add_computed_state::<ChosenCatalystState>();
         app.add_systems(OnEnter(InGameScreen::Crafting), enter_crafting_screen);
     }
 }
 
+// Debug startup things
+fn load_debug_ingredients(mut commands: Commands) {
+    commands.spawn_scene_list(bsn_list! {
+        template(|_| Ok( InventoryItem {
+            item: Item::Struberry,
+            amount: 0
+        } ))
+        --
+        template(|_| Ok( InventoryItem {
+            item: Item::CrystalWater,
+            amount: 0
+        } ))
+        --
+        template(|_| Ok( InventoryItem {
+            item: Item::FrogSlime,
+            amount: 0
+        } ))
+        --
+        template(|_| Ok( InventoryItem {
+            item: Item::WorldTreeBlood,
+            amount: 0
+        } ))
+        --
+        template(|_| Ok( InventoryItem {
+            item: Item::TaintedWorldTreeBlood,
+            amount: 0
+        } ))
+        --
+        template(|_| Ok( InventoryItem {
+            item: Item::FastJuice ,
+            amount: 0
+        } ))
+    });
+}
+
+/// `#[allow(unused)]` is here because these just keep the handles loaded
 #[derive(Resource, Debug)]
-pub struct IngredientsAsset(Handle<Ingredients>);
+pub struct IngredientsAsset(#[allow(unused)] Handle<Ingredients>);
 #[derive(Resource, Debug)]
-pub struct RecipeAssets(Handle<LoadedFolder>);
+pub struct RecipeAssets(#[allow(unused)] Handle<LoadedFolder>);
 
 //
 // INGREDIENT ZONE
@@ -78,9 +123,57 @@ pub struct RecipeAssets(Handle<LoadedFolder>);
 /// as to what an item actually is.
 #[derive(Copy, Clone, Debug, Component, PartialEq, Eq, Hash, Deserialize)]
 pub enum Item {
-    Struby,
-    Heliopal,
-    Mushroom,
+    Struberry,
+    CrystalWater,
+    FrogSlime,
+    WorldTreeBlood,
+    TaintedWorldTreeBlood,
+    AngryMushrooms,
+    FastJuice,
+    SleepJuice,
+    LastBreathOfInnocent,
+    BillowOfAFreeSpirit,
+    WillOWisps,
+    Golem,
+    TreeMedicine,
+    IgnisAster,
+    CloudCandy,
+    LuminoTruant,
+    Mushroom, // Remove this in favour of angry mushroom?
+    StopSand,
+    SleepGas,
+    MagicLens,
+    BoomBottle,
+}
+
+impl Display for Item {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        use Item::*;
+
+        f.write_str(match self {
+            Struberry => "Struberry",
+            CrystalWater => "Crystal Water",
+            FrogSlime => "Frog Slime",
+            WorldTreeBlood => "World Tree Blood",
+            TaintedWorldTreeBlood => "Tainted World Tree Blood",
+            AngryMushrooms => "Angry Mushrooms",
+            FastJuice => "Fast Juice",
+            SleepJuice => "Sleep Juice",
+            LastBreathOfInnocent => "Last Breath Of Innocent",
+            BillowOfAFreeSpirit => "Billow Of A Free Spirit",
+            WillOWisps => "Will o' Wisps",
+            Golem => "Golem",
+            TreeMedicine => "Tree Medicine",
+            IgnisAster => "Ignis Aster",
+            CloudCandy => "Cloud Candy",
+            LuminoTruant => "Lumino Truant",
+            Mushroom => todo!(),
+            StopSand => "Stop Sand",
+            SleepGas => "Sleep Gas",
+            MagicLens => "Magic Lens",
+            BoomBottle => "Boom Bottle",
+        })
+    }
 }
 
 impl Item {
@@ -88,9 +181,27 @@ impl Item {
         use Item::*;
 
         let (dimensions, path): (Vec2, &str) = match self {
-            Struby => (Vec2::new(208., 293.), "struby.png"),
-            Heliopal => (Vec2::new(0.0, 0.0), "heliopal.png"),
-            Mushroom => (Vec2::new(0.0, 0.0), "mushroom.png"),
+            Struberry => (Vec2::new(208., 293.), "struby.png"),
+            CrystalWater => (Vec2::new(285., 258.), "crystal_water.png"),
+            FrogSlime => (Vec2::new(184., 275.), "frog_slime.png"),
+            WorldTreeBlood => (Vec2::new(282.0, 334.0), "world_tree_lifeblood_good.png"),
+            TaintedWorldTreeBlood => (Vec2::new(268., 326.), "world_tree_lifeblood_bad.png"),
+            AngryMushrooms => (Vec2::new(000., 000.), "TODO_TODO_TODO.png"),
+            FastJuice => (Vec2::new(193., 269.), "fast_juice.png"),
+            SleepJuice => (Vec2::new(299., 331.), "sleep_juice.png"),
+            LastBreathOfInnocent => (Vec2::new(169., 246.), "crab_breath_bad.png"),
+            BillowOfAFreeSpirit => (Vec2::new(371., 363.), "crab_breath_good.png"),
+            WillOWisps => (Vec2::new(000., 000.), "TODO_TODO_TODO.png"),
+            Golem => (Vec2::new(208., 325.), "golem.png"),
+            TreeMedicine => (Vec2::new(193., 269.), "tree_medicine.png"),
+            IgnisAster => (Vec2::new(211., 352.), "ignis_aster.png"),
+            CloudCandy => (Vec2::new(000., 000.), "TODO_TODO_TODO.png"),
+            LuminoTruant => (Vec2::new(262., 244.), "lumino_truant.png"),
+            Mushroom => (Vec2::new(000., 000.), "TODO_TODO_TODO.png"),
+            StopSand => (Vec2::new(230., 464.), "stop_sand.png"),
+            SleepGas => (Vec2::new(294., 567.), "sleep_gas.png"),
+            MagicLens => (Vec2::new(476., 681.), "magic_lens.png"),
+            BoomBottle => (Vec2::new(563., 421.), "boom_bottle.png"),
         };
 
         let image = format!("ingredient_images/{path}");
@@ -126,7 +237,11 @@ pub struct ItemAspect {
     pub tertiary: Option<AspectValue>,
 }
 
-// What item, with what aspects, and how much of it is available.
+/// What item, with what aspects, and how much of it is available.
+///
+/// # SAFETY
+/// Do not despawn these entities, ever! If the player runs out, simply set `item`
+/// to `0`. I'm going to use these to track what the player has discovered.
 #[derive(Clone, Debug, Component, PartialEq, Eq, Hash, Deserialize)]
 pub struct InventoryItem {
     pub amount: usize,
@@ -272,11 +387,11 @@ fn load_crafting_assets(asset_server: ResMut<AssetServer>, mut commands: Command
 /// When moving to the crafting screen, run this system once to setup everything.
 fn enter_crafting_screen(mut commands: Commands) {
     commands.spawn_scene_list(bsn_list! {
-        @ingredient_scene(Item::Struby)
+        @ingredient_scene(Item::Struberry)
         --
-        @ingredient_scene(Item::Struby)
+        @ingredient_scene(Item::CrystalWater)
         --
-        @ingredient_scene(Item::Struby)
+        @ingredient_scene(Item::FastJuice)
         --
         @book_scene()
         // --
@@ -289,14 +404,36 @@ fn enter_crafting_screen(mut commands: Commands) {
 #[derive(Component, FromTemplate, Clone, Debug)]
 struct BookContainerEntity(Entity);
 
+/// Starts at zero, goes forwards from that.
+#[derive(Component, FromTemplate, Default, Clone, Debug)]
+struct BookPageCount(usize);
+
+impl Deref for BookPageCount {
+    type Target = usize;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl DerefMut for BookPageCount {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+
+// TODO sync with new asset when we get it
+const LEFT_PAGE_X_OFFSET: f32 = -300.0;
+const RIGHT_PAGE_X_OFFSET: f32 = 0.0;
+const TOP_PAGE_Y_OFFSET: f32 = 200.0;
+const MID_PAGE_Y_OFFSET: f32 = 0.0;
+
+const TOP_LEFT_PAGE: Vec3 = Vec3::new(LEFT_PAGE_X_OFFSET, TOP_PAGE_Y_OFFSET, 0.0);
+const TOP_RIGHT_PAGE: Vec3 = Vec3::new(LEFT_PAGE_X_OFFSET, MID_PAGE_Y_OFFSET, 0.0);
+const BOTTOM_LEFT_PAGE: Vec3 = Vec3::new(RIGHT_PAGE_X_OFFSET, TOP_PAGE_Y_OFFSET, 0.0);
+const BOTTOM_RIGHT_PAGE: Vec3 = Vec3::new(RIGHT_PAGE_X_OFFSET, MID_PAGE_Y_OFFSET, 0.0);
+
 fn book_scene() -> impl Scene {
-    const LEFT_PAGE_X_OFFSET: f32 = -300.0;
-    const RIGHT_PAGE_X_OFFSET: f32 = 0.0;
-    const TOP_PAGE_Y_OFFSET: f32 = 200.0;
-    const MID_PAGE_Y_OFFSET: f32 = 0.0;
-
-    // TODO sync with new asset when we get it
-
     bsn! {
         @Draggable
         Sprite { image: "book-68.png"}
@@ -304,28 +441,29 @@ fn book_scene() -> impl Scene {
             translation: Vec3::new(0., 0., -10.0)
         }
         #BookContainer
+        BookPageCount
         Children [
             #LeftPageTop
             Transform {
-                translation: Vec3::new(LEFT_PAGE_X_OFFSET, TOP_PAGE_Y_OFFSET, 0.0)
+                translation: TOP_LEFT_PAGE
             }
             @page_scene()
             --
             #LeftPageBottom
             Transform {
-                translation: Vec3::new(LEFT_PAGE_X_OFFSET, MID_PAGE_Y_OFFSET, 0.0)
+                translation: TOP_RIGHT_PAGE
             }
             @page_scene()
             --
             #RightPageTop
             Transform {
-                translation: Vec3::new(RIGHT_PAGE_X_OFFSET, TOP_PAGE_Y_OFFSET, 0.0)
+                translation: BOTTOM_LEFT_PAGE
             }
             @page_scene()
             --
             #RightPageBottom
             Transform {
-                translation: Vec3::new(RIGHT_PAGE_X_OFFSET, MID_PAGE_Y_OFFSET, 0.0)
+                translation: BOTTOM_RIGHT_PAGE
             }
             @page_scene()
             --
@@ -334,16 +472,13 @@ fn book_scene() -> impl Scene {
             }
             TransformPropogatedUiNode [
                 Button
+                BookContainerEntity(#BookContainer)
+                @turn_page_observer(PageDirection::Forward)
                 Node
                 Children [
-                    Text("< Back")
+                    Text("Previous Page")
                     @book_text()
                 ]
-                BookContainerEntity(#BookContainer)
-                on(|click: On<PointerClick>, book_container: Query<&BookContainerEntity>, mut commands: Commands | {
-                    let entity = book_container.get(click.event_target()).expect("Must have `BookContainerEntity` on button");
-                    dbg!(entity);
-                })
             ]
             --
             Transform {
@@ -351,15 +486,97 @@ fn book_scene() -> impl Scene {
             }
             TransformPropogatedUiNode [
                 Button
+                BookContainerEntity(#BookContainer)
+                @turn_page_observer(PageDirection::Backwanrs)
                 Node
                 Children [
-                    Text("Next >")
+                    Text("Next Page")
                     @book_text()
                 ]
             ]
 
         ]
         DespawnOnExit<InGameScreen>(InGameScreen::Crafting)
+    }
+}
+
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
+enum PageDirection {
+    Forward,
+    Backwanrs,
+}
+
+fn turn_page_observer(page_direction: PageDirection) -> impl Scene {
+    let observer = move |click: On<PointerClick>,
+                         book_container_entity: Query<&BookContainerEntity>,
+                         mut book_container: Query<(&Children, &mut BookPageCount)>,
+                         ingredient_ui_node: Query<(Entity), With<IngredientNoteNode>>,
+                         mut commands: Commands,
+                         items: Query<&InventoryItem>| {
+        let entity = book_container_entity
+            .get(click.event_target())
+            .expect("Must have `BookContainerEntity` on button");
+        let book_container_entity = entity.0;
+
+        let (book_container_children, mut book_page_count) = book_container
+            .get_mut(book_container_entity)
+            .expect("book container must exist");
+
+        const ITEMS_PER_PAGE: usize = 4;
+        let total_discovered_items = items.count();
+
+        book_page_count.0 = match page_direction {
+            PageDirection::Forward => book_page_count.saturating_sub(1),
+            PageDirection::Backwanrs => {
+                (**book_page_count + 1).min(total_discovered_items / ITEMS_PER_PAGE)
+            }
+        };
+
+        let items = items
+            .iter()
+            .skip(**book_page_count * ITEMS_PER_PAGE)
+            .take(4)
+            .cloned()
+            .collect::<Vec<_>>();
+
+        let mut existing_children: Vec<Entity> = Vec::default();
+        // despawn old items
+        for entity in ingredient_ui_node.iter_many(book_container_children.iter()) {
+            if let Ok(entity) = entity {
+                commands.entity(entity).despawn();
+                info!("despawning")
+            }
+
+            if let Err(bevy::ecs::query::QueryEntityError::QueryDoesNotMatch(entity, _)) = entity {
+                info!("Not existingly!");
+                existing_children.push(entity);
+            }
+        }
+
+        commands
+            .entity(book_container_entity)
+            .with_children(move |p| {
+                for (pos, item) in vec![
+                    TOP_LEFT_PAGE,
+                    TOP_RIGHT_PAGE,
+                    BOTTOM_LEFT_PAGE,
+                    BOTTOM_RIGHT_PAGE,
+                ]
+                .into_iter()
+                .zip(items.iter())
+                {
+                    p.spawn_empty().apply_scene(bsn! {
+                        Transform {
+                            translation: pos
+                        }
+                        @page_scene()
+                    });
+                }
+            });
+    };
+
+    bsn! {
+        on(observer)
     }
 }
 
@@ -374,8 +591,8 @@ struct IngredientNoteNode;
 
 fn page_scene() -> impl Scene {
     bsn! {
+        IngredientNoteNode
         TransformPropogatedUiNode [
-            IngredientNoteNode
             Node {
                 top: Val::Px(50.),
                 left: Val::Px(50.)

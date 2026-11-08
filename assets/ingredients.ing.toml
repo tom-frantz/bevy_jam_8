@@ -7,26 +7,26 @@ primary=["Fire", 3]
 # tertiary=["Air", 1]
 
 [[ingredients]]
-name="Crystal Water"
+name="CrystalWater"
 description="TODO"
 [ingredients.aspects]
 primary=["Water", 1]
 # secondary=["Fire", 1]
 
 [[ingredients]]
-name="Frog Slime"
+name="FrogSlime"
 description="The goop and gunk of the back and belly of the cutest frogs around"
 [ingredients.aspects]
 primary=["Water", 1]
 
 [[ingredients]]
-name="World Tree Blood"
+name="WorldTreeBlood"
 description="Glowing sap, fuelled by all things living on the world"
 [ingredients.aspects]
 primary=["Water", 1]
 
 [[ingredients]]
-name="Tainted World Tree Blood"
+name="TaintedWorldTreeBlood"
 description="Glowing sap, with something twisted curling around"
 [ingredients.aspects]
 primary=["Water", 1]
