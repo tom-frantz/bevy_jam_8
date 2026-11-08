@@ -1,0 +1,157 @@
+[[context_items]]
+# arrival1
+[[context_items]]
+name = "arrival1"
+text = "Before even being able to make out the finer details of what lies atop the island, you feel it. A distant, thumping, rhythmic bassline. It's source becomes clearer after drifting closer, a multicoloured dancefloor shines and pulses in time to the music and the small crowd gathered on and around it. From it, both ends of a thin yet distinct path extend outward and wind their way around the island's perimeter."
+
+# arrival1 choice 1/1 arrival2
+[[context_items.choices]]
+text = "Land by the dancefloor"
+goto_context = "arrival2"
+[[context_items.choices.execute]]
+
+# arrival2
+[[context_items]]
+name = "arrival2"
+text = "You touch down on the edge of the dancefloor, choosing a section with fewer partygoers to prevent any unfortunate landing mishaps. From here you get a clearer read on the festivities. On one end of the dancefloor is a tall stack of arcane subwoofers that appear almost blurry on account of their constant and rapid movement. The party itself seems to have a few dozen attendees, most of whom look exhausted and are dancing as if they are running on fumes. By the speakers, on a small stage one partygoer stands out among the rest: a large blue mushroom that appears the most energetic in movement among the bunch. You also notice small motes of light float around the dancefloor, reacting to the music by pulsing and changing colour. "
+
+# arrival2 choice 1/1 party1
+[[context_items.choices]]
+text = "Look around"
+goto_context = "party1"
+[[context_items.choices.execute]]
+
+# party1
+[[context_items]]
+name = "party1"
+text = "You see a low hanging cluster of the glowing orbs lazily hovering a few meters away. In the other direction, also on the fringe of the dancefloor, you see an approachable group of dancers nearby, barely swaying side-to-side along with the music. A rustle from the treeline behind makes you turn, where you spot some shifting movement."
+
+# party1 choice 1/4 wisp
+[[context_items.choices]]
+text = "Examine the floating lights"
+goto_context = "wisp"
+[[context_items.choices.execute]]
+
+# party1 choice 2/4 party_questgive1
+[[context_items.choices]]
+text = "Talk to the exhausted dancers"
+goto_context = "party_questgive1"
+[[context_items.choices.execute]]
+
+# party1 choice 3/4 mushroom
+[[context_items.choices]]
+text = "Wander to the rustling treeline"
+goto_context = "mushroom"
+[[context_items.choices.execute]]
+
+# party1 choice 4/4 map
+[[context_items.choices]]
+text = "Leave"
+[[context_items.choices.execute]]
+Leave = {}
+
+# party_questgive1
+[[context_items]]
+name = "party_questgive1"
+text = "You walk up to the group of dancers, absentmindedly stepping and shifting to the beat. They turn seeing you <o>'Hey there! Here to join the.. *yawn* party? No? Well, probably for the best..'<o>"
+
+# party_questgive1 choice 1/1 party_questgive2
+[[context_items.choices]]
+text = "'Why's that?'"
+goto_context = "party_questgive2"
+[[context_items.choices.execute]]
+
+# party_questgive2 
+[[context_items]]
+name = "party_questgive2 "
+text = "<o>'Well honestly..'<o> another of the dancer starts, <o>'It's been kinda non-stop for a while now. We're on our last legs'>o>"
+
+# party_questgive2 choice 1/1 party_questgive3
+[[context_items.choices]]
+text = "'Why don't you just... stop?'"
+goto_context = "party_questgive3"
+[[context_items.choices.execute]]
+
+# party_questgive3
+[[context_items]]
+name = "party_questgive3"
+text = "The dancers look at you incredulously, like you just asked the silliest question imaginable. <o>'We can't stop until we're all partied out... and<o> <b>Fungi<b><o>? He's still going strong, so we have to, too'<o> one of them says, gesturing vaguely at the large blue mushroom that you noticed earlier. The dancers exchange tired looks, before ceasing their swaying altogether <o>'Well, that being said, we would very much like to stop. So if there's some way you could convince <o><b>Fungi<b><o> to wrap it up we'd really appreciate it'<o>"
+
+# party_questgive3 choice 1/1 party_questgive4
+[[context_items.choices]]
+text = "Agree to go talk to the party animal"
+goto_context = "party_questgive4"
+[[context_items.choices.execute]]
+
+# party_questgive4
+[[context_items]]
+name = "party_questgive4"
+text = "You box step, heel turn, twist and (regrettably) worm you way through the crowd to the busiest portion of the stage, arriving finally in front of the large blue mushroom dancer that serves as the powerhouse of the party. Its mitochondria if you will. Now that you've arrived at the stage, you see that while Fungi certainly has the most energetic movements of the remaining dancers, he also appears by far the most strung out in appearance. "
+
+# party_questgive4 choice 1/1 party_questgive5
+[[context_items.choices]]
+text = "Ask him to pause the party"
+goto_context = "party_questgive5"
+[[context_items.choices.execute]]
+MarkQuest = "Started"
+
+# party_questgive5
+[[context_items]]
+name = "party_questgive5"
+text = "<b>'No can do my little pal, party regulations I'm afraid! Hmmm, but I *did* see you worming up a storm on your way here, so I'll tell you what, if you can beat me in a race around the island I can pause the party for a bit. Or my name isn't Fungi: The Great Edible. But I gotta warn you, '<o> he points his thumb back behind him at a drink can with the branding 'Fast Juice' placed casually within arms reach, <b>'I've been chugging that Fast Juice for a few days now so I don't think I could lose if I wanted to! And at this point?'<b> he laughs hoarsely above the music, <b>'I kind of really want to!<b>"
+
+# party_questgive5 choice 1/3 party_race1 requires sleep cloud
+[[context_items.choices]]
+text = "Show the Sleep Cloud to Fungi"
+goto_context = "party_race1"
+[context_items.choices.requires]
+alt_text= "(I need something to slow him down before we race!)"
+req_items= ["SleepJuice"]
+
+# party_questgive5 choice 2/3 party_juicesteal
+[[context_items.choices]]
+text = "I could just take his Fast Juice and leave, but once I do I may not be welcome back here"
+goto_context = "juicesteal"
+[[context_items.choices.execute]]
+
+# party_questgivet5 choice 3/3 party1
+[[context_items.choices]]
+text = "Back to the edge of the party"
+goto_context = "party1"
+[[context_items.choices.execute]]
+
+# wisp
+[[context_items]]
+name = "wisp"
+text = "Now that you're closer, you see that the lights are individual specks of flame. You could probably collect them for your research"
+
+# wisp choice 1/2 party1
+[[context_items.choices]]
+text = "Take some of the Will 'o Wisps"
+goto_context = "party1"
+[[context_items.choices.execute]]
+AddItem="WillOWisps"
+
+# wisp choice 2/2 party1
+[[context_items.choices]]
+text = "Back"
+goto_context = "party1"
+[[context_items.choices.execute]]
+
+# mushroom
+[[context_items]]
+name = "mushroom"
+text = "You reach the treeline, and spot huddled behind a fallen log a small colony of once-ordinary mushrooms. They seem to be upset that the nearby party has been keeping them awake"
+
+# mushroom choice 1/2 party1
+[[context_items.choices]]
+text = "Harvest some of the Angry Mushrooms"
+goto_context = "party1"
+[[context_items.choices.execute]]
+AddItem="AngryMushrooms"
+
+# mushroom choice 2/2 party1
+[[context_items.choices]]
+text = "Back"
+goto_context = "party1"
+[[context_items.choices.execute]]
