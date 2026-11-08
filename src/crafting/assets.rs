@@ -7,7 +7,6 @@ use serde::Deserialize;
 use crate::{
     asset_helpers::DeError,
     crafting::{CraftingState, ItemAspect},
-    encounters::Encounter,
 };
 
 #[derive(Debug, Clone, Asset, TypePath, Deserialize)]

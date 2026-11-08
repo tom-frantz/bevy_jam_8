@@ -39,7 +39,7 @@ impl Plugin for WorldMapPlugin {
 }
 
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash, Component)]
-pub struct IslandId(usize);
+pub struct IslandId(pub usize);
 
 #[derive(Debug, Resource)]
 pub struct BroomFuel {
@@ -89,6 +89,12 @@ fn enter_world_map(mut commands: Commands) {
         IslandId(2)
         Transform {
             translation: Vec3::new(-200., -100., 0.)
+        }
+        --
+        @island()
+        IslandId(3)
+        Transform {
+            translation: Vec3::new(-400., 50., 0.)
         }
 
     });

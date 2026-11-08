@@ -10,19 +10,16 @@ text = "As you rise upward above even the highest clouds, the boundless blue of 
 [[context_items.choices]]
 text = "Drift towards the front door of the cottage"
 goto_context = "house1"
-[[context_items.choices.execute]]
 
 # arrival choice 2
 [[context_items.choices]]
 text = "Check out the flicker (not yet implemented)"
 goto_context = ""
-[[context_items.choices.execute]]
 
 # arrival choice 3
 [[context_items.choices]]
 text = "Leave"
 goto_context = "map"
-[[context_items.choices.execute]]
 
 # house1
 [[context_items]]
@@ -33,7 +30,6 @@ text = "The cottage appears totally normal, somehow making it stand out even mor
 [[context_items.choices]]
 text = "Give the door a polite knock"
 goto_context = "house2"
-[[context_items.choices.execute]]
 
 # house2
 [[context_items]]
@@ -44,7 +40,6 @@ text = "Your rhythmic taps echo happily across the frame, and as the sounds fade
 [[context_items.choices]]
 text = "Wait for someone to answer the door"
 goto_context = "housewait1"
-[[context_items.choices.execute]]
 
 # housewait1
 [[context_items]]
@@ -55,7 +50,6 @@ text = "You wait patiently, tapping your foot slowly..."
 [[context_items.choices]]
 text = "Continue waiting"
 goto_context = "housewait2"
-[[context_items.choices.execute]]
 
 # housewait2
 [[context_items]]
@@ -66,7 +60,6 @@ text = "As the moments stretch by you find yourself focusing your hearing for an
 [[context_items.choices]]
 text = "Continue waiting..."
 goto_context = "house3"
-[[context_items.choices.execute]]
 
 # house3
 [[context_items]]
@@ -77,7 +70,6 @@ text = "You're about to give up on anyone answering when the door begins to shif
 [[context_items.choices]]
 text = "Follow the crab inside"
 goto_context = "crab_questgive1"
-[[context_items.choices.execute]]
 
 # crab_questgive1
 [[context_items]]
@@ -88,7 +80,6 @@ text = "You stand inside the cottage facing the crab. It rests upon a low coffee
 [[context_items.choices]]
 text = "Examine the pile of paper scraps"
 goto_context = "crab_questgive2"
-[[context_items.choices.execute]]
 
 # crab_questgive2
 [[context_items]]
@@ -99,7 +90,6 @@ text = "Peering over at the papers in order to understand what the crab is tryin
 [[context_items.choices]]
 text = "'You want... to leave the moon and go to the ocean?'"
 goto_context = ""
-[[context_items.choices.execute]]
 
 # crab_questgive3
 [[context_items]]
@@ -110,7 +100,6 @@ text = "The crab hops from one side to the other, snapping its pincers in the ai
 [[context_items.choices]]
 text = "Check out whats on the counter"
 goto_context = "crab_contract"
-[[context_items.choices.execute]]
 
 # crab_contract
 [[context_items]]
@@ -123,11 +112,10 @@ text = "Not yet implemented!"
 goto_context = "crab_questcomplete1"
 [context_items.choices.requires]
 alt_text= "(I need some way to read the invisible ink...)"
-req_items= ["magic_lens"]
-[[context_items.choices.execute]]
+# TODO: magic lens
+req_items= ["Heliopal"]
 
 # crab_contract choice 2
 [[context_items.choices]]
 text = "Leave"
 goto_context = "map"
-[[context_items.choices.execute]]

@@ -3,13 +3,13 @@ use bevy::{
     reflect::TypePath,
 };
 
-use crate::{asset_helpers::DeError, encounters::Encounter};
+use crate::{asset_helpers::DeError, encounters::EncounterRes};
 
 #[derive(Default, TypePath)]
 pub struct TomlEncLoader;
 
 impl AssetLoader for TomlEncLoader {
-    type Asset = Encounter;
+    type Asset = EncounterRes;
     type Settings = ();
     type Error = DeError;
 
@@ -22,7 +22,7 @@ impl AssetLoader for TomlEncLoader {
         let mut bytes = Vec::new();
         reader.read_to_end(&mut bytes).await?;
 
-        let enc: Encounter = toml::from_slice(&bytes)?;
+        let enc: EncounterRes = toml::from_slice(&bytes)?;
         Ok(enc)
     }
 
@@ -44,20 +44,17 @@ mod tests {
 
     #[test]
     fn encounters_parse() {
+        let mut failures = Vec::new();
         for entry in read_dir(Path::new("assets/encounters")).unwrap() {
             let path = entry.unwrap().path();
             if !path.is_file() {
                 continue;
             }
-            let asset: Result<Encounter, _> = toml::from_str(&read_to_string(path).unwrap());
-
-            if let Err(val) = &asset {
-                dbg!(val);
-            };
-            if let Ok(val) = &asset {
-                dbg!(val);
+            let asset: Result<EncounterRes, _> = toml::from_str(&read_to_string(&path).unwrap());
+            if let Err(err) = asset {
+                failures.push(format!("{}:\n{err}", path.display()));
             }
-            assert!(asset.is_ok())
         }
+        assert!(failures.is_empty(), "\n{}", failures.join("\n"));
     }
 }

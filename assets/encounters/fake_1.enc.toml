@@ -1,9 +1,14 @@
+name = "World Tree"
+
 # arrival1
 [[context_items]]
 name = "arrival1"
 text = "The first thing you notice is the enormous tree that dominates the center of the island. Its old, gnarled branches sprawl upward and outward, cradling some object or structure behind its autumn coloured leaves and multicoloured bark.  By the time you're close enough to land you can make out some additional details that had escaped your notice from the air: The object held aloft by its sturdiest boughs appears to be a model of the planet, shrunken to a fraction of its actual size but complete with real water for oceans and even clouds that drift an inch or two above the surface. Bringing your gaze downwards, you can also see a sizeable chunk has been hacked out of the side of the tree, amber sap oozing from the horrific wound."
 
 # arrival1 choice 1
+[[context_items.choices]]
+text = "continue..."
+goto_context = "arrival2"
 
 # arrival2
 [[context_items]]
@@ -14,25 +19,21 @@ text = "The most notable feature of the tree, however, is the large face that de
 [[context_items.choices]]
 text = "Approach the tree"
 goto_context = "tree_questgive1"
-[[context_items.choices.execute]]
 
 # arrival2 choice 2
 [[context_items.choices]]
 text = "Check out the pond"
 goto_context = "pond"
-[[context_items.choices.execute]]
 
 # arrival2 choice 3
 [[context_items.choices]]
 text = "Cross the clearing and examine the red light"
 goto_context = "berry"
-[[context_items.choices.execute]]
 
 # arrival2 choice 4
 [[context_items.choices]]
 text = "Leave"
 goto_context = "map"
-[[context_items.choices.execute]]
 
 # tree_questgive1
 [[context_items]]
@@ -43,7 +44,6 @@ text = "<g>'Greetings... Young traveler..'<g> groans from the tree with a voice 
 [[context_items.choices]]
 text = "Introduce yourself"
 goto_context = "tree_questgive2"
-[[context_items.choices.execute]]
 
 # tree_questgive2
 [[context_items]]
@@ -54,7 +54,6 @@ text = "<g>'An alchemist you say?'<g> The World Tree looks at you with some surp
 [[context_items.choices]]
 text = "'An alchemist did that to you?'"
 goto_context = "tree_questgive3"
-[[context_items.choices.execute]]
 
 # tree_questgive3
 [[context_items]]
@@ -67,14 +66,12 @@ text = "Give the tree the medicine"
 goto_context = "tree_questcomplete1"
 [context_items.choices.requires]
 alt_text= "(I need something to heal the tree)"
-req_items= ["tree_medicine"]
-[[context_items.choices.execute]]
+req_items= ["Heliopal"]
 
 # tree_questgive3 choice 2
 [[context_items.choices]]
 text = "Back"
-goto_context = arrival2
-[[context_items.choices.execute]]
+goto_context = "arrival2"
 
 # pond
 [[context_items]]
@@ -86,13 +83,12 @@ text = "You stand by the banks of the glittering oasis. The crystalline water gl
 text = "Take some Crystal Water"
 goto_context = "arrival2"
 [[context_items.choices.execute]]
-AddItem="Crystal Water"
+AddItem="Mushroom"
 
 # pond choice 2
 [[context_items.choices]]
 text = "Back"
 goto_context = "arrival2"
-[[context_items.choices.execute]]
 
 # berry
 [[context_items]]
@@ -104,10 +100,9 @@ text = "You cross the clearing and find a small field of Strubyrries"
 text = "Harvest a few Strubyrries"
 goto_context = "arrival2"
 [[context_items.choices.execute]]
-AddItem="Strubyrries"
+AddItem="Struby"
 
 # berry choice 2
 [[context_items.choices]]
 text = "Back"
 goto_context = "arrival2"
-[[context_items.choices.execute]]

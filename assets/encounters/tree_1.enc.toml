@@ -1,0 +1,110 @@
+name = "World Tree"
+
+# arrival1
+[[context_items]]
+name = "arrival1"
+text = "The first thing you notice is the enormous tree that dominates the center of the island. Its old, gnarled branches sprawl upward and outward, cradling some object or structure behind its autumn coloured leaves and multicoloured bark.  By the time you're close enough to land you can make out some additional details that had escaped your notice from the air: The object held aloft by its sturdiest boughs appears to be a model of the planet, shrunken to a fraction of its actual size but complete with real water for oceans and even clouds that drift an inch or two above the surface. Bringing your gaze downwards, you can also see a sizeable chunk has been hacked out of the side of the tree, amber sap oozing from the horrific wound."
+
+# arrival1 choice 1
+[[context_items.choices]]
+text = "continue..."
+goto_context = "arrival2"
+
+# arrival2
+[[context_items]]
+name = "arrival2"
+text = "The most notable feature of the tree, however, is the large face that despite looking as if it is carved into the bark itself actually shifts slowly, its eyes following you as you touch down in a small clearing before it. Besides the looming tower of wood and leaf, the clearing contains a pristine pond filled with a shimmering liquid too lustrous to be normal water. On the other side, a shimmering patch of red catches your eye."
+
+# arrival2 choice 1
+[[context_items.choices]]
+text = "Approach the tree"
+goto_context = "tree_questgive1"
+
+# arrival2 choice 2
+[[context_items.choices]]
+text = "Check out the pond"
+goto_context = "pond"
+
+# arrival2 choice 3
+[[context_items.choices]]
+text = "Cross the clearing and examine the red light"
+goto_context = "berry"
+
+# arrival2 choice 4
+[[context_items.choices]]
+text = "Leave"
+goto_context = "map"
+
+# tree_questgive1
+[[context_items]]
+name = "tree_questgive1"
+text = "<g>'Greetings... Young traveler..'<g> groans from the tree with a voice like the deep rustling of branches in a storm, <g>'Apologies, it has been some time since I've spoken with another. I am the World Tree. Tell me, what brings one such as yourself to my lonely oasis?'<g>"
+
+# tree_questgive1 choice 1
+[[context_items.choices]]
+text = "Introduce yourself"
+goto_context = "tree_questgive2"
+
+# tree_questgive2
+[[context_items]]
+name = "tree_questgive2"
+text = "<g>'An alchemist you say?'<g> The World Tree looks at you with some surprise. <g>'It has been quite some time since I last met one of your fellow practioners, though you seem already to be markedly more... polite'<g> the tree remarks, its trunk shuddering slightly from the wound on its side. "
+
+# tree_questgive2 choice 1
+[[context_items.choices]]
+text = "'An alchemist did that to you?'"
+goto_context = "tree_questgive3"
+
+# tree_questgive3
+[[context_items]]
+name = "tree_questgive3"
+text = "<g>'Indeed, a long time ago. They believed my blood to have powerful alchemical properties'<g> the tree says, narrowing its eyes at you ever so slightly '<g>though I know not whether this is true. Regardless, you seem to be a different sort. If you were able to help me, I would offer you a sample of my sap should you wish. While I do not know what effects it may have, I have lived long enough to know a gift freely given will often serve one better than that taken by force.'<g>"
+
+# tree_questgive3 choice 1
+[[context_items.choices]]
+text = "Give the tree the medicine"
+goto_context = "tree_questcomplete1"
+[context_items.choices.requires]
+alt_text= "(I need something to heal the tree)"
+# TODO: tree_medicine
+req_items= ["Heliopal"]
+
+# tree_questgive3 choice 2
+[[context_items.choices]]
+text = "Back"
+goto_context = "arrival2"
+
+# pond
+[[context_items]]
+name = "pond"
+text = "You stand by the banks of the glittering oasis. The crystalline water glints in the sunlight"
+
+# pond choice 1
+[[context_items.choices]]
+text = "Take some Crystal Water"
+goto_context = "arrival2"
+[[context_items.choices.execute]]
+# TODO: crystal water
+AddItem="Mushroom"
+
+# pond choice 2
+[[context_items.choices]]
+text = "Back"
+goto_context = "arrival2"
+
+# berry
+[[context_items]]
+name = "berry"
+text = "You cross the clearing and find a small field of Strubyrries"
+
+# berry choice 1
+[[context_items.choices]]
+text = "Harvest a few Strubyrries"
+goto_context = "arrival2"
+[[context_items.choices.execute]]
+AddItem="Struby"
+
+# berry choice 2
+[[context_items.choices]]
+text = "Back"
+goto_context = "arrival2"

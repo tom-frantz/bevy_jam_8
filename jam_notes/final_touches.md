@@ -42,7 +42,6 @@
 - [ ] Finish crafting
   - [ ] When dragging, it draws behind you.
 - [ ] Finish book
-- [ ] Broom fuel
 - [ ] Final wiring.
 - [ ] Flags across encounters. (to load new flags) (first time visit)
 - [ ] Flags to display options

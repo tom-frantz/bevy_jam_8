@@ -9,6 +9,8 @@ text = "Scream into the forest at the top of your lungs"
 goto_context = "screamed"
 [[context_items.choices.execute]]
 MarkComplete = {}
+[[context_items.choices.execute]]
+MarkQuest = "Started"
 
 [[context_items.choices]]
 text = "Take a mushroom"

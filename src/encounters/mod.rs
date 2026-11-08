@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use bevy::{
     app::{Plugin, Startup, Update},
     asset::{Asset, AssetApp, AssetServer, Assets, Handle},
@@ -13,26 +15,30 @@ use bevy::{
         system::{Commands, Query, Res, ResMut},
     },
     input::{ButtonInput, keyboard::KeyCode},
-    log::info,
+    log::{info, warn},
     picking::{
         Pickable,
         events::{PointerLeave, PointerOver, PointerPress},
     },
     reflect::TypePath,
     scene::{CommandsSceneExt, EntityCommandsSceneExt, Scene, bsn, on},
-    state::{state::OnEnter, state_scoped::DespawnOnExit},
+    state::{
+        state::{OnEnter, State},
+        state_scoped::DespawnOnExit,
+    },
     text::TextColor,
     ui::{BackgroundColor, FlexDirection, Node, UiRect, Val, widget::Text},
 };
 use serde::Deserialize;
 
 use crate::{
-    InGameScreen,
+    InGameScreen, PlayerLocation,
     crafting::{AspectValue, Aspects, InventoryItem, Item, ItemAspect},
     encounters::{
         deserialize::TomlEncLoader,
         fancy_textify::{FancyTextColor, render_text_scene},
     },
+    world_map::IslandId,
 };
 
 mod deserialize;
@@ -43,8 +49,8 @@ pub struct EncounterPlugin;
 impl Plugin for EncounterPlugin {
     fn build(&self, app: &mut bevy::app::App) {
         app.init_resource::<Encounters>();
-        app.init_resource::<CurrentEncounter>();
-        app.init_asset::<Encounter>();
+        app.init_resource::<EncounterState>();
+        app.init_asset::<EncounterRes>();
         app.init_asset_loader::<TomlEncLoader>();
         app.add_systems(OnEnter(InGameScreen::Encounter), enter_encounter_screen);
         app.add_systems(Startup, load_assets);
@@ -53,7 +59,7 @@ impl Plugin for EncounterPlugin {
 }
 
 #[derive(Asset, TypePath, Default, Clone, Debug, Deserialize)]
-pub struct Encounter {
+pub struct EncounterRes {
     // TODO print at top of screen?
     pub name: String,
     pub context_items: Vec<Context>,
@@ -88,16 +94,83 @@ pub enum Execute {
     AddItem(Item),
     LoseItem(Item),
     MarkComplete,
+    MarkQuest(QuestProgress),
     Leave,
+}
+
+#[derive(Debug, Default, Deserialize, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum QuestProgress {
+    #[default]
+    NotStarted,
+    Started,
+    Complete,
+}
+
+impl QuestProgress {
+    /// resource filename suffix
+    fn file_suffix(self) -> &'static str {
+        match self {
+            Self::NotStarted => "1",
+            Self::Started => "2",
+            Self::Complete => "3",
+        }
+    }
 }
 
 #[derive(Resource, Default)]
 struct Encounters {
-    handle: Handle<Encounter>,
+    handles: HashMap<(IslandId, QuestProgress), Handle<EncounterRes>>,
+    quest_progress: HashMap<IslandId, QuestProgress>,
 }
 
 fn load_assets(mut encounters: ResMut<Encounters>, asset_server: Res<AssetServer>) {
-    encounters.handle = asset_server.load("encounters/encounter_template.enc.toml")
+    // load island 1
+    for progress in [
+        QuestProgress::NotStarted,
+        QuestProgress::Started,
+        QuestProgress::Complete,
+    ] {
+        let path = format!("encounters/tree_{}.enc.toml", progress.file_suffix());
+        encounters
+            .handles
+            .insert((IslandId(0), progress), asset_server.load(path));
+    }
+
+    // load island 2
+    for progress in [
+        QuestProgress::NotStarted,
+        QuestProgress::Started,
+        QuestProgress::Complete,
+    ] {
+        let path = format!("encounters/moon_{}.enc.toml", progress.file_suffix());
+        encounters
+            .handles
+            .insert((IslandId(1), progress), asset_server.load(path));
+    }
+
+    // load island 3
+    for progress in [
+        QuestProgress::NotStarted,
+        QuestProgress::Started,
+        QuestProgress::Complete,
+    ] {
+        let path = format!("encounters/ruins_{}.enc.toml", progress.file_suffix());
+        encounters
+            .handles
+            .insert((IslandId(2), progress), asset_server.load(path));
+    }
+
+    // load island 4
+    for progress in [
+        QuestProgress::NotStarted,
+        QuestProgress::Started,
+        QuestProgress::Complete,
+    ] {
+        let path = format!("encounters/fake_{}.enc.toml", progress.file_suffix());
+        encounters
+            .handles
+            .insert((IslandId(3), progress), asset_server.load(path));
+    }
 }
 
 #[derive(Component, Debug, Clone, Copy)]
@@ -105,13 +178,14 @@ struct ChoiceIndex(usize);
 
 // TODO make this an option?
 #[derive(Resource, Default, Debug, Clone)]
-pub struct CurrentEncounter {
-    encounter: Encounter,
+pub struct EncounterState {
+    encounter: EncounterRes,
     // index into Encounter resource
     current_context_index: usize,
+    island: IslandId,
 }
 
-impl CurrentEncounter {
+impl EncounterState {
     fn current_context(&self) -> &Context {
         &self.encounter.context_items[self.current_context_index]
     }
@@ -138,7 +212,8 @@ const KEYS: [KeyCode; 9] = [
 
 fn check_encounter_keyboard_input(
     input: Res<ButtonInput<KeyCode>>,
-    current_encounter: ResMut<CurrentEncounter>,
+    current_encounter: ResMut<EncounterState>,
+    encounters: ResMut<Encounters>,
     commands: Commands,
     q: Query<Entity, With<ChatBoxMarker>>,
     items: Query<&mut InventoryItem>,
@@ -148,7 +223,7 @@ fn check_encounter_keyboard_input(
     }
     for index in 0..current_encounter.current_context().choices.len() {
         if input.just_pressed(KEYS[index]) {
-            return handle_choice(index, current_encounter, commands, q, items);
+            return handle_choice(index, current_encounter, encounters, commands, q, items);
         }
     }
 }
@@ -156,16 +231,33 @@ fn check_encounter_keyboard_input(
 /// When moving to the encounter screen, run this system once to setup everything.
 fn enter_encounter_screen(
     mut commands: Commands,
-    encounter: Res<Encounters>,
-    mut current_encounter: ResMut<CurrentEncounter>,
-    encounters: Res<Assets<Encounter>>,
+    encounters: Res<Encounters>,
+    mut current_encounter: ResMut<EncounterState>,
+    encounter_assets: Res<Assets<EncounterRes>>,
+    location: Res<State<PlayerLocation>>,
     items: Query<&mut InventoryItem>,
 ) {
-    let enc = encounters
-        .get(&encounter.handle)
-        .expect("Encounter handle doesn't exist");
+    let PlayerLocation::Island(island) = *location.get() else {
+        info!("not on island");
+        return;
+    };
+    // Islands with no recorded progress haven't had their quest started yet.
+    let progress = encounters
+        .quest_progress
+        .get(&island)
+        .copied()
+        .unwrap_or_default();
+    let Some(enc) = encounters
+        .handles
+        .get(&(island, progress))
+        .and_then(|handle| encounter_assets.get(handle))
+    else {
+        warn!("Encounter for {island:?} / {progress:?} isn't loaded");
+        return;
+    };
     current_encounter.encounter = enc.clone();
     current_encounter.current_context_index = 0;
+    current_encounter.island = island;
     let my_enc = set_scene_context(current_encounter.current_context(), items);
 
     commands.spawn_scene(bsn! {
@@ -227,8 +319,9 @@ fn set_scene_context(context: &Context, mut items: Query<&mut InventoryItem>) ->
         ChatBoxMarker
         Children [
             @flavour_text(context.text.clone())
-            // --
             // @action_text("This is something that happened to your character")
+            --
+            Text("\n")
             --
             {choices}
         ]
@@ -274,7 +367,8 @@ fn choice_scene(
 fn choice_click_observer(
     event: On<PointerPress>,
     choices: Query<&ChoiceIndex>,
-    current_encounter: ResMut<CurrentEncounter>,
+    current_encounter: ResMut<EncounterState>,
+    encounters: ResMut<Encounters>,
     commands: Commands,
     q: Query<Entity, With<ChatBoxMarker>>,
     items: Query<&mut InventoryItem>,
@@ -284,7 +378,14 @@ fn choice_click_observer(
         .get(selected_choice_entity)
         .expect("No choice index fo choice")
         .0;
-    handle_choice(choice_index, current_encounter, commands, q, items)
+    handle_choice(
+        choice_index,
+        current_encounter,
+        encounters,
+        commands,
+        q,
+        items,
+    )
 }
 
 fn choice_pointer_enter_observer(
@@ -311,7 +412,8 @@ fn choice_pointer_exit_observer(
 
 fn handle_choice(
     choice_index: usize,
-    mut current_encounter: ResMut<CurrentEncounter>,
+    mut current_encounter: ResMut<EncounterState>,
+    mut encounters: ResMut<Encounters>,
     mut commands: Commands,
     mut q: Query<Entity, With<ChatBoxMarker>>,
     mut items: Query<&mut InventoryItem>,
@@ -366,6 +468,11 @@ fn handle_choice(
                 Execute::MarkComplete => {
                     current_encounter.current_context_mut().choices[choice_index].is_completed =
                         true;
+                }
+                Execute::MarkQuest(quest_state) => {
+                    encounters
+                        .quest_progress
+                        .insert(current_encounter.island, *quest_state);
                 }
                 Execute::Leave => todo!(),
             }
