@@ -1,54 +1,131 @@
+# need to add: 
+# new intro/arrival scene
+# path for items (stopsand, lumino truant)
+# good/bad paths
+
+
 name = "Remote Ruins"
 
+
+# arrival1
 [[context_items]]
-name = "enter_first"
-text = "<r>Within<r> <o>the<o> <m>crumbling<m> <g>stone<g> <y>structure<y> <n>you<n> <p>see<p> a lone <m>researcher<m> poring over some documents in the corner. The far wall is adorned with a damaged stone relief and lit from below by a soft glow"
+name = "ruins1"
+text = "Visible even from a distance, the island is dominated by a sprawling compound of ancient ruins. Near the base of one of the pyramid shaped structures you can see the darkened hollow of an entranceway. You circle the structure a few more times, but without any other points of interest for further investigation you make your way towards the carved doorway."
+
+
+
+# arrival1 choice 1/1 ruins1
   [[context_items.choices]]
-  text = "Approach the researcher"
-  goto_context = "researcher_questgive"
+  text = "Enter the ruins"
+  goto_context = "ruins1"
+
+
+
+  [[context_items.choices.execute]]
+[[context_items]]
+name = "ruins1"
+text = "Before long the entrance passage opens up into a small room with dusty sandstone walls. It is lit mostly by a stream of sunlight that has found its way through the jagged path of some ancient cave-in of the roof. Another, smaller light source comes in the form of a regular wooden torch, its warm orange glow revealing the body (and web) of an arachnid figure who you can see is currently hunched over some documents that they are reading intently. The back wall of the room, next to where the researcher is perched, appears as though it's made of a different material."
+[[context_items.choices]]
+  text = "Look around the room"
+  goto_context = "ruins2"
+
+[[context_items]]
+name = "ruins2"
+text = "Besides the arachnid researcher, you find your gaze wandering to the darkest and brightest sections of the room: Where the sunbeam hits the ground and a far-off corner where said light does not reach and darkness seems to swallow the surrounding area in an unnatural way"
 
   [[context_items.choices]]
-  text = "Examine the far wall"
-  goto_context = "ruins_wall"
+  text = "Talk to the researcher"
+  goto_context = "researcher_questgive1"
+
+  [[context_items.choices]]
+  text = "Examine the sunbeam"
+  goto_context = "stopsand"
   
+
+  [[context_items.choices]]
+  text = "Check out the dark corner"
+  goto_context = "lumino"
+
   [[context_items.choices]]
   text = "Leave"
   [[context_items.choices.execute]]
   Leave = {}
 
 [[context_items]]
-name = "researcher_questgive"
-text = """As you approach the researcher glances up at you with a slightly startled look. <r>’Oh my, a visitor! I’m sorry, I must’ve been so absorbed in my work that I didn’t see you come in. These ruins are fascinating, aren’t they?’<r>. They lean forward excitedly as they continue:  <r>’My working hypothesis is that they were built as a place of worship by an ancient civilisation. The stonework in the undamaged sections is so precise, their tools must have been far more advanced than any we can produce today!’<r>
-
-The researcher, now only a few inches away from your face seems to catch themselves, taking a quick step back and nervously dusting their clothes with their hands. <r>’…Ah, but I’ve gotten ahead of myself. My research has hit a proverbial and literal brick wall recently, so without any more hard data my theories are running a little wild. Say, now that I get a better look at you, those are alchemist's tools, right? I can’t explore further until I can breach this wall behind me. If you can help me out, I’ll share my research and let you take anything with unique alchemical properties, uh, assuming they have no archeological value of course! And lest you worry, this wall isn’t part of the original structure, my guess is that it’s barely a hundred years old… But that is to say, would you lend me a hand?’<r>"""
-  [[context_items.choices]]
-  text = "‘Sure!’"
-  goto_context = "researcher_questaccept"
+name = "researcher_questgive1"
+text = """As you approach the researcher glances up at you with a slightly startled look. <r>'Oh my, a visitor! I'm sorry, I must've been so absorbed in my work that I didn't see you come in. These ruins are fascinating, aren't they?'<r>. They scuttle down the wall to converse on ground level:  <r>'My working hypothesis is that they were built as a place of worship by an ancient civilisation thousands of years ago. The stonework in the undamaged sections is so precise, their tools must have been far more advanced than any we can produce today!'<r>"""
 
   [[context_items.choices]]
-  text = "‘Uh.. I’ll think about it’"
-  goto_context = "researcher_questaccept"
+  text = "Continue"
+  goto_context = "researcher_questgive2"
+
+[[context_items]]
+name = "researcher_questgive2"
+text = """<r>'…Ah, '<r> the researcher pauses for a moment, looking a little embarassed, <r>'but I've gotten ahead of myself. My research has hit a proverbial and literal brick wall recently, so without any more hard data my theories are running a little wild. Say, now that I get a better look at you, those are alchemist's tools, right?'<r>"""
+ [[context_items.choices]]
+  text = "Confirm their theory"
+  goto_context = "researcher_questgive3"
+
+
+[[context_items]]
+name = "researcher_questgive3"
+text = """I can't explore further until I can breach this wall beside me. I believe those who once lived here once practised alchemy themselves! I've written some notes on their work from what I found elsewhere in these ruins, but it's probably better to see the real thing right? If you can help me out I'll let you take any hidden alchemical knowledge that you find inside. Or, uh... copy them, since handing out ancient texts probably doesn't make for great archeology! And lest you worry, this wall isn't part of the original structure, my guess is that it's barely a hundred years old… But that is all to say, would you lend me a hand?'<r>"""
+[[context_items.choices]]
+text = "'Sure!'"
+goto_context = "researcher_questaccept"
+MarkQuest = "Started"
 
 
 [[context_items]]
 name = "researcher_questaccept"
-text = "<r>’Thank you! Take your time, I still have some texts to decipher for now. Just bring it by once it’s ready.<r>’"
-  [[context_items.choices]]
-  text = "Return"
-  goto_context = "enter_accepted"
+text = "<r>'Thank you! Take your time, I still have some texts to decipher for now. Just bring it by once it's ready.<r>'"
+[[context_items.choices]]
+text = "Throw the Boom in a Bottle at the wall... carefully."
+goto_context = "ruins_questcomp1"
+[context_items.choices.requires]
+alt_text= "(I need something to blast open this wall)"
+req_items= ["BoomBottle"]
+MarkQuest = "Complete"
+AddItem = "AncientNotes"
+
+[[context_items.choices.execute]]
+[[context_items.choices]]
+  text = "Skip the wall and just swipe the researcher's notes"
+  goto_context = "ruins_questskip"
+MarkQuest = "Complete"
+AddItem = "ModernNotes"
+[[context_items.choices]]
+  text = "Back"
+  goto_context = "ruins2"
 
 [[context_items]]
-name = "ruins_wall"
-text = "You approach the wall. The stone relief appears to be depicting an object of worship, although it’s too damaged to make out more than a roughly circular shape. Bursting from a crack in the stone foundation, a curious vine has climbed its way up the wall and small pinpricks of light within the plant’s flowers illuminate the surrounding area in a soft light"
-  [[context_items.choices]]
-  text = "Take a few of the flowers"
-  goto_context = "pickup_heliopals"
-  [[context_items.choices.execute]]
-  AddItem="Heliopal"
+name = "stopsand"
+text = "You follow the sunbeam's path from the roof to the floor where it hits a thin trickle of sand pouring down from the stones above... Or not? The sand isn't actually moving and is instead suspended motionless within the air"
+
+[[context_items.choices]]
+text = "Take some Stopsand"
+goto_context = "ruins2"
+
+[[context_items.choices.execute]]
+[[context_items.choices]]
+text = "Back"
+goto_context = "ruins2"
+
+[[context_items.choices.execute]]
+
+
 
 [[context_items]]
-name = "pickup_heliopals"
-text = "You carefully remove a few of the flowers and stow them away"
-  [[context_items.choices]]
-  text = "Return"
-  goto_context = "enter_first"
+name = "lumino"
+text = "In the darkened corner you find a few crystalline objects scattered about. As you inspect them more closely you see that they actually seem seem to dim the surrounding light, together causing the unnatural shadow."
+
+[[context_items.choices]]
+text = "Take the Truant Lumino"
+goto_context = "ruins2"
+
+[[context_items.choices.execute]]
+[[context_items.choices]]
+text = "Back"
+goto_context = "ruins2"
+
+[[context_items.choices.execute]]
