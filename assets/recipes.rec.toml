@@ -5,7 +5,7 @@ input_aspects = ["Nature", "Water"]
 
 [[recipes]]
 name = "snoozetown"
-output = "SleepGas"
+output = "SleepCloud"
 input_aspects = ["Magic", "Light", "Dark"]
 
 [[recipes]]

@@ -58,7 +58,6 @@ impl Plugin for JamPlugin {
         app.add_systems(Startup, spawn_camera)
             .add_systems(OnEnter(AppState::InGame), spawn_ui_overlay);
 
-        #[cfg(feature = "dev")]
         app.add_systems(Startup, debug_start_game);
     }
 }

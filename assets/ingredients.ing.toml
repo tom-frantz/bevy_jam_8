@@ -1,86 +1,85 @@
-```toml
 [[ingredients]]
 name="Struby"
 description="TODO"
-[[ingredients.aspects]]
+[ingredients.aspects]
 primary=["Fire", 1]
 # secondary=["TODO", 1]
 
 [[ingredients]]
 name="CrystalWater"
 description="TODO"
-[[ingredients.aspects]]
+[ingredients.aspects]
 primary=["Water", 1]
 secondary=["Magic", 1]
 
 [[ingredients]]
 name="FrogSlime"
 description="TODO"
-[[ingredients.aspects]]
+[ingredients.aspects]
 primary=["Nature", 1]
 # secondary=["TODO", 1]
 
 [[ingredients]]
 name="AngryMushrooms"
 description="TODO"
-[[ingredients.aspects]]
+[ingredients.aspects]
 primary=["Energy", 1]
 secondary=["Nature", 1]
 
 [[ingredients]]
 name="SleepCloud"
 description="TODO"
-[[ingredients.aspects]]
+[ingredients.aspects]
 primary=["Inert", 1]
 secondary=["Air", 1]
 
 [[ingredients]]
 name="WillOWisps"
 description="TODO"
-[[ingredients.aspects]]
+[ingredients.aspects]
 primary=["Light", 1]
 secondary=["Magic", 1]
 
 [[ingredients]]
 name="TreeMedicine"
 description="TODO"
-[[ingredients.aspects]]
+[ingredients.aspects]
 primary=["Nature", 1]
 secondary=["Water", 1]
 
 [[ingredients]]
 name="IgnisAster"
 description="TODO"
-[[ingredients.aspects]]
+[ingredients.aspects]
 primary=["Light", 1]
 secondary=["Nature", 1]
 
 [[ingredients]]
 name="CloudCandy"
 description="TODO"
-[[ingredients.aspects]]
+[ingredients.aspects]
 primary=["Air", 1]
 secondary=["Water", 1]
 
 [[ingredients]]
 name="LuminoTruant"
 description="TODO"
-[[ingredients.aspects]]
+[ingredients.aspects]
 primary=["Dark", 1]
 # secondary=["TODO", 1]
 
 # Craftables
-# [[ingredients]]
+[[ingredients]]
 name="StopSand"
 description="TODO"
-[[ingredients.aspects]]
+[ingredients.aspects]
 primary=["Inert", 1]
 # secondary=["TODO", 1]
 
 [[ingredients]]
 name="MagicLens"
 description="TODO"
-[[ingredients.aspects]]
+[ingredients.aspects]
 primary=["Magic", 1]
 secondary=["Light", 1]
 tertiary=["Dark", 1]
@@ -88,7 +87,7 @@ tertiary=["Dark", 1]
 [[ingredients]]
 name="BoomBottle"
 description="TODO"
-[[ingredients.aspects]]
+[ingredients.aspects]
 primary=["Fire", 1]
 # secondary=["Energy", 1]
 
@@ -97,14 +96,14 @@ primary=["Fire", 1]
 [[ingredients]]
 name="WorldTreeBlood"
 description="TODO"
-[[ingredients.aspects]]
+[ingredients.aspects]
 primary=["Magic", 1]
 # secondary=["TODO", 1]
 
 [[ingredients]]
 name="TaintedWorldTreeBlood"
 description="TODO"
-[[ingredients.aspects]]
+[ingredients.aspects]
 primary=["Magic", 1]
 # secondary=["TODO", 1]
 
@@ -112,14 +111,14 @@ primary=["Magic", 1]
 [[ingredients]]
 name="LastBreathOfInnocent"
 description="TODO"
-[[ingredients.aspects]]
+[ingredients.aspects]
 primary=["Magic", 1]
 # secondary=["TODO", 1]
 
 [[ingredients]]
 name="BillowOfAFreeSpirit"
 description="TODO"
-[[ingredients.aspects]]
+[ingredients.aspects]
 primary=["Magic", 1]
 # secondary=["TODO", 1]
 
@@ -127,14 +126,14 @@ primary=["Magic", 1]
 [[ingredients]]
 name="CrystallisedEffort"
 description="TODO"
-[[ingredients.aspects]]
+[ingredients.aspects]
 primary=["Magic", 1]
 # secondary=["TODO", 1]
 
 [[ingredients]]
 name="FastJuice"
 description="TODO"
-[[ingredients.aspects]]
+[ingredients.aspects]
 primary=["Energy", 1]
 secondary=["Magic", 1]
 
@@ -142,15 +141,14 @@ secondary=["Magic", 1]
 [[ingredients]]
 name="AncientNotes"
 description="TODO"
-[[ingredients.aspects]]
+[ingredients.aspects]
 primary=["Magic", 1]
 # secondary=["TODO", 1]
 
 [[ingredients]]
 name="ModernNotes"
 description="TODO"
-[[ingredients.aspects]]
+[ingredients.aspects]
 primary=["Magic", 1]
 # secondary=["TODO", 1]
 
-```

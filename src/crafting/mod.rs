@@ -5,7 +5,7 @@ use std::{
 
 use bevy::{
     app::{Plugin, Startup},
-    asset::{AssetApp, AssetServer, Handle, LoadedFolder},
+    asset::{AssetApp, AssetServer, Assets, Handle, LoadedFolder},
     color::palettes::css,
     ecs::{
         component::Component,
@@ -46,7 +46,9 @@ use serde::Deserialize;
 
 use crate::{
     InGameScreen,
-    crafting::assets::{IngredientAssetLoader, Ingredients, Recipe, RecipeAssetLoader, Recipes},
+    crafting::assets::{
+        Ingredient, IngredientAssetLoader, Ingredients, Recipe, RecipeAssetLoader, Recipes,
+    },
     draggable::Draggable,
     drawing::DrawingPath,
     tracked_ui_node::TransformPropogatedUiNode,
@@ -135,7 +137,7 @@ pub enum Item {
     Heliopal,
     StopSand,
     // Craftables
-    SleepGas,
+    SleepCloud,
     TreeMedicine,
     MagicLens,
     BoomBottle,
@@ -178,7 +180,7 @@ impl Display for Item {
             LuminoTruant => "Lumino Truant",
             Mushroom => todo!(),
             StopSand => "Stop Sand",
-            SleepGas => "Sleep Cloud",
+            SleepCloud => "Sleep Cloud",
             MagicLens => "Magic Lens",
             BoomBottle => "Boom Bottle",
             AncientNotes => todo!(),
@@ -211,7 +213,7 @@ impl Item {
             LuminoTruant => (Vec2::new(262., 244.), "lumino_truant.png"),
             Mushroom => todo!(),
             StopSand => (Vec2::new(230., 464.), "stop_sand.png"),
-            SleepGas => (Vec2::new(294., 567.), "sleep_gas.png"),
+            SleepCloud => (Vec2::new(294., 567.), "sleep_gas.png"),
             MagicLens => (Vec2::new(476., 681.), "magic_lens.png"),
             BoomBottle => (Vec2::new(563., 421.), "boom_bottle.png"),
             AncientNotes => todo!(),
@@ -257,6 +259,21 @@ pub struct ItemAspect {
     pub primary: AspectValue,
     pub secondary: Option<AspectValue>,
     pub tertiary: Option<AspectValue>,
+}
+
+impl ItemAspect {
+    pub fn aspects_in_order(&self) -> Vec<Aspects> {
+        let mut aspects = vec![
+            Some(self.primary.clone()),
+            self.secondary.clone(),
+            self.tertiary.clone(),
+        ];
+        aspects
+            .into_iter()
+            .filter(Option::is_some)
+            .map(|item| item.unwrap().0)
+            .collect()
+    }
 }
 
 /// What item, with what aspects, and how much of it is available.
@@ -367,8 +384,33 @@ impl CraftingState {
         }
     }
 
-    pub fn try_craft(&self) -> Result<Self, ()> {
+    pub fn try_craft(
+        &self,
+        recipes: Vec<Recipe>,
+        ingredients: Vec<Ingredient>,
+    ) -> Result<Item, ()> {
         dbg!(self);
+        let Self::Refine(refine_state) = self else {
+            panic!("gosh");
+        };
+
+        for recipe in recipes.iter() {
+            let ingredients_present = refine_state
+                .items
+                .iter()
+                .map(|item| {
+                    ingredients
+                        .iter()
+                        .find(|ing| ing.name == *item)
+                        .unwrap()
+                        .clone()
+                })
+                .collect::<Vec<Ingredient>>();
+
+            if recipe.test_for_ingredients(ingredients_present) {
+                // craft it
+            }
+        }
         Err(())
     }
 }
@@ -407,13 +449,23 @@ fn load_crafting_assets(asset_server: ResMut<AssetServer>, mut commands: Command
 }
 
 /// When moving to the crafting screen, run this system once to setup everything.
-fn enter_crafting_screen(mut commands: Commands) {
+fn enter_crafting_screen(mut commands: Commands, inventory: Query<&InventoryItem>) {
+    let inv_items: Vec<_> = inventory
+        .iter()
+        .flat_map(|inv_item| {
+            let mut items = Vec::new();
+            for _ in 0..inv_item.amount {
+                items.push(inv_item.item);
+            }
+            items
+        })
+        .map(|item| {
+            bsn! {@ingredient_scene(item)}
+        })
+        .collect();
+
     commands.spawn_scene_list(bsn_list! {
-        @ingredient_scene(Item::Struby)
-        --
-        @ingredient_scene(Item::CrystalWater)
-        --
-        @ingredient_scene(Item::FastJuice)
+        {inv_items}
         --
         @book_scene()
         // --
@@ -654,7 +706,7 @@ fn ingredient_scene(item: Item) -> impl Scene {
     let item_sprite = item.sprite();
     bsn! {
         Transform {
-            translation: Vec3::new(0.0, 0.0, 10.0)
+            translation: Vec3::new(200.0, 0.0, 10.0)
         }
         @Draggable
         @item_sprite
@@ -669,6 +721,7 @@ fn philosophers_stone_scene(catalyst: Catalysts) -> impl Scene {
     bsn! {
         // @Draggable
         @sprite
+        Transform::from_translation(Vec3::new(-200., 0., 0.))
         Pickable
         on(on_philosophers_start_drag)
         on(on_philosophers_end_drag_successful)
@@ -723,12 +776,35 @@ fn on_ingredient_drag_through(
 fn on_philosophers_end_drag_successful(
     _event: On<PointerDragDrop>,
     crafting_state: Res<State<CraftingState>>,
+    recipes: Res<Assets<Recipes>>,
+    ingredients: Res<Assets<Ingredients>>,
+    mut commands: Commands,
 ) {
     info!("on_philosophers_end_drag_successful");
-    let crafting = crafting_state.try_craft();
-    let Ok(crafting) = crafting else {
+    let item_result = crafting_state.try_craft(
+        recipes
+            .iter()
+            .next()
+            .expect("Recipes should be loaded")
+            .1
+            .recipes
+            .clone(),
+        ingredients
+            .iter()
+            .next()
+            .expect("Ingredients should be loaded")
+            .1
+            .ingredients
+            .clone(),
+    );
+    let Ok(item) = item_result else {
         return;
     };
+    let new_inv_item = InventoryItem {
+        amount: 1,
+        item: item.clone(),
+    };
+    commands.spawn_empty().insert(new_inv_item);
 }
 
 /// Called after `on_philosophers_end_drag_successful`, regardless of it it reaches back to the right spot

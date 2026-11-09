@@ -11,26 +11,47 @@ use crate::{
 
 #[derive(Debug, Clone, Asset, TypePath, Deserialize)]
 pub struct Ingredients {
-    ingredients: Vec<Ingredient>,
+    pub ingredients: Vec<Ingredient>,
 }
 
 #[derive(Debug, Clone, Asset, TypePath, Deserialize)]
 pub struct Recipes {
-    recipes: Vec<Recipe>,
+    pub recipes: Vec<Recipe>,
 }
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct Ingredient {
-    name: String,
-    description: String,
-    aspects: ItemAspect,
+    pub name: Item,
+    pub description: String,
+    pub aspects: ItemAspect,
 }
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct Recipe {
-    name: String,
-    input_aspects: Vec<Aspects>,
-    output: Item,
+    pub name: String,
+    pub input_aspects: Vec<Aspects>,
+    pub output: Item,
+}
+
+impl Recipe {
+    /// Tests by checking if each and every aspect in the recipe is met by some
+    /// ingredient. Each ingredient can only do one thing. Checks primary first,
+    /// and doesn't check next aspects if already met. If an earlier item meets
+    /// the item's primary aspect, then it checks the secondary, etc.
+    pub fn test_for_ingredients(&self, ingredients: Vec<Ingredient>) -> bool {
+        let mut aspects_remaining = self.input_aspects.clone();
+
+        for ingredient in ingredients {
+            for aspect in ingredient.aspects.aspects_in_order() {
+                if let Some(index) = aspects_remaining.iter().position(|item| *item == aspect) {
+                    aspects_remaining.remove(index);
+                }
+            }
+        }
+
+        // Checks that everything has been satisfied if nothing remains
+        aspects_remaining.is_empty()
+    }
 }
 
 #[derive(Default, TypePath)]

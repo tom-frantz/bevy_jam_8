@@ -2,9 +2,9 @@
 
 PROJECT_NAME="philosophers-grave";
 
-[ -d ".cargo/bin/wasm-bindgen" ] || echo "wasm-bindgen not found" && exit 1
-[ -d ".cargo/bin/wasm-opt"] || echo "wasm-opt not found" && exit 1 
-which butler || echo "butler not found" && exit 1
+# [ -d ".cargo/bin/wasm-bindgen" ] || echo "wasm-bindgen not found" && exit 1
+# [ -d ".cargo/bin/wasm-opt"] || echo "wasm-opt not found" && exit 1 
+# which butler || echo "butler not found" && exit 1
 
 
 bevy build --release web --bundle
