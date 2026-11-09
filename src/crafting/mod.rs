@@ -46,7 +46,7 @@ use serde::Deserialize;
 
 use crate::{
     InGameScreen,
-    crafting::assets::{IngredientAssetLoader, Ingredients, Recipe},
+    crafting::assets::{IngredientAssetLoader, Ingredients, Recipe, RecipeAssetLoader, Recipes},
     draggable::Draggable,
     drawing::DrawingPath,
     tracked_ui_node::TransformPropogatedUiNode,
@@ -59,9 +59,9 @@ pub struct CraftingPlugin;
 impl Plugin for CraftingPlugin {
     fn build(&self, app: &mut bevy::app::App) {
         app.init_asset::<Ingredients>()
-            .init_asset::<Recipe>()
+            .init_asset::<Recipes>()
             .init_asset_loader::<IngredientAssetLoader>()
-            .init_asset_loader::<IngredientAssetLoader>()
+            .init_asset_loader::<RecipeAssetLoader>()
             .add_systems(Startup, load_crafting_assets);
 
         #[cfg(feature = "dev")]
@@ -113,7 +113,7 @@ fn load_debug_ingredients(mut commands: Commands) {
 #[derive(Resource, Debug)]
 pub struct IngredientsAsset(#[allow(unused)] Handle<Ingredients>);
 #[derive(Resource, Debug)]
-pub struct RecipeAssets(#[allow(unused)] Handle<LoadedFolder>);
+pub struct RecipeAssets(#[allow(unused)] Handle<Recipes>);
 
 //
 // INGREDIENT ZONE
@@ -127,17 +127,16 @@ pub enum Item {
     CrystalWater,
     FrogSlime,
     AngryMushrooms,
-    SleepJuice,
     WillOWisps,
-    TreeMedicine,
     IgnisAster,
     CloudCandy,
     LuminoTruant,
     Mushroom, // Remove this in favour of angry mushroom?
     Heliopal,
-    // Craftables
     StopSand,
+    // Craftables
     SleepGas,
+    TreeMedicine,
     MagicLens,
     BoomBottle,
     // Rewards / Punishments
@@ -169,7 +168,6 @@ impl Display for Item {
             TaintedWorldTreeBlood => "Tainted World Tree Blood",
             AngryMushrooms => "Angry Mushrooms",
             FastJuice => "Fast Juice",
-            SleepJuice => "Sleep Juice",
             LastBreathOfInnocent => "Last Breath Of Innocent",
             BillowOfAFreeSpirit => "Billow Of A Free Spirit",
             WillOWisps => "Will o' Wisps",
@@ -180,7 +178,7 @@ impl Display for Item {
             LuminoTruant => "Lumino Truant",
             Mushroom => todo!(),
             StopSand => "Stop Sand",
-            SleepGas => "Sleep Gas",
+            SleepGas => "Sleep Cloud",
             MagicLens => "Magic Lens",
             BoomBottle => "Boom Bottle",
             AncientNotes => todo!(),
@@ -203,7 +201,6 @@ impl Item {
             TaintedWorldTreeBlood => (Vec2::new(268., 326.), "world_tree_lifeblood_bad.png"),
             AngryMushrooms => todo!(),
             FastJuice => (Vec2::new(193., 269.), "fast_juice.png"),
-            SleepJuice => (Vec2::new(299., 331.), "sleep_juice.png"),
             LastBreathOfInnocent => (Vec2::new(169., 246.), "crab_breath_bad.png"),
             BillowOfAFreeSpirit => (Vec2::new(371., 363.), "crab_breath_good.png"),
             WillOWisps => todo!(),
@@ -290,10 +287,10 @@ pub enum Catalysts {
 impl Catalysts {
     pub fn sprite(&self) -> impl Scene {
         let asset_path = match self {
-            Catalysts::None => "philosophers_stone.png",
-            Catalysts::Refine => "philosophers_stone_earth.png",
-            Catalysts::Combine => "philosophers_stone_water.png",
-            Catalysts::Subtract => "philosophers_stone_fire.png",
+            Catalysts::None => "final_assets/philosophers_stone.png",
+            Catalysts::Refine => "final_assets/philosophers_stone_earth.png",
+            Catalysts::Combine => "final_assets/philosophers_stone_water.png",
+            Catalysts::Subtract => "final_assets/philosophers_stone_fire.png",
         };
 
         bsn! {
@@ -406,7 +403,7 @@ impl Default for CraftingState {
 
 fn load_crafting_assets(asset_server: ResMut<AssetServer>, mut commands: Commands) {
     commands.insert_resource(IngredientsAsset(asset_server.load("ingredients.ing.toml")));
-    commands.insert_resource(RecipeAssets(asset_server.load_folder("recipes")));
+    commands.insert_resource(RecipeAssets(asset_server.load("recipes.rec.toml")));
 }
 
 /// When moving to the crafting screen, run this system once to setup everything.
@@ -461,7 +458,7 @@ const BOTTOM_RIGHT_PAGE: Vec3 = Vec3::new(RIGHT_PAGE_X_OFFSET, MID_PAGE_Y_OFFSET
 fn book_scene() -> impl Scene {
     bsn! {
         @Draggable
-        Sprite { image: "book-68.png"}
+        Sprite { image: "book-68.png", }
         Transform {
             translation: Vec3::new(0., 0., -10.0)
         }
@@ -690,9 +687,13 @@ fn on_philosophers_start_drag(
     _event: On<PointerDragStart>,
     mut commands: Commands,
     crafting_state: Res<State<CraftingState>>,
+    ingredients: Query<Entity, With<AddedToCrafting>>,
     mut next_state: ResMut<NextState<CraftingState>>,
 ) {
     info!("on_philosophers_start_drag");
+    for entity in &ingredients {
+        commands.entity(entity).remove::<AddedToCrafting>();
+    }
     next_state.set(crafting_state.reset_crafting_state());
     commands.insert_resource(DrawingPath::new());
 }

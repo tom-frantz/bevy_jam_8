@@ -6,12 +6,17 @@ use serde::Deserialize;
 
 use crate::{
     asset_helpers::DeError,
-    crafting::{CraftingState, ItemAspect},
+    crafting::{Aspects, CraftingState, Item, ItemAspect},
 };
 
 #[derive(Debug, Clone, Asset, TypePath, Deserialize)]
 pub struct Ingredients {
     ingredients: Vec<Ingredient>,
+}
+
+#[derive(Debug, Clone, Asset, TypePath, Deserialize)]
+pub struct Recipes {
+    recipes: Vec<Recipe>,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -21,10 +26,11 @@ pub struct Ingredient {
     aspects: ItemAspect,
 }
 
-#[derive(Debug, Clone, Asset, TypePath, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct Recipe {
     name: String,
-    crafting_state: CraftingState,
+    inputs_aspects: Vec<Aspects>,
+    output: Item,
 }
 
 #[derive(Default, TypePath)]
@@ -56,7 +62,7 @@ impl AssetLoader for IngredientAssetLoader {
 }
 
 impl AssetLoader for RecipeAssetLoader {
-    type Asset = Recipe;
+    type Asset = Recipes;
     type Settings = ();
     type Error = DeError;
 
@@ -69,7 +75,7 @@ impl AssetLoader for RecipeAssetLoader {
         let mut bytes = Vec::new();
         reader.read_to_end(&mut bytes).await?;
 
-        let rec: Recipe = toml::from_slice(&bytes)?;
+        let rec: Recipes = toml::from_slice(&bytes)?;
         Ok(rec)
     }
 

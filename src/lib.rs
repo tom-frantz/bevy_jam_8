@@ -112,7 +112,7 @@ fn spawn_ui_overlay(mut commands: Commands) {
         Pickable::IGNORE
         Children [
             ImageNode {
-                image: "philosophers_stone.png"
+                image: "final_assets/philosophers_stone.png"
             }
             Node {
                 max_width: Val::Px(100.)

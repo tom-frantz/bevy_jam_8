@@ -1,33 +1,182 @@
 [[ingredients]]
-name="Struberry"
-description="A gemlike strawberry that glimmers with the fire of a ruby"
-[ingredients.aspects]
-primary=["Fire", 3]
-# secondary=["Water", 1]
-# tertiary=["Air", 1]
+name="Struby"
+description="TODO"
+[[ingredients.aspects]]
+primary=["TODO", 1]
+# secondary=["TODO", 1]
 
 [[ingredients]]
 name="CrystalWater"
 description="TODO"
-[ingredients.aspects]
-primary=["Water", 1]
-# secondary=["Fire", 1]
+[[ingredients.aspects]]
+primary=["TODO", 1]
+# secondary=["TODO", 1]
 
 [[ingredients]]
 name="FrogSlime"
-description="The goop and gunk of the back and belly of the cutest frogs around"
-[ingredients.aspects]
-primary=["Water", 1]
+description="TODO"
+[[ingredients.aspects]]
+primary=["TODO", 1]
+# secondary=["TODO", 1]
 
 [[ingredients]]
+name="AngryMushrooms"
+description="TODO"
+[[ingredients.aspects]]
+primary=["TODO", 1]
+# secondary=["TODO", 1]
+
+[[ingredients]]
+name="SleepJuice"
+description="TODO"
+[[ingredients.aspects]]
+primary=["TODO", 1]
+# secondary=["TODO", 1]
+
+[[ingredients]]
+name="WillOWisps"
+description="TODO"
+[[ingredients.aspects]]
+primary=["TODO", 1]
+# secondary=["TODO", 1]
+
+[[ingredients]]
+name="TreeMedicine"
+description="TODO"
+[[ingredients.aspects]]
+primary=["TODO", 1]
+# secondary=["TODO", 1]
+
+[[ingredients]]
+name="IgnisAster"
+description="TODO"
+[[ingredients.aspects]]
+primary=["TODO", 1]
+# secondary=["TODO", 1]
+
+[[ingredients]]
+name="CloudCandy"
+description="TODO"
+[[ingredients.aspects]]
+primary=["TODO", 1]
+# secondary=["TODO", 1]
+
+[[ingredients]]
+name="LuminoTruant"
+description="TODO"
+[[ingredients.aspects]]
+primary=["TODO", 1]
+# secondary=["TODO", 1]
+
+[[ingredients]]  # TODO maybe just remove this.
+name="Mushroom"
+description="TODO"
+[[ingredients.aspects]]
+primary=["TODO", 1]
+# secondary=["TODO", 1]
+
+[[ingredeints]]
+name="Heliopal"
+description="TODO"
+[[ingredients.aspects]]
+primary=["TODO", 1]
+# secondary=["TODO", 1]
+
+# Craftables
+# [[ingredients]]
+name="StopSand"
+description="TODO"
+[[ingredients.aspects]]
+primary=["TODO", 1]
+# secondary=["TODO", 1]
+
+[[ingredients]]
+name="SleepGas"
+description="TODO"
+[[ingredients.aspects]]
+primary=["TODO", 1]
+# secondary=["TODO", 1]
+
+[[ingredients]]
+name="MagicLens"
+description="TODO"
+[[ingredients.aspects]]
+primary=["TODO", 1]
+# secondary=["TODO", 1]
+
+[[ingredients]]
+name="BoomBottle"
+description="TODO"
+[[ingredients.aspects]]
+primary=["TODO", 1]
+# secondary=["TODO", 1]
+
+# Rewards / Punishments
+# World tree
+[[ingredients]]
 name="WorldTreeBlood"
-description="Glowing sap, fuelled by all things living on the world"
-[ingredients.aspects]
-primary=["Water", 1]
+description="TODO"
+[[ingredients.aspects]]
+primary=["TODO", 1]
+# secondary=["TODO", 1]
 
 [[ingredients]]
 name="TaintedWorldTreeBlood"
-description="Glowing sap, with something twisted curling around"
-[ingredients.aspects]
-primary=["Water", 1]
+description="TODO"
+[[ingredients.aspects]]
+primary=["TODO", 1]
+# secondary=["TODO", 1]
+
+# Moon
+[[ingredients]]
+name="LastBreathOfInnocent"
+description="TODO"
+[[ingredients.aspects]]
+primary=["TODO", 1]
+# secondary=["TODO", 1]
+
+[[ingredients]]
+name="BillowOfAFreeSpirit"
+description="TODO"
+[[ingredients.aspects]]
+primary=["TODO", 1]
+# secondary=["TODO", 1]
+
+# Mushroom Party
+[[ingredients]]
+name="CrystallisedEffort"
+description="TODO"
+[[ingredients.aspects]]
+primary=["TODO", 1]
+# secondary=["TODO", 1]
+
+[[ingredients]]
+name="FastJuice"
+description="TODO"
+[[ingredients.aspects]]
+primary=["TODO", 1]
+# secondary=["TODO", 1]
+
+# Ruins
+[[ingredients]]
+name="AncientNotes"
+description="TODO"
+[[ingredients.aspects]]
+primary=["TODO", 1]
+# secondary=["TODO", 1]
+
+[[ingredients]]
+name="ModernNotes"
+description="TODO"
+[[ingredients.aspects]]
+primary=["TODO", 1]
+# secondary=["TODO", 1]
+
+# Outcomes
+[[ingredients]]
+name="Golem"
+description="TODO"
+[[ingredients.aspects]]
+primary=["TODO", 1]
+# secondary=["TODO", 1]
 

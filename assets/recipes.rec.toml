@@ -1,0 +1,23 @@
+[[recipes]]
+name = "treemed"
+output = "TreeMedicine"
+input_aspects = ["Nature", "Water"]
+
+[[recipes]]
+name = "snoozetown"
+output = "SleepGas"
+input_aspects = ["Magic", "Light", "Dark"]
+
+[[recipes]]
+name = "lens"
+output = "MagicLens"
+input_aspects = ["Inert", "Air"]
+
+[[recipes]]
+name = "boomtown"
+output = "BoomBottle"
+input_aspects = ["Fire", "Energy"]
+
+# [crafting_state.Refine]
+# items = ["Struby", "Struby", "Struby"]
+
