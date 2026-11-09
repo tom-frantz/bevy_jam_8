@@ -45,14 +45,19 @@ mod tests {
     #[test]
     fn encounters_parse() {
         let mut failures = Vec::new();
-        for entry in read_dir(Path::new("assets/encounters")).unwrap() {
-            let path = entry.unwrap().path();
-            if !path.is_file() {
-                continue;
-            }
-            let asset: Result<EncounterRes, _> = toml::from_str(&read_to_string(&path).unwrap());
-            if let Err(err) = asset {
-                failures.push(format!("{}:\n{err}", path.display()));
+        let mut dirs = vec![Path::new("assets/encounters").to_path_buf()];
+        while let Some(dir) = dirs.pop() {
+            for entry in read_dir(&dir).unwrap() {
+                let path = entry.unwrap().path();
+                if path.is_dir() {
+                    dirs.push(path);
+                    continue;
+                }
+                let asset: Result<EncounterRes, _> =
+                    toml::from_str(&read_to_string(&path).unwrap());
+                if let Err(err) = asset {
+                    failures.push(format!("{}:\n{err}", path.display()));
+                }
             }
         }
         assert!(failures.is_empty(), "\n{}", failures.join("\n"));

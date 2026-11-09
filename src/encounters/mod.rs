@@ -161,7 +161,7 @@ struct Encounters {
 
 fn load_assets(mut encounters: ResMut<Encounters>, asset_server: Res<AssetServer>) {
     // load endings
-    encounters.endings = (1..=4)
+    encounters.endings = (0..=4)
         .map(|n| asset_server.load(format!("encounters/endings/ending_{n}.enc.toml")))
         .collect();
 
@@ -246,10 +246,9 @@ impl Encounters {
             .count()
     }
 
-    /// 1 good is ending_1 ... 4 good -> ending_4.
-    /// bit cooked as 0 good and 1 good are the same
+    /// 0 good is ending_0 ... 4 good -> ending_4.
     fn ending_index(&self) -> usize {
-        self.good_count().clamp(1, 4) - 1
+        self.good_count().min(4)
     }
 
     fn get_encounter_by_island_and_quest_progress(

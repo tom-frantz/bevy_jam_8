@@ -91,7 +91,7 @@ MarkQuest = "Started"
 # party_questgive5
 [[context_items]]
 name = "party_questgive5"
-text = "<n>'No can do my little pal, party regulations I'm afraid! Hmmm, but I *did* see you worming up a storm on your way here, so I'll tell you what, if you can beat me in a race around the island I can pause the party for a bit. Or my name isn't Fungi: The Great Edible. But I gotta warn you, '<o> he points his thumb back behind him at a drink can with the branding 'Fast Juice' placed casually within arms reach, <n>'I've been chugging that Fast Juice for a few days now so I don't think I could lose if I wanted to! And at this point?'<n> he laughs hoarsely above the music, <n>'I kind of really want to!<n>"
+text = "<n>'No can do my little pal, party regulations I'm afraid! Hmmm, but I *did* see you worming up a storm on your way here, so I'll tell you what, if you can beat me in a race around the island I can pause the party for a bit. Or my name isn't Fungi: The Great Edible. But I gotta warn you,<n> '<o> he points his thumb back behind him at a drink can with the branding 'Fast Juice' placed casually within arms reach,<o> <n>'I've been chugging that Fast Juice for a few days now so I don't think I could lose if I wanted to! And at this point?'<n> he laughs hoarsely above the music, <n>'I kind of really want to!<n>"
 
 # party_questgive5 choice 1/3 party_race1 requires sleep cloud
 [[context_items.choices]]

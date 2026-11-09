@@ -26,15 +26,14 @@ text = "You carefully set the items down on the grave. <p>'Now, '<p> Doug starts
 
 
 [[context_items.choices]]
-text = "Trace your finger from focus to items and back again
-"
+text = """Trace your finger from focus to items and back again"""
 goto_context = "ending_intro_3"
 
 [[context_items]]
 name = "ending_intro_3"
-text = "The moment you complete the loop a terrible billow of purple energy spews forth from the grave. The loop you traced is fixed in place, seemingly focusing the immense energy as it rises to hover in the air. 
+text = """The moment you complete the loop a terrible billow of purple energy spews forth from the grave. The loop you traced is fixed in place, seemingly focusing the immense energy as it rises to hover in the air. 
 
-<p>'Ha ha ha ha! Oh you've done well my pupil! With this I shall live again to continue my research while those fools who sealed me all those years ago remain long dead! I can feel my essence being made more powerful by the second!<p> Your feet are glued to the floor, leaving you unable to flee. <p>'I'll have you serve me well, but not as my apprentice. I think your living body will make an excellent new home for this old spirit! If you wanted me to keep my promise you should have made me sign a magical contract like I did to that stupid crab!<p>"
+<p>'Ha ha ha ha! Oh you've done well my pupil! With this I shall live again to continue my research while those fools who sealed me all those years ago remain long dead! I can feel my essence being made more powerful by the second!<p> Your feet are glued to the floor, leaving you unable to flee. <p>'I'll have you serve me well, but not as my apprentice. I think your living body will make an excellent new home for this old spirit! If you wanted me to keep my promise you should have made me sign a magical contract like I did to that stupid crab!<p>"""
 
 
 [[context_items.choices]]
@@ -53,11 +52,11 @@ goto_context = "bad1"
 
 [[context_items]]
 name = "bad1"
-text = "You awake in the cabin where the near-solid form of what Doug Skullery must have looked like in life is standing. 
+text = """You awake in the cabin where the near-solid form of what Doug Skullery must have looked like in life is standing. 
 
 <p>'The ritual was a success, but required a bit too much of my own energy to maintain to be permanent. Still, it was long enough to have you sign this'<p> Doug Skullery holds up a piece of paper that reminds you of Ferris' magical contract. 
 
-<p>'You may not be my apprentice or my new body, but you'll make a competent assistant I think'<p>"
+<p>'You may not be my apprentice or my new body, but you'll make a competent assistant I think'<p>"""
 
 [[context_items.choices]]
 text = "Game Over"

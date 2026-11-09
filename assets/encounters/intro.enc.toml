@@ -64,9 +64,9 @@ goto_context = "intro6"
 
 [[context_items]]
 name = "intro6"
-text = "<p>'All alchemical crafting works by extracting the underlying <p><o>aspects<o><p> of alchemically potent objects and recombining them to form new creations in one fell swoop. We perform this operation using a <p><o>philosopher's stone<p><o> as a focus.'<p>
+text = """<p>'All alchemical crafting works by extracting the underlying <p><o>aspects<o><p> of alchemically potent objects and recombining them to form new creations in one fell swoop. We perform this operation using a <p><o>philosopher's stone<p><o> as a focus.'<p>
 
-<p>'The first step is to select your <p><o>ingredients<o><p>, the types of things you can find just scattered about the world, and lay them out around the focus. Next, trace a line from the philosopher's stone through each ingredient and then back into itself to close the arcane loop. The order of your ingredients doesn't matter. Depending on the number and aspects of ingredients, you can create powerful tools to help you.'<p>"
+<p>'The first step is to select your <p><o>ingredients<o><p>, the types of things you can find just scattered about the world, and lay them out around the focus. Next, trace a line from the philosopher's stone through each ingredient and then back into itself to close the arcane loop. The order of your ingredients doesn't matter. Depending on the number and aspects of ingredients, you can create powerful tools to help you.'<p>"""
 
 
 [[context_items.choices]]
@@ -77,7 +77,7 @@ goto_context = "intro7"
 # intro1
 [[context_items]]
 name = "intro7"
-text = "<p>'There are nine aspects, each with their own properties.'<p>
+text = """<p>'There are nine aspects, each with their own properties.'<p>
 
 Fire: the aspect of heat and burning
 Water: the aspect of liquidity
@@ -87,7 +87,7 @@ Energy: the aspect of motion and potential
 Inert: the aspect of passivity and stillness
 Light: the aspect of light and vision
 Dark: the aspect of that which is hidden
-Magic: the aspect of the arcane"
+Magic: the aspect of the arcane"""
 
 
 [[context_items.choices]]
