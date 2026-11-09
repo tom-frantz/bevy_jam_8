@@ -1,4 +1,4 @@
-name = "Mushroom Forest"
+name = "Moon"
 
 
 # arrival
@@ -10,6 +10,12 @@ text = "As you rise upward above even the highest clouds, the boundless blue of 
 [[context_items.choices]]
 text = "Get a better look of the surroundings"
 goto_context = "house1"
+
+# arrival choice 2
+[[context_items.choices]]
+text = "Leave"
+[[context_items.choices.execute]]
+Leave = {}
 
 [[context_items]]
 name = "arrival2"
@@ -33,7 +39,8 @@ goto_context = "cloud"
 # arrival choice 3
 [[context_items.choices]]
 text = "Leave"
-goto_context = "map"
+[[context_items.choices.execute]]
+Leave = {}
 
 # house1
 [[context_items]]
@@ -130,7 +137,7 @@ goto_context = "moon_questcomplete"
 alt_text= "(I need some way to read the invisible ink...)"
 req_items= ["MagicLens"]
 [[context_items.choices.execute]]
-MarkQuest="Complete"
+MarkQuest="GoodComplete"
 
 # crab_contract choice 1
 [[context_items.choices]]
@@ -139,11 +146,12 @@ goto_context = "moon_questskip"
 [[context_items.choices.execute]]
 AddItem="LastBreathOfInnocent"
 [[context_items.choices.execute]]
-MarkQuest="Complete"
+MarkQuest="BadComplete"
 
 # crab_contract choice 2
 [[context_items.choices]]
 text = "Leave"
+[[context_items.choices.execute]]
 Leave = {}
 
 # 
