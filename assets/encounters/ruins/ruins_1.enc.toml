@@ -71,6 +71,7 @@ text = """I can't explore further until I can breach this wall beside me. I beli
 [[context_items.choices]]
 text = "'Sure!'"
 goto_context = "researcher_questaccept"
+[[context_items.choices.execute]]
 MarkQuest = "Started"
 
 
@@ -79,25 +80,25 @@ name = "researcher_questaccept"
 text = "<r>'Thank you! Take your time, I still have some texts to decipher for now. Just bring it by once it's ready.<r>'"
 [[context_items.choices]]
 text = "Throw the Boom in a Bottle at the wall... carefully."
-goto_context = "ruins_questcomp1"
+goto_context = "ruins_questcomplete"
 [context_items.choices.requires]
 alt_text= "(I need something to blast open this wall)"
 req_items= ["BoomBottle"]
 [[context_items.choices.execute]]
-MarkQuest = "Complete"
+MarkQuest = "GoodComplete"
 [[context_items.choices.execute]]
 AddItem = "AncientNotes"
 
 [[context_items.choices]]
-  text = "Skip the wall and just swipe the researcher's notes"
+  text = "Skip breaking the wall and just swipe the researcher's notes"
   goto_context = "ruins_questskip"
 [[context_items.choices.execute]]
-MarkQuest = "Complete"
+MarkQuest = "BadComplete"
 [[context_items.choices.execute]]
 AddItem = "ModernNotes"
 [[context_items.choices]]
-  text = "Back"
-  goto_context = "ruins2"
+text = "Back"
+goto_context = "ruins2"
 
 [[context_items]]
 name = "stopsand"
@@ -124,4 +125,24 @@ goto_context = "ruins2"
 [[context_items.choices]]
 text = "Back"
 goto_context = "ruins2"
+
+
+[[context_items]]
+name = "ruins_questcomplete"
+text = "You hurl the Boom in a Bottle at the center of the modern brick wall. It shatters and immediately explodes with a loud... well, honestly more of a pop. It seems the blast was just large enough to open a roughly alchemist-and-spider-researcher-sized hole without damaging any of the surroundings. Inside you see a carved mural that depicts some alchemical process. <r>'Thankyou! You have no idea how much this means to me!'<r> is all the researcher manages before getting totally absorbed in this portion of the ruin"
+
+[[context_items.choices]]
+text = "Copy notes from the mural and leave the researcher to their work"
+[[context_items.choices.execute]]
+Leave = {}
+
+
+[[context_items]]
+name = "ruins_questcomplete"
+text = "Who needs ancient knowledge when there's more modern info sitting right there? You wait for the researcher to go examine a section of the room before you slyly pocket one of their tomes, having to yank it free from the web. You hope they don't notice."
+
+[[context_items.choices]]
+text = "Quickly make your way back outside"
+[[context_items.choices.execute]]
+Leave = {}
 

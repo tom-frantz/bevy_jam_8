@@ -54,6 +54,7 @@ text = "<g>'An alchemist you say?'<g> The World Tree looks at you with some surp
 [[context_items.choices]]
 text = "'An alchemist did that to you?'"
 goto_context = "tree_questgive3"
+[[context_items.choices.execute]]
 MarkQuest="Started"
 
 # tree_questgive3
@@ -67,17 +68,20 @@ text = "Give the tree the medicine"
 goto_context = "tree_questcomplete"
 [context_items.choices.requires]
 alt_text= "(I need something to heal the tree)"
-# TODO: tree_medicine
 req_items= ["TreeMedicine"]
+[[context_items.choices.execute]]
 AddItem="WorldTreeBlood"
-MarkQuest="Complete"
+[[context_items.choices.execute]]
+MarkQuest="GoodComplete"
 
 # tree_questgive3 choice 1
 [[context_items.choices]]
 text = "You don't need to listen to some tree! Take that blood!"
 goto_context = "tree_questskip"
+[[context_items.choices.execute]]
 AddItem="TaintedWorldTreeBlood"
-MarkQuest="Complete"
+[[context_items.choices.execute]]
+MarkQuest="BadComplete"
 
 # tree_questgive3 choice 2
 [[context_items.choices]]
@@ -94,7 +98,6 @@ text = "You stand by the banks of the glittering oasis. The crystalline water gl
 text = "Take some Crystal Water"
 goto_context = "arrival2"
 [[context_items.choices.execute]]
-# TODO: crystal water
 AddItem="CrystalWater"
 
 # pond choice 2
@@ -102,7 +105,6 @@ AddItem="CrystalWater"
 text = "Scoop up some frog slime"
 goto_context = "arrival2"
 [[context_items.choices.execute]]
-# TODO: crystal water
 AddItem="FrogSlime"
 
 # pond choice 3
@@ -126,3 +128,22 @@ AddItem="Struby"
 [[context_items.choices]]
 text = "Back"
 goto_context = "arrival2"
+
+
+[[context_items]]
+name = "tree_questcompletey"
+text = "You show the medicine to the tree, and with its permission approach its towering trunk. Immediately after pouring the liquid across the wound, the surrounding sections begin to close up and around around the missing chunk until it is entirely replaced by the same unusual multicoloured bark. You step away and see a high branch bending its way towards you gently, a large drop of amber blood pooled at its tip. <g>'Thank you for your aid. This boon I offer you freely'<g>. "
+
+[[context_items.choices]]
+text = "Thank the tree, bottle the blood and take your leave"
+[[context_items.choices.execute]]
+Leave = {}
+
+[[context_items]]
+name = "tree_questskip"
+text = "You step forward confidently, ignoring the World Tree's reproachful gaze. <g>'I believed you to be different,'<g> it begins as you start to scoop the foul smelling sap into a bottle <g>'but it seems you are the same as those who came before after all.'<g> The tree makes no attempt to stop you beyond its harsh rebuke, which somehow fills you with more dread than if you'd had to fight through whirling branches to claim your prize. You return to your broom, the feeling of enormous watchful eyes boring a hole into your back."
+
+[[context_items.choices]]
+text = "Shake it off and head back"
+[[context_items.choices.execute]]
+Leave = {}

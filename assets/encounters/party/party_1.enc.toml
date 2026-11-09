@@ -1,4 +1,5 @@
-[[context_items]]
+name = "Party"
+
 # arrival1
 [[context_items]]
 name = "arrival1"
@@ -8,7 +9,6 @@ text = "Before even being able to make out the finer details of what lies atop t
 [[context_items.choices]]
 text = "Land by the dancefloor"
 goto_context = "arrival2"
-[[context_items.choices.execute]]
 
 # arrival2
 [[context_items]]
@@ -19,7 +19,6 @@ text = "You touch down on the edge of the dancefloor, choosing a section with fe
 [[context_items.choices]]
 text = "Look around"
 goto_context = "party1"
-[[context_items.choices.execute]]
 
 # party1
 [[context_items]]
@@ -30,19 +29,16 @@ text = "You see a low hanging cluster of the glowing orbs lazily hovering a few 
 [[context_items.choices]]
 text = "Examine the floating lights"
 goto_context = "wisp"
-[[context_items.choices.execute]]
 
 # party1 choice 2/4 party_questgive1
 [[context_items.choices]]
 text = "Talk to the exhausted dancers"
 goto_context = "party_questgive1"
-[[context_items.choices.execute]]
 
 # party1 choice 3/4 mushroom
 [[context_items.choices]]
 text = "Wander to the rustling treeline"
 goto_context = "mushroom"
-[[context_items.choices.execute]]
 
 # party1 choice 4/4 map
 [[context_items.choices]]
@@ -59,7 +55,6 @@ text = "You walk up to the group of dancers, absentmindedly stepping and shiftin
 [[context_items.choices]]
 text = "'Why's that?'"
 goto_context = "party_questgive2"
-[[context_items.choices.execute]]
 
 # party_questgive2 
 [[context_items]]
@@ -70,7 +65,6 @@ text = "<o>'Well honestly..'<o> another of the dancer starts, <o>'It's been kind
 [[context_items.choices]]
 text = "'Why don't you just... stop?'"
 goto_context = "party_questgive3"
-[[context_items.choices.execute]]
 
 # party_questgive3
 [[context_items]]
@@ -81,7 +75,6 @@ text = "The dancers look at you incredulously, like you just asked the silliest 
 [[context_items.choices]]
 text = "Agree to go talk to the party animal"
 goto_context = "party_questgive4"
-[[context_items.choices.execute]]
 
 # party_questgive4
 [[context_items]]
@@ -103,22 +96,30 @@ text = "<b>'No can do my little pal, party regulations I'm afraid! Hmmm, but I *
 # party_questgive5 choice 1/3 party_race1 requires sleep cloud
 [[context_items.choices]]
 text = "Show the Sleep Cloud to Fungi"
-goto_context = "party_race1"
+goto_context = "party_questcomplete"
 [context_items.choices.requires]
 alt_text= "(I need something to slow him down before we race!)"
 req_items= ["SleepJuice"]
+[[context_items.choices.execute]]
+AddItem="CrystallisedEffort"
+[[context_items.choices.execute]]
+MarkQuest="GoodComplete"
 
 # party_questgive5 choice 2/3 party_juicesteal
 [[context_items.choices]]
-text = "I could just take his Fast Juice and leave, but once I do I may not be welcome back here"
-goto_context = "juicesteal"
+text = "I could just take his Fast Juice and leave, but that'd harsh the vibes for sure"
+goto_context = "party_questskip"
 [[context_items.choices.execute]]
+AddItem="FastJuice"
+[[context_items.choices.execute]]
+MarkQuest="BadComplete"
+
 
 # party_questgivet5 choice 3/3 party1
 [[context_items.choices]]
 text = "Back to the edge of the party"
 goto_context = "party1"
-[[context_items.choices.execute]]
+
 
 # wisp
 [[context_items]]
@@ -136,7 +137,7 @@ AddItem="WillOWisps"
 [[context_items.choices]]
 text = "Back"
 goto_context = "party1"
-[[context_items.choices.execute]]
+
 
 # mushroom
 [[context_items]]
@@ -150,8 +151,29 @@ goto_context = "party1"
 [[context_items.choices.execute]]
 AddItem="AngryMushrooms"
 
+
 # mushroom choice 2/2 party1
 [[context_items.choices]]
 text = "Back"
 goto_context = "party1"
+
+
+[[context_items]]
+name = "party_questcomplete"
+text = "<b>'Woah you actually found some stuff to counteract the Fast Juice?'<b> Fungi shouts over the music, taking the cloud from you and inhaling it deeply. <b>'Well I still wanna race you for it! Gotta make it a challenge!'<b> You line up alongside The Great Edible, and with a bass drop as your starting gun take off, pumping legs that you probably neglect given the ease of travelling by broom. Bends melt into eachother as you focus, and before you know it you're turning the final bend and crossing back into the dancefloor. You won! After catching your breath, you look back at the track and see Fungi laying down just past the finish line, snoring loudly. You feel something you hadn't noticed was clutched tight in your fist, and find a blue crystalline thumbsup had formed within grasp over the course of the race."
+
+[[context_items.choices]]
+text = "Let the exhausted dancers rest"
 [[context_items.choices.execute]]
+Leave = {}
+
+
+[[context_items]]
+name = "party_questskip"
+text = "You swipe the Fast Juice while Fungi isn't looking and quickly head back to your broom. You're pretty sure he'll be angry at you for that, so you should probably leave for now."
+
+[[context_items.choices]]
+text = "Take off on your brrom, trying to ignore the glares of dancers who saw what you did"
+[[context_items.choices.execute]]
+Leave = {}
+
