@@ -1,0 +1,107 @@
+name = "Intro"
+
+# intro0
+[[context_items]]
+name = "intro0"
+text = "You are an alchemist."
+
+
+[[context_items.choices]]
+text = "I am!?"
+goto_context = "intro1"
+
+# intro1
+[[context_items]]
+name = "intro1"
+text = "Well, an apprentice technically, but it still counts. You've travelled far and wide searching for some way to increase your knowledge, whether it be simple inspiration, an ancient repository of knowledge, or even just a teacher willing to take you on. Your journey has brought you to a remote island off the coast about which you have heard more than a few rumors swirling around. Some say that powerful alchemical ingredients can be found here, others claim it is the site of a vast hidden library that sprawls beneath the waves. But now that you stand here you find nothing besides barren dunes and a rundown cabin atop a central hill. "
+
+
+[[context_items.choices]]
+text = "The cabin"
+goto_context = "intro2"
+
+# intro2
+[[context_items]]
+name = "intro2"
+text = "The cabin is unremarkable. Exactly what you might expect to find on a sandy rock tucked away in the middle of nowhere. There are no signs that it has been occupied in dozens of years. Outside, a small garden sprouts a handful of weeds and a lone tombstone faces away away from the waves. You are about to check the interior of the cabin when the tombstone catches your eye again, you could've sworn you'd seen something moving."
+
+
+[[context_items.choices]]
+text = "Look closer"
+goto_context = "intro3"
+
+# intro1
+[[context_items]]
+name = "intro3"
+text = "You wait and watch the grave for a few moments, before an unmistakeable wisp of purple energy rises upward and around the headstone, resolving itself into a face that locks eyes with you. <p>'A fellow alchemist in these parts! It has been quite some time...'<p> you startle backwards at the sight of the apparition, before hastily composing yourself, <m>'Well, an apprentice for now, but yes'<m> you reply. The ghost smiles, a slight glint in its eye. I forget my manners, when I lived I was known as Doug Skullery, it's a pleasure to meet you. Say, if you were able to gather some items for a ritual to give me a new body I would happily take you on as an apprentice.'<p> You can hardly believe your luck!"
+
+
+[[context_items.choices]]
+text = "Accept eagerly"
+goto_context = "intro4"
+
+# intro1
+[[context_items]]
+name = "intro4"
+text = "<p>'I knew you looked like a reliable sort'<p> the spirit beams,  <p>'Even from here I can sense that everything we need can be found on the nearby floating islands, it should be a piece of cake to get to them on that nifty broom of yours. The only catch is that I'm not sure exactly what it is you'll need to bring me... But what I can tell you is that they won't be the sort of regular alchemical ingredients you can find just lying around! Do whatever you need to in order to get them, part of being an alchemist is being willing to put your research first'<p>"
+
+
+[[context_items.choices]]
+text = "Begin your task"
+goto_context = "intro5"
+
+# intro1
+[[context_items]]
+name = "intro5"
+text = "'<p>Ah, before you go'<p> Doug interjects, bringing your attention back to him once more, <p>'You may need to perform some alchemy in order to find these items, so I'll give you a refresher on how to craft'<p>"
+
+
+[[context_items.choices]]
+text = "Continue"
+goto_context = "intro6"
+
+
+
+[[context_items]]
+name = "intro6"
+text = "<p>'All alchemical crafting works by extracting the underlying <p><o>aspects<o><p> of alchemically potent objects and recombining them to form new creations in one fell swoop. We perform this operation using a <p><o>philosopher's stone<p><o> as a focus.'<p>
+
+<p>'The first step is to select your <p><o>ingredients<o><p>, the types of things you can find just scattered about the world, and lay them out around the focus. Next, trace a line from the philosopher's stone through each ingredient and then back into itself to close the arcane loop. The order of your ingredients doesn't matter. Depending on the number and aspects of ingredients, you can create powerful tools to help you.'<p>"
+
+
+[[context_items.choices]]
+text = "Ask about aspects"
+goto_context = "intro7"
+
+
+# intro1
+[[context_items]]
+name = "intro7"
+text = "<p>'There are nine aspects, each with their own properties.'<p>
+
+Fire: the aspect of heat and burning
+Water: the aspect of liquidity
+Air: the aspect of wind and atmosphere
+Nature: the aspect of living things and growth
+Energy: the aspect of motion and potential
+Inert: the aspect of passivity and stillness
+Light: the aspect of light and vision
+Dark: the aspect of that which is hidden
+Magic: the aspect of the arcane"
+
+
+[[context_items.choices]]
+text = "Continue"
+goto_context = "intro8"
+
+# intro1
+[[context_items]]
+name = "intro8"
+text = "<p>'I can see you're eager to begin. If you need a reminder of this or any help along your journey you can speak to me after you've returned from exploring an island for the day, once night has fallen'<p>"
+
+
+[[context_items.choices]]
+text = "Take to the skies and begin your quest"
+[[context_items.choices.execute]]
+Leave = {}
+
