@@ -20,7 +20,7 @@ use bevy::{
 
 use crate::{
     asset_helpers::{DefaultPluginImageExt, set_default_font},
-    world_map::IslandId,
+    world_map::Islands,
 };
 
 mod crafting;
@@ -158,7 +158,7 @@ fn debug_start_game(
 #[derive(SubStates, Clone, PartialEq, Eq, Hash, Debug, Default)]
 #[source(AppState = AppState::InGame)]
 enum PlayerLocation {
-    Island(IslandId),
+    Island(Islands),
     #[default]
     Home,
 }

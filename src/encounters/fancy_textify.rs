@@ -15,6 +15,7 @@ struct StyledText {
 #[derive(Clone, Copy)]
 pub enum FancyTextColor {
     DEFAULT,
+    UNAVAILABLE,
     HIGHLIGHT,
     R,
     O,
@@ -41,7 +42,8 @@ impl FancyTextColor {
 
     pub fn to_bevy_color(&self) -> Color {
         match self {
-            FancyTextColor::DEFAULT => Color::srgb(1.0, 1.0, 1.0),
+            FancyTextColor::DEFAULT => Color::Srgba(tailwind::STONE_700),
+            FancyTextColor::UNAVAILABLE => Color::Srgba(tailwind::SLATE_400),
             FancyTextColor::HIGHLIGHT => Color::srgb(0.8, 0.5, 0.2),
             FancyTextColor::R => Color::Srgba(tailwind::RED_500),
             FancyTextColor::O => Color::Srgba(tailwind::ORANGE_400),

@@ -17,19 +17,25 @@ use bevy::{
     },
     input::{ButtonInput, keyboard::KeyCode},
     log::{info, warn},
+    math::Vec2,
     picking::{
         Pickable,
         events::{PointerLeave, PointerOver, PointerPress},
     },
     reflect::TypePath,
     scene::{CommandsSceneExt, EntityCommandsSceneExt, Scene, bsn, on},
+    sprite::Sprite,
     state::{
         condition::in_state,
         state::{NextState, OnEnter, State},
         state_scoped::DespawnOnExit,
     },
-    text::TextColor,
-    ui::{BackgroundColor, FlexDirection, Node, UiRect, Val, widget::Text},
+    text::{TextColor, TextFont},
+    ui::{
+        BackgroundColor, FlexDirection, Node, UiRect, Val,
+        widget::{ImageNode, NodeImageMode, Text},
+    },
+    utils::default,
 };
 use serde::Deserialize;
 
@@ -40,7 +46,7 @@ use crate::{
         deserialize::TomlEncLoader,
         fancy_textify::{FancyTextColor, render_text_scene},
     },
-    world_map::{IslandId, Islands},
+    world_map::Islands,
 };
 
 mod deserialize;
@@ -90,18 +96,14 @@ pub struct Choice {
 }
 
 impl Choice {
-    fn is_visible(&self, quest_progress: &HashMap<IslandId, QuestProgress>) -> bool {
+    fn is_visible(&self, quest_progress: &HashMap<Islands, QuestProgress>) -> bool {
         if self.is_completed {
             return false;
         }
         match &self.requires_quest_state {
             None => true,
             Some(req) => {
-                quest_progress
-                    .get(&req.island.id())
-                    .copied()
-                    .unwrap_or_default()
-                    == req.required_state
+                quest_progress.get(&req.island).copied().unwrap_or_default() == req.required_state
             }
         }
     }
@@ -151,15 +153,15 @@ impl QuestProgress {
 
 #[derive(Resource, Default)]
 struct Encounters {
-    handles: HashMap<(IslandId, QuestProgress), Handle<EncounterRes>>,
-    quest_progress: HashMap<IslandId, QuestProgress>,
+    handles: HashMap<(Islands, QuestProgress), Handle<EncounterRes>>,
+    quest_progress: HashMap<Islands, QuestProgress>,
 }
 
 fn load_assets(mut encounters: ResMut<Encounters>, asset_server: Res<AssetServer>) {
     // load night
     let path = "encounters/night.enc.toml";
     encounters.handles.insert(
-        (Islands::NIGHT.id(), QuestProgress::NotStarted),
+        (Islands::NIGHT, QuestProgress::NotStarted),
         asset_server.load(path),
     );
 
@@ -172,7 +174,7 @@ fn load_assets(mut encounters: ResMut<Encounters>, asset_server: Res<AssetServer
         let path = format!("encounters/tree/tree_{}.enc.toml", progress.file_suffix());
         encounters
             .handles
-            .insert((Islands::TREE.id(), progress), asset_server.load(path));
+            .insert((Islands::TREE, progress), asset_server.load(path));
     }
 
     // load island 2
@@ -184,7 +186,7 @@ fn load_assets(mut encounters: ResMut<Encounters>, asset_server: Res<AssetServer
         let path = format!("encounters/moon/moon_{}.enc.toml", progress.file_suffix());
         encounters
             .handles
-            .insert((Islands::MOON.id(), progress), asset_server.load(path));
+            .insert((Islands::MOON, progress), asset_server.load(path));
     }
 
     // load island 3
@@ -196,7 +198,7 @@ fn load_assets(mut encounters: ResMut<Encounters>, asset_server: Res<AssetServer
         let path = format!("encounters/ruins/ruins_{}.enc.toml", progress.file_suffix());
         encounters
             .handles
-            .insert((Islands::RUINS.id(), progress), asset_server.load(path));
+            .insert((Islands::RUINS, progress), asset_server.load(path));
     }
 
     // load island 4
@@ -208,14 +210,14 @@ fn load_assets(mut encounters: ResMut<Encounters>, asset_server: Res<AssetServer
         let path = format!("encounters/party/party_{}.enc.toml", progress.file_suffix());
         encounters
             .handles
-            .insert((Islands::PARTY.id(), progress), asset_server.load(path));
+            .insert((Islands::PARTY, progress), asset_server.load(path));
     }
 }
 
 impl Encounters {
     fn get_encounter_by_island_and_quest_progress(
         &self,
-        island: IslandId,
+        island: Islands,
         encounter_assets: &Assets<EncounterRes>,
     ) -> Option<EncounterRes> {
         let progress = self
@@ -234,7 +236,6 @@ impl Encounters {
 struct ChoiceParams<'w, 's> {
     current_encounter: ResMut<'w, EncounterState>,
     encounters: ResMut<'w, Encounters>,
-    encounter_assets: Res<'w, Assets<EncounterRes>>,
     next_location: ResMut<'w, NextState<PlayerLocation>>,
     next_screen: ResMut<'w, NextState<InGameScreen>>,
     commands: Commands<'w, 's>,
@@ -254,7 +255,7 @@ pub struct EncounterState {
     encounter: EncounterRes,
     // index into Encounter resource
     current_context_index: usize,
-    island: IslandId,
+    island: Islands,
 }
 
 impl EncounterState {
@@ -323,6 +324,9 @@ fn enter_encounter_screen(
         .get_encounter_by_island_and_quest_progress(island, &encounter_assets)
         .expect("no encounter for island + quest progress");
 
+    let island_enc_background_path = island.background_path();
+    let encounter_name = enc.name.clone();
+
     current_encounter.encounter = enc;
     current_encounter.current_context_index = 0;
     current_encounter.island = island;
@@ -338,12 +342,18 @@ fn enter_encounter_screen(
             height: Val::Percent(100.),
             padding: UiRect::all(Val::Px(40.))
         }
+        ImageNode {
+            image: island_enc_background_path ,
+            image_mode: NodeImageMode::Stretch,
+            color: Color::WHITE,
+        }
         Children [
             Node {
                 flex_grow: 1.0
             }
             Children [
-                Text("Background goes here.")
+                Text(encounter_name)
+                TextFont{font_size: bevy::text::FontSize::Px(52.)}
             ]
             --
             @my_enc
@@ -354,7 +364,7 @@ fn enter_encounter_screen(
 
 fn set_scene_context(
     context: &Context,
-    quest_progress: &HashMap<IslandId, QuestProgress>,
+    quest_progress: &HashMap<Islands, QuestProgress>,
     items: &mut Query<&mut InventoryItem>,
 ) -> impl Scene {
     let choices = context
@@ -388,10 +398,14 @@ fn set_scene_context(
     bsn! {
         Node {
             width: Val::Px(600.),
-            padding: UiRect::all(Val::Px(40.)),
+            padding: UiRect::all(Val::Px(100.)),
             flex_direction: FlexDirection::Column
         }
-        BackgroundColor(tailwind::GRAY_600)
+        ImageNode {
+            image: "final_assets/encounter_background.png",
+            image_mode: NodeImageMode::Stretch,
+            color: Color::WHITE,
+        }
         ChatBoxMarker
         Children [
             @flavour_text(context.text.clone())
@@ -419,9 +433,9 @@ fn choice_scene(
             .requires
             .clone()
             .expect("Didn't meet nonexistent requirements, uh oh!");
-        (reqs.alt_text, Color::Srgba(tailwind::STONE_950))
+        (reqs.alt_text, FancyTextColor::UNAVAILABLE.to_bevy_color())
     } else {
-        (choice.text.clone(), Color::srgb(1.0, 1.0, 1.0))
+        (choice.text.clone(), FancyTextColor::DEFAULT.to_bevy_color())
     };
 
     let enumarated_choice_text = format!("{display_index}. {text}");
@@ -557,7 +571,7 @@ fn handle_choice(choice_index: usize, choice_params: &mut ChoiceParams) {
     }
 
     if leave {
-        if choice_params.current_encounter.island == Islands::NIGHT.id() {
+        if choice_params.current_encounter.island == Islands::NIGHT {
             info!("sleepy time, back to map");
             choice_params.next_location.set(PlayerLocation::Home);
             choice_params.next_screen.set(InGameScreen::WorldMap);
@@ -565,19 +579,12 @@ fn handle_choice(choice_index: usize, choice_params: &mut ChoiceParams) {
         }
 
         info!("goto night time");
-        let night_enc = choice_params
-            .encounters
-            .get_encounter_by_island_and_quest_progress(
-                Islands::NIGHT.id(),
-                &choice_params.encounter_assets,
-            )
-            .expect("night should be loaded");
         choice_params
             .next_location
-            .set(PlayerLocation::Island(Islands::NIGHT.id()));
-        choice_params.current_encounter.encounter = night_enc;
-        choice_params.current_encounter.current_context_index = 0;
-        choice_params.current_encounter.island = Islands::NIGHT.id();
+            .set(PlayerLocation::Island(Islands::NIGHT));
+        choice_params.next_screen.set(InGameScreen::Encounter);
+        //reload
+        return;
     } else if let Some(goto_context) = &choice_selected.goto_context {
         info!("Goto: {goto_context:?}");
         let target_index = choice_params

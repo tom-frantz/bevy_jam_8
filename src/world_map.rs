@@ -1,5 +1,6 @@
 use bevy::{
     app::Plugin,
+    color::Color,
     ecs::{
         component::Component,
         event::EntityEvent,
@@ -21,7 +22,10 @@ use bevy::{
         state_scoped::DespawnOnExit,
     },
     transform::components::Transform,
-    ui::{Node, Val, widget::Text},
+    ui::{
+        GlobalZIndex, Node, Val, ZIndex,
+        widget::{ImageNode, NodeImageMode, Text},
+    },
 };
 use serde::Deserialize;
 
@@ -38,9 +42,6 @@ impl Plugin for WorldMapPlugin {
         .add_systems(OnExit(PlayerLocation::Home), top_up_broom_fuel);
     }
 }
-
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash, Component)]
-pub struct IslandId(pub usize);
 
 #[derive(Debug, Resource)]
 pub struct BroomFuel {
@@ -68,6 +69,10 @@ fn enter_world_map(mut commands: Commands) {
             width: Val::Percent(100.),
             height: Val::Percent(100.)
         }
+        Sprite{
+            image: "backgrounds/backgrounds_blue.png",
+        }
+        Transform::from_xyz(0.0, 0.0, -1.0)
         Children [
             Text("Hello, WorldMap")
         ]
@@ -75,25 +80,25 @@ fn enter_world_map(mut commands: Commands) {
         Pickable::IGNORE
         --
         @island()
-        Islands::TREE.id()
+        Islands::TREE
         Transform {
             translation: Vec3::new(50., 100., 0.)
         }
         --
         @island()
-        Islands::MOON.id()
+        Islands::MOON
         Transform {
             translation: Vec3::new(300., 0., 0.)
         }
         --
         @island()
-        Islands::RUINS.id()
+        Islands::RUINS
         Transform {
             translation: Vec3::new(-200., -100., 0.)
         }
         --
         @island()
-        Islands::PARTY.id()
+        Islands::PARTY
         Transform {
             translation: Vec3::new(-400., 50., 0.)
         }
@@ -113,23 +118,23 @@ fn island() -> impl Scene {
 
 fn island_click_observer(
     event: On<PointerPress>,
-    islands: Query<&IslandId>,
+    islands: Query<&Islands>,
     mut next_state: ResMut<NextState<PlayerLocation>>,
     mut next_screen: ResMut<NextState<InGameScreen>>,
 ) {
     info!("This is getting pretty frisky!");
-    let island_id = islands
+    let island = islands
         .get(event.event_target())
         .expect("Clicked on an island without an island ID");
 
     // TODO broom fuel consumption
-    next_state.set(PlayerLocation::Island(*island_id));
-    // TODO the setup for the encounter on the island
+    next_state.set(PlayerLocation::Island(*island));
     next_screen.set(InGameScreen::Encounter);
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Default, Deserialize, Clone, Copy, PartialEq, Eq, Hash, Component)]
 pub enum Islands {
+    #[default]
     NIGHT,
     TREE,
     MOON,
@@ -138,13 +143,13 @@ pub enum Islands {
 }
 
 impl Islands {
-    pub fn id(&self) -> IslandId {
+    pub fn background_path(self) -> String {
         match self {
-            Islands::NIGHT => IslandId(0),
-            Islands::TREE => IslandId(1),
-            Islands::MOON => IslandId(2),
-            Islands::RUINS => IslandId(3),
-            Islands::PARTY => IslandId(4),
+            Islands::NIGHT => String::from("backgrounds/background_night.png"),
+            Islands::TREE => String::from("backgrounds/backgrounds_green_2.png"),
+            Islands::MOON => String::from("backgrounds/backgrounds_blue_2.png"),
+            Islands::RUINS => String::from("backgrounds/backgrounds_green.png"),
+            Islands::PARTY => String::from("backgrounds/backgrounds_yellow.png"),
         }
     }
 }
