@@ -79,7 +79,8 @@ pub struct ImagesHandleHolder(#[allow(dead_code)] Vec<Handle<LoadedFolder>>);
 fn load_assets(asset_server: Res<AssetServer>, mut commands: Commands) {
     commands.insert_resource(ImagesHandleHolder(vec![
         asset_server.load_folder("final_assets"),
-        asset_server.load_folder("final_assets"),
+        asset_server.load_folder("backgrounds"),
+        asset_server.load_folder("ingredient_images"),
     ]));
 }
 
