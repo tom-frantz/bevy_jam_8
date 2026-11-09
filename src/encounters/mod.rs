@@ -130,7 +130,7 @@ fn load_assets(mut encounters: ResMut<Encounters>, asset_server: Res<AssetServer
         QuestProgress::Started,
         QuestProgress::Complete,
     ] {
-        let path = format!("encounters/tree_{}.enc.toml", progress.file_suffix());
+        let path = format!("encounters/tree/tree_{}.enc.toml", progress.file_suffix());
         encounters
             .handles
             .insert((IslandId(0), progress), asset_server.load(path));
@@ -142,7 +142,7 @@ fn load_assets(mut encounters: ResMut<Encounters>, asset_server: Res<AssetServer
         QuestProgress::Started,
         QuestProgress::Complete,
     ] {
-        let path = format!("encounters/moon_{}.enc.toml", progress.file_suffix());
+        let path = format!("encounters/moon/moon_{}.enc.toml", progress.file_suffix());
         encounters
             .handles
             .insert((IslandId(1), progress), asset_server.load(path));
@@ -154,7 +154,7 @@ fn load_assets(mut encounters: ResMut<Encounters>, asset_server: Res<AssetServer
         QuestProgress::Started,
         QuestProgress::Complete,
     ] {
-        let path = format!("encounters/ruins_{}.enc.toml", progress.file_suffix());
+        let path = format!("encounters/ruins/ruins_{}.enc.toml", progress.file_suffix());
         encounters
             .handles
             .insert((IslandId(2), progress), asset_server.load(path));
@@ -166,7 +166,7 @@ fn load_assets(mut encounters: ResMut<Encounters>, asset_server: Res<AssetServer
         QuestProgress::Started,
         QuestProgress::Complete,
     ] {
-        let path = format!("encounters/fake_{}.enc.toml", progress.file_suffix());
+        let path = format!("encounters/party/party_{}.enc.toml", progress.file_suffix());
         encounters
             .handles
             .insert((IslandId(3), progress), asset_server.load(path));
