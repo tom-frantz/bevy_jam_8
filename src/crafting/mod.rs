@@ -148,7 +148,7 @@ pub enum Item {
     LastBreathOfInnocent,
     BillowOfAFreeSpirit,
     // Mushroom Party
-    CrystalisedEffort,
+    CrystallisedEffort,
     FastJuice,
     // Ruins
     AncientNotes,
@@ -186,7 +186,7 @@ impl Display for Item {
             AncientNotes => todo!(),
             Heliopal => todo!(),
             ModernNotes => todo!(),
-            CrystalisedEffort => todo!(),
+            CrystallisedEffort => todo!(),
         })
     }
 }
@@ -220,7 +220,7 @@ impl Item {
             AncientNotes => todo!(),
             Heliopal => todo!(),
             ModernNotes => todo!(),
-            CrystalisedEffort => todo!(),
+            CrystallisedEffort => todo!(),
         };
 
         let image = format!("ingredient_images/{path}");
