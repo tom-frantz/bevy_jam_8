@@ -43,7 +43,7 @@ goto_context = "intro4"
 # intro1
 [[context_items]]
 name = "intro4"
-text = "<p>'I knew you looked like a reliable sort'<p> the spirit beams,  <p>'Even from here I can sense that everything we need can be found on the nearby floating islands, it should be a piece of cake to get to them on that nifty broom of yours. The only catch is that I'm not sure exactly what it is you'll need to bring me... But what I can tell you is that they won't be the sort of regular alchemical ingredients you can find just lying around! Do whatever you need to in order to get them, part of being an alchemist is being willing to put your research first'<p>"
+text = "<p>'I knew you looked like a reliable sort'<p> the spirit beams,  <p>'Even from here I can sense that everything we need can be found on the nearby floating islands, it should be a piece of cake to get to them on that nifty broom of yours. The only catch is that I'm not sure exactly what it is you'll need to bring me... But what I can tell you is that there are four of them and they won't be the sort of regular alchemical ingredients you can find just lying around! Do whatever you need to in order to get them, part of being an alchemist is being willing to put your research first'<p>"
 
 
 [[context_items.choices]]
