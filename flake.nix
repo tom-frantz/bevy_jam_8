@@ -21,7 +21,7 @@
               # extensions = ["rust-analyzer" "rust-src"];
             # }))
             (rust-bin.nightly."2026-10-31".default.override {
-              extensions = ["rust-analyzer" "rust-src"];
+              extensions = ["rust-analyzer" "rust-src" "rustc-dev" "llvm-tools"];
               targets = ["wasm32-unknown-unknown"];
             })
 
@@ -31,11 +31,15 @@
 
             # General
             openssl
+            butler  # itch.io helper
+            zip
           ] ++ lib.optionals stdenv.hostPlatform.isLinux [
             # General
             udev  # Device manager (not necessary????)
             alsa-lib-with-plugins  # Audio
             vulkan-loader vulkan-tools # Graphics  
+            # nix-ld  # god forsaken test
+            binaryen  # Stolen for wasmopt
 
             # X11 features
             libx11 libxcursor libxi libxrandr

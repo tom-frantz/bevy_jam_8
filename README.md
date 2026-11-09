@@ -9,6 +9,7 @@
 export PATH="$(pwd)/.cargo/bin:$PATH"  # The flake does this automatically. Could use direnv too to do this
 cargo install --git https://github.com/TheBevyFlock/bevy_cli --tag cli-v0.1.0-alpha.2 --locked bevy_cli --root .cargo
 cargo install wasm-bindgen-cli --root .cargo
+cargo install wasm-opt --root .cargo
 ```
 
 ## Now run!
