@@ -18,6 +18,7 @@ use bevy::{
         system::{Commands, Query, Res, ResMut},
         template::{FromTemplate, template},
     },
+    image::ImageSampler::Descriptor,
     log::info,
     math::{Vec2, Vec3},
     picking::{
@@ -178,20 +179,53 @@ impl Display for Item {
             IgnisAster => "Ignis Aster",
             CloudCandy => "Cloud Candy",
             LuminoTruant => "Lumino Truant",
-            Mushroom => todo!(),
+            Mushroom => "Mushroom",
             StopSand => "Stop Sand",
             SleepCloud => "Sleep Cloud",
             MagicLens => "Magic Lens",
             BoomBottle => "Boom Bottle",
-            AncientNotes => todo!(),
-            Heliopal => todo!(),
-            ModernNotes => todo!(),
-            CrystallisedEffort => todo!(),
+            AncientNotes => "Notes",
+            Heliopal => "Heliopal",
+            ModernNotes => "Spider Notes",
+            CrystallisedEffort => "Crystallised Effort",
         })
     }
 }
 
 impl Item {
+    pub fn sprite_path(&self) -> String {
+        use Item::*;
+        let (dimensions, path): (Vec2, &str) = match self {
+            Struby => (Vec2::new(208., 293.), "struby.png"),
+            CrystalWater => (Vec2::new(285., 258.), "crystal_water.png"),
+            FrogSlime => (Vec2::new(184., 275.), "frog_slime.png"),
+            WorldTreeBlood => (Vec2::new(282.0, 334.0), "world_tree_lifeblood_good.png"),
+            TaintedWorldTreeBlood => (Vec2::new(268., 326.), "world_tree_lifeblood_bad.png"),
+            AngryMushrooms => (Vec2::new(212., 310.), "bad_mushroom_2.png"),
+            FastJuice => (Vec2::new(193., 269.), "fast_juice.png"),
+            LastBreathOfInnocent => (Vec2::new(169., 246.), "crab_breath_bad.png"),
+            BillowOfAFreeSpirit => (Vec2::new(371., 363.), "crab_breath_good.png"),
+            WillOWisps => (Vec2::new(157., 202.), "fire_multi.png"),
+            Golem => (Vec2::new(208., 325.), "golem.png"),
+            TreeMedicine => (Vec2::new(193., 269.), "tree_medicine.png"),
+            IgnisAster => (Vec2::new(211., 352.), "ignis_aster.png"),
+            CloudCandy => (Vec2::new(444., 229.), "cloud_candy.png"),
+            LuminoTruant => (Vec2::new(262., 244.), "lumino_truant.png"),
+            Mushroom => todo!(),
+            StopSand => (Vec2::new(230., 464.), "stop_sand.png"),
+            SleepCloud => (Vec2::new(294., 567.), "sleep_gas.png"),
+            MagicLens => (Vec2::new(476., 681.), "magic_lens.png"),
+            BoomBottle => (Vec2::new(563., 421.), "boom_bottle.png"),
+            AncientNotes => (Vec2::new(256., 295.), "good_notes.png"),
+            Heliopal => todo!(),
+            ModernNotes => (Vec2::new(220., 215.), "bad_notes.png"),
+            CrystallisedEffort => (Vec2::new(190., 234.), "crystalized_effort.png"),
+        };
+
+        let image = format!("ingredient_images/{path}");
+        image
+    }
+
     pub fn sprite(&self) -> impl Scene {
         use Item::*;
 
@@ -249,6 +283,23 @@ pub enum Aspects {
     Item,
 }
 
+impl Display for Aspects {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(match self {
+            Aspects::Fire => "Fire",
+            Aspects::Water => "Water",
+            Aspects::Nature => "Nature",
+            Aspects::Air => "Air",
+            Aspects::Magic => "Magic",
+            Aspects::Inert => "Inert",
+            Aspects::Dark => "Dark",
+            Aspects::Light => "Light",
+            Aspects::Energy => "Energy",
+            Aspects::Item => "Item",
+        })
+    }
+}
+
 /// An aspect and a level associated with it. More useful.
 #[derive(Clone, Debug, Component, PartialEq, Eq, Hash, Deserialize)]
 pub struct AspectValue(pub Aspects, pub u8);
@@ -259,6 +310,19 @@ pub struct ItemAspect {
     pub primary: AspectValue,
     pub secondary: Option<AspectValue>,
     pub tertiary: Option<AspectValue>,
+}
+
+impl Display for ItemAspect {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(&self.primary.0.to_string())?;
+        if let Some(aspect) = self.secondary.clone() {
+            f.write_str(&aspect.0.to_string())?;
+        }
+        if let Some(aspect) = self.tertiary.clone() {
+            f.write_str(&aspect.0.to_string())?;
+        }
+        Ok(())
+    }
 }
 
 impl ItemAspect {
@@ -521,25 +585,12 @@ fn book_scene() -> impl Scene {
             Transform {
                 translation: TOP_LEFT_PAGE
             }
-            @page_scene()
-            --
-            #LeftPageBottom
-            Transform {
-                translation: TOP_RIGHT_PAGE
-            }
-            @page_scene()
-            --
-            #RightPageTop
-            Transform {
-                translation: BOTTOM_LEFT_PAGE
-            }
-            @page_scene()
-            --
-            #RightPageBottom
-            Transform {
-                translation: BOTTOM_RIGHT_PAGE
-            }
-            @page_scene()
+            IngredientNoteNode
+            TransformPropogatedUiNode [
+                    Text("Click a button to change the page.")
+            ]
+
+
             --
             Transform {
                 translation: Vec3::new(LEFT_PAGE_X_OFFSET, -175.0, 0.0)
@@ -586,6 +637,7 @@ fn turn_page_observer(page_direction: PageDirection) -> impl Scene {
                          mut book_container: Query<(&Children, &mut BookPageCount)>,
                          ingredient_ui_node: Query<(Entity), With<IngredientNoteNode>>,
                          mut commands: Commands,
+                         ingredients: Res<Assets<Ingredients>>,
                          items: Query<&InventoryItem>| {
         let entity = book_container_entity
             .get(click.event_target())
@@ -639,11 +691,21 @@ fn turn_page_observer(page_direction: PageDirection) -> impl Scene {
                 .into_iter()
                 .zip(items.iter())
                 {
+                    let ingredeint = ingredients
+                        .iter()
+                        .next()
+                        .expect("Ingredients should be loaded")
+                        .1
+                        .ingredients
+                        .iter()
+                        .find(|ing| ing.name == item.item)
+                        .unwrap();
+
                     p.spawn_empty().apply_scene(bsn! {
                         Transform {
                             translation: pos
                         }
-                        @page_scene()
+                        @page_scene(item.item, ingredeint.clone())
                     });
                 }
             });
@@ -663,7 +725,13 @@ fn book_text() -> impl Scene {
 #[derive(Component, Default, Clone, Debug)]
 struct IngredientNoteNode;
 
-fn page_scene() -> impl Scene {
+fn page_scene(item: Item, ing: Ingredient) -> impl Scene {
+    let sprite = item.sprite_path();
+
+    let title = ing.name.to_string();
+    let description = ing.description.to_string();
+    let aspects = ing.aspects.to_string();
+
     bsn! {
         IngredientNoteNode
         TransformPropogatedUiNode [
@@ -678,20 +746,20 @@ fn page_scene() -> impl Scene {
                     flex_direction: FlexDirection::Row
                 }
                 ImageNode {
-                    image: "ingredient_images/struby.png"
+                    image: sprite
                 }
                 --
                 Node {
                     flex_direction: FlexDirection::Column
                 }
                 Children [
-                    Text("Title")
+                    Text(title)
                     @book_text()
                     --
-                    Text("Description")
+                    Text(description)
                     @book_text()
                     --
-                    Text("aspects")
+                    Text(aspects)
                     @book_text()
                 ]
             ]

@@ -2,6 +2,7 @@ use bevy::{
     DefaultPlugins,
     app::{App, Plugin, PluginGroup, Startup},
     asset::{AssetServer, Handle, LoadedFolder},
+    audio::{AudioPlayer, GlobalVolume, PlaybackSettings, Volume},
     camera::{Camera2d, ScalingMode::WindowSize},
     ecs::{
         component::Component,
@@ -69,11 +70,23 @@ impl Plugin for JamPlugin {
             .add_sub_state::<InGameScreen>()
             .add_sub_state::<PlayerLocation>();
 
-        app.add_systems(Startup, (spawn_camera, load_assets))
+        app.add_systems(Startup, (spawn_camera, load_assets, play_background_audio))
             .add_systems(OnEnter(AppState::InGame), spawn_ui_overlay);
 
         app.add_systems(Startup, debug_start_game);
     }
+}
+
+fn play_background_audio(
+    asset_server: Res<AssetServer>,
+    mut commands: Commands,
+    mut volume: ResMut<GlobalVolume>,
+) {
+    let audio = asset_server.load("Philo_SONG.mp3");
+
+    volume.volume = Volume::Linear(0.4);
+    // Create an entity dedicated to playing our background music
+    commands.spawn((AudioPlayer::new(audio), PlaybackSettings::LOOP));
 }
 
 #[derive(Resource, Debug, Clone)]
