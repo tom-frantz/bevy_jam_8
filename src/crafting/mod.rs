@@ -408,7 +408,7 @@ impl CraftingState {
                 .collect::<Vec<Ingredient>>();
 
             if recipe.test_for_ingredients(ingredients_present) {
-                // craft it
+                return Ok(recipe.output);
             }
         }
         Err(())

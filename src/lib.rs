@@ -1,13 +1,16 @@
 use bevy::{
     DefaultPlugins,
-    app::{App, Plugin, Startup},
-    camera::Camera2d,
+    app::{App, Plugin, PluginGroup, Startup},
+    asset::{AssetServer, Handle, LoadedFolder},
+    camera::{Camera2d, ScalingMode::WindowSize},
     ecs::{
         component::Component,
         hierarchy::Children,
         observer::On,
-        system::{Commands, ResMut},
+        resource::Resource,
+        system::{Commands, Res, ResMut},
     },
+    image::Image,
     picking::{Pickable, events::PointerClick},
     prelude::States,
     scene::{CommandsSceneExt, bsn, on},
@@ -16,6 +19,9 @@ use bevy::{
         state::{NextState, OnEnter, SubStates},
     },
     ui::{AlignItems, FlexDirection, JustifyContent, Node, Val, ZIndex, widget::ImageNode},
+    utils::default,
+    window::{Window, WindowPlugin, WindowResolution},
+    winit::WinitUserEvent::WindowAdded,
 };
 
 use crate::{
@@ -38,7 +44,13 @@ pub struct JamPlugin;
 
 impl Plugin for JamPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins(DefaultPlugins.set_image_plugin());
+        app.add_plugins(DefaultPlugins.set_image_plugin().set(WindowPlugin {
+            primary_window: Some(Window {
+                resolution: WindowResolution::new(1920, 1080),
+                ..default()
+            }),
+            ..default()
+        }));
 
         app.add_plugins((
             set_default_font,
@@ -55,11 +67,20 @@ impl Plugin for JamPlugin {
             .add_sub_state::<InGameScreen>()
             .add_sub_state::<PlayerLocation>();
 
-        app.add_systems(Startup, spawn_camera)
+        app.add_systems(Startup, (spawn_camera, load_assets))
             .add_systems(OnEnter(AppState::InGame), spawn_ui_overlay);
 
         app.add_systems(Startup, debug_start_game);
     }
+}
+
+#[derive(Resource, Debug, Clone)]
+pub struct ImagesHandleHolder(#[allow(dead_code)] Vec<Handle<LoadedFolder>>);
+fn load_assets(asset_server: Res<AssetServer>, mut commands: Commands) {
+    commands.insert_resource(ImagesHandleHolder(vec![
+        asset_server.load_folder("final_assets"),
+        asset_server.load_folder("final_assets"),
+    ]));
 }
 
 /// Controls the whole flow of the game.
