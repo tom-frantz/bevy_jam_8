@@ -128,6 +128,7 @@ goto_context = "crab_questcomplete1"
 [context_items.choices.requires]
 alt_text= "(I need some way to read the invisible ink...)"
 req_items= ["MagicLens"]
+MarkQuest="Complete"
 
 # crab_contract choice 1
 [[context_items.choices]]
@@ -168,3 +169,21 @@ AddItem="CloudCandy"
 [[context_items.choices]]
 text = "Back"
 goto_context="arrival2"
+
+
+# moon_questcomplete
+[[context_items]]
+name = "moon_questcomplete"
+text = "You put the Magic Lens up to your eye and look back at the contract on the counter. Clear as day you can now make out the instructions for setting Ferris free! <m>'Spin once counter-clockwise, three times clockwise, damage some property and then let out a deep breath while you think about home'<m> you turn to face the crab after reading out the instructions just as it manages to flip the coffee table over with enough force to smash the globe that rested there. As Ferris exhales a shimmering wisp of energy is formed in the air in front of it. Uninterested, Ferris gives you a small nod before rapidly scuttling across the room and out the door. It immediately bee-lines and hops right off the moon! You're sure it'll make it back home."
+[[context_items.choices]]
+text = "Gather the wisp of energy"
+Leave = {}
+
+# moon_questcomplete
+[[context_items]]
+name = "moon_questskip"
+text= "You pick up the contract and toss it into the fireplace beside you. Glancing over, you see Ferris is slumped on the coffee table, unmoving. As you rush to its side a final rattling exhale is released, spewing forth a dark billowing cloud across the tabletop. It continues to expand for a few moments, before condensing into a single point and forming a macabre stoppered bottle around itself. The bottle clatters onto the table, bringing attention to the absolute silence that now surrounds you."
+
+[[context_items.choices]]
+text = "Take the bottle and leave"
+Leave = {}
