@@ -78,7 +78,7 @@ impl Plugin for CraftingPlugin {
 fn load_debug_ingredients(mut commands: Commands) {
     commands.spawn_scene_list(bsn_list! {
         template(|_| Ok( InventoryItem {
-            item: Item::Struberry,
+            item: Item::Struby,
             amount: 0
         } ))
         --
@@ -123,7 +123,7 @@ pub struct RecipeAssets(#[allow(unused)] Handle<LoadedFolder>);
 /// as to what an item actually is.
 #[derive(Copy, Clone, Debug, Component, PartialEq, Eq, Hash, Deserialize)]
 pub enum Item {
-    Struberry,
+    Struby,
     CrystalWater,
     FrogSlime,
     WorldTreeBlood,
@@ -144,6 +144,9 @@ pub enum Item {
     SleepGas,
     MagicLens,
     BoomBottle,
+    AncientNotes,
+    ModernNotes,
+    Heliopal,
 }
 
 impl Display for Item {
@@ -151,7 +154,7 @@ impl Display for Item {
         use Item::*;
 
         f.write_str(match self {
-            Struberry => "Struberry",
+            Struby => "Struby",
             CrystalWater => "Crystal Water",
             FrogSlime => "Frog Slime",
             WorldTreeBlood => "World Tree Blood",
@@ -172,6 +175,9 @@ impl Display for Item {
             SleepGas => "Sleep Gas",
             MagicLens => "Magic Lens",
             BoomBottle => "Boom Bottle",
+            AncientNotes => todo!(),
+            Heliopal => todo!(),
+            ModernNotes => todo!(),
         })
     }
 }
@@ -181,7 +187,7 @@ impl Item {
         use Item::*;
 
         let (dimensions, path): (Vec2, &str) = match self {
-            Struberry => (Vec2::new(208., 293.), "struby.png"),
+            Struby => (Vec2::new(208., 293.), "struby.png"),
             CrystalWater => (Vec2::new(285., 258.), "crystal_water.png"),
             FrogSlime => (Vec2::new(184., 275.), "frog_slime.png"),
             WorldTreeBlood => (Vec2::new(282.0, 334.0), "world_tree_lifeblood_good.png"),
@@ -202,6 +208,9 @@ impl Item {
             SleepGas => (Vec2::new(294., 567.), "sleep_gas.png"),
             MagicLens => (Vec2::new(476., 681.), "magic_lens.png"),
             BoomBottle => (Vec2::new(563., 421.), "boom_bottle.png"),
+            AncientNotes => todo!(),
+            Heliopal => todo!(),
+            ModernNotes => todo!(),
         };
 
         let image = format!("ingredient_images/{path}");
@@ -387,7 +396,7 @@ fn load_crafting_assets(asset_server: ResMut<AssetServer>, mut commands: Command
 /// When moving to the crafting screen, run this system once to setup everything.
 fn enter_crafting_screen(mut commands: Commands) {
     commands.spawn_scene_list(bsn_list! {
-        @ingredient_scene(Item::Struberry)
+        @ingredient_scene(Item::Struby)
         --
         @ingredient_scene(Item::CrystalWater)
         --

@@ -120,7 +120,7 @@ text = "You cross the clearing and find a small field of Strubyrries"
 text = "Harvest a few Strubyrries"
 goto_context = "arrival2"
 [[context_items.choices.execute]]
-AddItem="Struberry"
+AddItem="Struby"
 
 # berry choice 2
 [[context_items.choices]]

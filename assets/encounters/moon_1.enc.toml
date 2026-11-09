@@ -110,7 +110,7 @@ MarkQuest = "Started"
 # crab_contract
 [[context_items]]
 name = "crab_contract"
-text = "Sitting neatly on the counter is a small sheet of parchment. A contract to serve as the live-in caretaker for the lunar cottage is penned neatly in a shimmering script. A line at the bottom bears the squiggly signature of that reads "Ferris". Interestingly, the section that should detail the method for the contract's termination leaves an odd blank line and a half in the middle of the document. Running your hand along the page you clearly feel the magic from alchemical ink even in the missing portion. There must be something written there that you can't see!"
+text = "Sitting neatly on the counter is a small sheet of parchment. A contract to serve as the live-in caretaker for the lunar cottage is penned neatly in a shimmering script. A line at the bottom bears the squiggly signature of that reads 'Ferris'. Interestingly, the section that should detail the method for the contract's termination leaves an odd blank line and a half in the middle of the document. Running your hand along the page you clearly feel the magic from alchemical ink even in the missing portion. There must be something written there that you can't see!"
 
 # crab_contract choice 1
 [[context_items.choices]]
@@ -118,8 +118,7 @@ text = "Peer through the Magic Lens"
 goto_context = "crab_questcomplete1"
 [context_items.choices.requires]
 alt_text= "(I need some way to read the invisible ink...)"
-# TODO: magic lens
-req_items= ["magic_lens"]
+req_items= ["MagicLens"]
 
 # crab_contract choice 1
 [[context_items.choices]]
