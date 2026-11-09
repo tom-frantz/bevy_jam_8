@@ -20,8 +20,6 @@ text = "Visible even from a distance, the island is dominated by a sprawling com
   goto_context = "ruins1"
 
 
-
-  [[context_items.choices.execute]]
 [[context_items]]
 name = "ruins1"
 text = "Before long the entrance passage opens up into a small room with dusty sandstone walls. It is lit mostly by a stream of sunlight that has found its way through the jagged path of some ancient cave-in of the roof. Another, smaller light source comes in the form of a regular wooden torch, its warm orange glow revealing the body (and web) of an arachnid figure who you can see is currently hunched over some documents that they are reading intently. The back wall of the room, next to where the researcher is perched, appears as though it's made of a different material."
@@ -85,14 +83,17 @@ goto_context = "ruins_questcomp1"
 [context_items.choices.requires]
 alt_text= "(I need something to blast open this wall)"
 req_items= ["BoomBottle"]
+[[context_items.choices.execute]]
 MarkQuest = "Complete"
+[[context_items.choices.execute]]
 AddItem = "AncientNotes"
 
-[[context_items.choices.execute]]
 [[context_items.choices]]
   text = "Skip the wall and just swipe the researcher's notes"
   goto_context = "ruins_questskip"
+[[context_items.choices.execute]]
 MarkQuest = "Complete"
+[[context_items.choices.execute]]
 AddItem = "ModernNotes"
 [[context_items.choices]]
   text = "Back"
@@ -106,12 +107,9 @@ text = "You follow the sunbeam's path from the roof to the floor where it hits a
 text = "Take some Stopsand"
 goto_context = "ruins2"
 
-[[context_items.choices.execute]]
 [[context_items.choices]]
 text = "Back"
 goto_context = "ruins2"
-
-[[context_items.choices.execute]]
 
 
 
@@ -123,9 +121,7 @@ text = "In the darkened corner you find a few crystalline objects scattered abou
 text = "Take the Truant Lumino"
 goto_context = "ruins2"
 
-[[context_items.choices.execute]]
 [[context_items.choices]]
 text = "Back"
 goto_context = "ruins2"
 
-[[context_items.choices.execute]]
