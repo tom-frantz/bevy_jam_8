@@ -135,18 +135,19 @@ fn island_click_observer(
 #[derive(Debug, Default, Deserialize, Clone, Copy, PartialEq, Eq, Hash, Component)]
 pub enum Islands {
     #[default]
+    TUTORIAL,
     NIGHT,
     TREE,
     MOON,
     RUINS,
     PARTY,
-    /// Not on the map: the final encounter, picked by how many quests went well.
     ENDING,
 }
 
 impl Islands {
     pub fn background_path(self) -> String {
         match self {
+            Islands::TUTORIAL => String::from("backgrounds/background_night.png"),
             Islands::NIGHT => String::from("backgrounds/background_night.png"),
             Islands::TREE => String::from("backgrounds/backgrounds_green_2.png"),
             Islands::MOON => String::from("backgrounds/backgrounds_blue_2.png"),
