@@ -13,7 +13,7 @@ goto_context = "arrival2"
 # arrival2
 [[context_items]]
 name = "arrival2"
-text = "The most notable feature of the tree, however, is the large face that despite looking as if it is carved into the bark itself actually shifts slowly, its eyes following you as you touch down in a small clearing before it. Besides the looming tower of wood and leaf, the clearing contains a pristine pond filled with a shimmering liquid too lustrous to be normal water. On the other side, a shimmering patch of red catches your eye."
+text = "The most notable feature of the tree, however, is the large face that despite looking as if it is carved into the bark itself actually shifts slowly, its eyes following you as you touch down in a small clearing before it. Besides the looming tower of wood and leaf, the clearing contains a pristine pond filled with a shimmering liquid too lustrous to be normal water that seems to be occupied by non-shimmering frogs exactly as lustrous as to be normal. On the other side, a shimmering patch of red catches your eye."
 
 # arrival2 choice 1
 [[context_items.choices]]
@@ -54,6 +54,7 @@ text = "<g>'An alchemist you say?'<g> The World Tree looks at you with some surp
 [[context_items.choices]]
 text = "'An alchemist did that to you?'"
 goto_context = "tree_questgive3"
+MarkQuest="Started"
 
 # tree_questgive3
 [[context_items]]
@@ -63,11 +64,20 @@ text = "<g>'Indeed, a long time ago. They believed my blood to have powerful alc
 # tree_questgive3 choice 1
 [[context_items.choices]]
 text = "Give the tree the medicine"
-goto_context = "tree_questcomplete1"
+goto_context = "tree_questcomplete"
 [context_items.choices.requires]
 alt_text= "(I need something to heal the tree)"
 # TODO: tree_medicine
-req_items= ["Heliopal"]
+req_items= ["TreeMedicine"]
+AddItem="WorldTreeBlood"
+MarkQuest="Complete"
+
+# tree_questgive3 choice 1
+[[context_items.choices]]
+text = "You don't need to listen to some tree! Take that blood!"
+goto_context = "tree_questskip"
+AddItem="TaintedWorldTreeBlood"
+MarkQuest="Complete"
 
 # tree_questgive3 choice 2
 [[context_items.choices]]
@@ -77,7 +87,7 @@ goto_context = "arrival2"
 # pond
 [[context_items]]
 name = "pond"
-text = "You stand by the banks of the glittering oasis. The crystalline water glints in the sunlight"
+text = "You stand by the banks of the glittering oasis. The crystalline water glints in the sunlight, and the many frogs hop happily to and fro"
 
 # pond choice 1
 [[context_items.choices]]
@@ -85,9 +95,17 @@ text = "Take some Crystal Water"
 goto_context = "arrival2"
 [[context_items.choices.execute]]
 # TODO: crystal water
-AddItem="Mushroom"
+AddItem="CrystalWater"
 
 # pond choice 2
+[[context_items.choices]]
+text = "Scoop up some frog slime"
+goto_context = "arrival2"
+[[context_items.choices.execute]]
+# TODO: crystal water
+AddItem="FrogSlime"
+
+# pond choice 3
 [[context_items.choices]]
 text = "Back"
 goto_context = "arrival2"
@@ -102,7 +120,7 @@ text = "You cross the clearing and find a small field of Strubyrries"
 text = "Harvest a few Strubyrries"
 goto_context = "arrival2"
 [[context_items.choices.execute]]
-AddItem="Struby"
+AddItem="Struberry"
 
 # berry choice 2
 [[context_items.choices]]
