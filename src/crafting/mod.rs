@@ -126,27 +126,35 @@ pub enum Item {
     Struby,
     CrystalWater,
     FrogSlime,
-    WorldTreeBlood,
-    TaintedWorldTreeBlood,
     AngryMushrooms,
-    FastJuice,
     SleepJuice,
-    LastBreathOfInnocent,
-    BillowOfAFreeSpirit,
     WillOWisps,
-    Golem,
     TreeMedicine,
     IgnisAster,
     CloudCandy,
     LuminoTruant,
     Mushroom, // Remove this in favour of angry mushroom?
+    Heliopal,
+    // Craftables
     StopSand,
     SleepGas,
     MagicLens,
     BoomBottle,
+    // Rewards / Punishments
+    // World tree
+    WorldTreeBlood,
+    TaintedWorldTreeBlood,
+    // Moon
+    LastBreathOfInnocent,
+    BillowOfAFreeSpirit,
+    // Mushroom Party
+    CrystalisedEffort,
+    FastJuice,
+    // Ruins
     AncientNotes,
     ModernNotes,
-    Heliopal,
+    // Outcomes
+    Golem,
 }
 
 impl Display for Item {
@@ -178,6 +186,7 @@ impl Display for Item {
             AncientNotes => todo!(),
             Heliopal => todo!(),
             ModernNotes => todo!(),
+            CrystalisedEffort => todo!(),
         })
     }
 }
@@ -192,18 +201,18 @@ impl Item {
             FrogSlime => (Vec2::new(184., 275.), "frog_slime.png"),
             WorldTreeBlood => (Vec2::new(282.0, 334.0), "world_tree_lifeblood_good.png"),
             TaintedWorldTreeBlood => (Vec2::new(268., 326.), "world_tree_lifeblood_bad.png"),
-            AngryMushrooms => (Vec2::new(000., 000.), "TODO_TODO_TODO.png"),
+            AngryMushrooms => todo!(),
             FastJuice => (Vec2::new(193., 269.), "fast_juice.png"),
             SleepJuice => (Vec2::new(299., 331.), "sleep_juice.png"),
             LastBreathOfInnocent => (Vec2::new(169., 246.), "crab_breath_bad.png"),
             BillowOfAFreeSpirit => (Vec2::new(371., 363.), "crab_breath_good.png"),
-            WillOWisps => (Vec2::new(000., 000.), "TODO_TODO_TODO.png"),
+            WillOWisps => todo!(),
             Golem => (Vec2::new(208., 325.), "golem.png"),
             TreeMedicine => (Vec2::new(193., 269.), "tree_medicine.png"),
             IgnisAster => (Vec2::new(211., 352.), "ignis_aster.png"),
-            CloudCandy => (Vec2::new(000., 000.), "TODO_TODO_TODO.png"),
+            CloudCandy => todo!(),
             LuminoTruant => (Vec2::new(262., 244.), "lumino_truant.png"),
-            Mushroom => (Vec2::new(000., 000.), "TODO_TODO_TODO.png"),
+            Mushroom => todo!(),
             StopSand => (Vec2::new(230., 464.), "stop_sand.png"),
             SleepGas => (Vec2::new(294., 567.), "sleep_gas.png"),
             MagicLens => (Vec2::new(476., 681.), "magic_lens.png"),
@@ -211,6 +220,7 @@ impl Item {
             AncientNotes => todo!(),
             Heliopal => todo!(),
             ModernNotes => todo!(),
+            CrystalisedEffort => todo!(),
         };
 
         let image = format!("ingredient_images/{path}");
@@ -229,9 +239,15 @@ impl Item {
 #[derive(Clone, Debug, Component, PartialEq, Eq, Hash, Deserialize)]
 pub enum Aspects {
     Fire,
-    Earth,
-    Air,
     Water,
+    Nature,
+    Air,
+    Magic,
+    Inert,
+    Dark,
+    Light,
+    Energy,
+    Item,
 }
 
 /// An aspect and a level associated with it. More useful.
