@@ -201,11 +201,11 @@ impl Item {
             FrogSlime => (Vec2::new(184., 275.), "frog_slime.png"),
             WorldTreeBlood => (Vec2::new(282.0, 334.0), "world_tree_lifeblood_good.png"),
             TaintedWorldTreeBlood => (Vec2::new(268., 326.), "world_tree_lifeblood_bad.png"),
-            AngryMushrooms => todo!(),
+            AngryMushrooms => (Vec2::new(212., 310.), "bad_mushroom_2.png"),
             FastJuice => (Vec2::new(193., 269.), "fast_juice.png"),
             LastBreathOfInnocent => (Vec2::new(169., 246.), "crab_breath_bad.png"),
             BillowOfAFreeSpirit => (Vec2::new(371., 363.), "crab_breath_good.png"),
-            WillOWisps => todo!(),
+            WillOWisps => (Vec2::new(157., 202.), "fire_multi.png"),
             Golem => (Vec2::new(208., 325.), "golem.png"),
             TreeMedicine => (Vec2::new(193., 269.), "tree_medicine.png"),
             IgnisAster => (Vec2::new(211., 352.), "ignis_aster.png"),
@@ -219,7 +219,7 @@ impl Item {
             AncientNotes => todo!(),
             Heliopal => todo!(),
             ModernNotes => todo!(),
-            CrystallisedEffort => todo!(),
+            CrystallisedEffort => (Vec2::new(190., 234.), "crystalized_effort.png"),
         };
 
         let image = format!("ingredient_images/{path}");
