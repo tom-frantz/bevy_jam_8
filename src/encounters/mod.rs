@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use bevy::{
     app::{Plugin, Startup, Update},
     asset::{Asset, AssetApp, AssetServer, Assets, Handle},
-    color::{Color, palettes::tailwind},
+    color::Color,
     ecs::{
         component::Component,
         entity::Entity,
@@ -16,26 +16,23 @@ use bevy::{
         system::{Commands, Query, Res, ResMut, SystemParam},
     },
     input::{ButtonInput, keyboard::KeyCode},
-    log::{info, warn},
-    math::Vec2,
+    log::info,
     picking::{
         Pickable,
         events::{PointerLeave, PointerOver, PointerPress},
     },
     reflect::TypePath,
     scene::{CommandsSceneExt, EntityCommandsSceneExt, Scene, bsn, on},
-    sprite::Sprite,
     state::{
         condition::in_state,
-        state::{NextState, OnEnter, State},
+        state::{OnEnter, State},
         state_scoped::DespawnOnExit,
     },
     text::{TextColor, TextFont},
     ui::{
-        BackgroundColor, FlexDirection, Node, UiRect, Val,
+        FlexDirection, Node, UiRect, Val,
         widget::{ImageNode, NodeImageMode, Text},
     },
-    utils::default,
 };
 use serde::Deserialize;
 
@@ -46,6 +43,7 @@ use crate::{
         deserialize::TomlEncLoader,
         fancy_textify::{FancyTextColor, render_text_scene},
     },
+    fader::Fader,
     world_map::Islands,
 };
 
@@ -151,13 +149,22 @@ impl QuestProgress {
     }
 }
 
+const ISLANDS: [Islands; 4] = [Islands::TREE, Islands::MOON, Islands::RUINS, Islands::PARTY];
+
 #[derive(Resource, Default)]
 struct Encounters {
     handles: HashMap<(Islands, QuestProgress), Handle<EncounterRes>>,
+    /// handle to ending based on good quest completions
+    endings: Vec<Handle<EncounterRes>>,
     quest_progress: HashMap<Islands, QuestProgress>,
 }
 
 fn load_assets(mut encounters: ResMut<Encounters>, asset_server: Res<AssetServer>) {
+    // load endings
+    encounters.endings = (1..=4)
+        .map(|n| asset_server.load(format!("encounters/endings/ending_{n}.enc.toml")))
+        .collect();
+
     // load night
     let path = "encounters/night.enc.toml";
     encounters.handles.insert(
@@ -215,11 +222,48 @@ fn load_assets(mut encounters: ResMut<Encounters>, asset_server: Res<AssetServer
 }
 
 impl Encounters {
+    fn progress(&self, island: Islands) -> QuestProgress {
+        self.quest_progress
+            .get(&island)
+            .copied()
+            .unwrap_or_default()
+    }
+
+    /// Every quest island is finished, good or bad.
+    fn all_quests_finished(&self) -> bool {
+        ISLANDS.iter().all(|&island| {
+            matches!(
+                self.progress(island),
+                QuestProgress::GoodComplete | QuestProgress::BadComplete
+            )
+        })
+    }
+
+    fn good_count(&self) -> usize {
+        ISLANDS
+            .iter()
+            .filter(|&&island| self.progress(island) == QuestProgress::GoodComplete)
+            .count()
+    }
+
+    /// 1 good is ending_1 ... 4 good -> ending_4.
+    /// bit cooked as 0 good and 1 good are the same
+    fn ending_index(&self) -> usize {
+        self.good_count().clamp(1, 4) - 1
+    }
+
     fn get_encounter_by_island_and_quest_progress(
         &self,
         island: Islands,
         encounter_assets: &Assets<EncounterRes>,
     ) -> Option<EncounterRes> {
+        if island == Islands::ENDING {
+            return self
+                .endings
+                .get(self.ending_index())
+                .and_then(|handle| encounter_assets.get(handle))
+                .cloned();
+        }
         let progress = self
             .quest_progress
             .get(&island)
@@ -236,8 +280,7 @@ impl Encounters {
 struct ChoiceParams<'w, 's> {
     current_encounter: ResMut<'w, EncounterState>,
     encounters: ResMut<'w, Encounters>,
-    next_location: ResMut<'w, NextState<PlayerLocation>>,
-    next_screen: ResMut<'w, NextState<InGameScreen>>,
+    fader: ResMut<'w, Fader>,
     commands: Commands<'w, 's>,
     chatbox: Query<'w, 's, Entity, With<ChatBoxMarker>>,
     items: Query<'w, 's, &'static mut InventoryItem>,
@@ -398,7 +441,7 @@ fn set_scene_context(
     bsn! {
         Node {
             width: Val::Px(600.),
-            padding: UiRect::all(Val::Px(100.)),
+            padding: UiRect::all(Val::Px(120.)),
             flex_direction: FlexDirection::Column
         }
         ImageNode {
@@ -571,19 +614,31 @@ fn handle_choice(choice_index: usize, choice_params: &mut ChoiceParams) {
     }
 
     if leave {
-        if choice_params.current_encounter.island == Islands::NIGHT {
-            info!("sleepy time, back to map");
-            choice_params.next_location.set(PlayerLocation::Home);
-            choice_params.next_screen.set(InGameScreen::WorldMap);
-            return;
+        match choice_params.current_encounter.island {
+            Islands::NIGHT if choice_params.encounters.all_quests_finished() => {
+                info!("qyests done goto ending");
+                choice_params.fader.fade_to(
+                    PlayerLocation::Island(Islands::ENDING),
+                    InGameScreen::Encounter,
+                );
+            }
+            Islands::NIGHT => {
+                info!("sleepy time, back to map");
+                choice_params
+                    .fader
+                    .fade_to(PlayerLocation::Home, InGameScreen::WorldMap);
+            }
+            Islands::ENDING => {
+                todo!()
+            }
+            _ => {
+                info!("goto night time");
+                choice_params.fader.fade_to(
+                    PlayerLocation::Island(Islands::NIGHT),
+                    InGameScreen::Encounter,
+                );
+            }
         }
-
-        info!("goto night time");
-        choice_params
-            .next_location
-            .set(PlayerLocation::Island(Islands::NIGHT));
-        choice_params.next_screen.set(InGameScreen::Encounter);
-        //reload
         return;
     } else if let Some(goto_context) = &choice_selected.goto_context {
         info!("Goto: {goto_context:?}");

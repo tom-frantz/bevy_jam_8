@@ -140,6 +140,8 @@ pub enum Islands {
     MOON,
     RUINS,
     PARTY,
+    /// Not on the map: the final encounter, picked by how many quests went well.
+    ENDING,
 }
 
 impl Islands {
@@ -150,6 +152,7 @@ impl Islands {
             Islands::MOON => String::from("backgrounds/backgrounds_blue_2.png"),
             Islands::RUINS => String::from("backgrounds/backgrounds_green.png"),
             Islands::PARTY => String::from("backgrounds/backgrounds_yellow.png"),
+            Islands::ENDING => String::from("backgrounds/background_night.png"),
         }
     }
 }

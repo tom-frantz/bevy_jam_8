@@ -99,7 +99,7 @@ text = "Show the Sleep Cloud to Fungi"
 goto_context = "party_questcomplete"
 [context_items.choices.requires]
 alt_text= "(I need something to slow him down before we race!)"
-req_items= ["SleepGas"]
+req_items= ["SleepCloud"]
 [[context_items.choices.execute]]
 AddItem="CrystallisedEffort"
 [[context_items.choices.execute]]

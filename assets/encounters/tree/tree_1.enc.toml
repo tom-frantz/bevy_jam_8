@@ -33,7 +33,8 @@ goto_context = "berry"
 # arrival2 choice 4
 [[context_items.choices]]
 text = "Leave"
-goto_context = "map"
+[[context_items.choices.execute]]
+Leave = {}
 
 # tree_questgive1
 [[context_items]]

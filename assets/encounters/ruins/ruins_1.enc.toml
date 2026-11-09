@@ -9,9 +9,8 @@ name = "Remote Ruins"
 
 # arrival1
 [[context_items]]
-name = "ruins1"
+name = "arrival1"
 text = "Visible even from a distance, the island is dominated by a sprawling compound of ancient ruins. Near the base of one of the pyramid shaped structures you can see the darkened hollow of an entranceway. You circle the structure a few more times, but without any other points of interest for further investigation you make your way towards the carved doorway."
-
 
 
 # arrival1 choice 1/1 ruins1
@@ -67,7 +66,7 @@ text = """<r>'…Ah, '<r> the researcher pauses for a moment, looking a little e
 
 [[context_items]]
 name = "researcher_questgive3"
-text = """I can't explore further until I can breach this wall beside me. I believe those who once lived here once practised alchemy themselves! I've written some notes on their work from what I found elsewhere in these ruins, but it's probably better to see the real thing right? If you can help me out I'll let you take any hidden alchemical knowledge that you find inside. Or, uh... copy them, since handing out ancient texts probably doesn't make for great archeology! And lest you worry, this wall isn't part of the original structure, my guess is that it's barely a hundred years old… But that is all to say, would you lend me a hand?'<r>"""
+text = """<r>I can't explore further until I can breach this wall beside me. I believe those who once lived here once practised alchemy themselves! I've written some notes on their work from what I found elsewhere in these ruins, but it's probably better to see the real thing right? If you can help me out I'll let you take any hidden alchemical knowledge that you find inside. Or, uh... copy them, since handing out ancient texts probably doesn't make for great archeology! And lest you worry, this wall isn't part of the original structure, my guess is that it's barely a hundred years old… But that is all to say, would you lend me a hand?'<r>"""
 [[context_items.choices]]
 text = "'Sure!'"
 goto_context = "researcher_questaccept"
@@ -138,7 +137,7 @@ Leave = {}
 
 
 [[context_items]]
-name = "ruins_questcomplete"
+name = "ruins_questskip"
 text = "Who needs ancient knowledge when there's more modern info sitting right there? You wait for the researcher to go examine a section of the room before you slyly pocket one of their tomes, having to yank it free from the web. You hope they don't notice."
 
 [[context_items.choices]]

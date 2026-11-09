@@ -31,6 +31,7 @@ use crate::{
 
 mod crafting;
 mod encounters;
+mod fader;
 mod nights;
 mod world_map;
 
@@ -57,6 +58,7 @@ impl Plugin for JamPlugin {
             crafting::CraftingPlugin,
             encounters::EncounterPlugin,
             nights::NightsPlugin,
+            fader::FaderPlugin,
             world_map::WorldMapPlugin,
             draggable::DraggablePlugin,
             drawing::DrawingPlugin,
