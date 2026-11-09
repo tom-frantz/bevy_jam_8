@@ -1,0 +1,54 @@
+name = "Ending0"
+
+[[context_items]]
+name = "ending_intro_0"
+text = "You've finally collected all four items! Your nerves running wild, you return to the cabin to perform the ritual. You touch down at the cabin and approach Doug Skullery's grave. The setting sun stretches the headstones shadow out before you, painting the ground a stygian black. "
+
+
+[[context_items.choices]]
+text = "Doug Skullery's incorporeal form rises from the earth"
+goto_context = "ending_intro_1"
+
+
+[[context_items]]
+name = "ending_intro_1"
+text = "<p>'You've done it! You've brought the items!'<p> a wild grin curls the ghostly face. <p>'Quickly, place them around my grave with your philosopher's stone in the center. You've done well, soon we can begin your tutelage in earnest!'<p>"
+
+
+[[context_items.choices]]
+text = "Place the items"
+goto_context = "ending_intro_2"
+
+
+[[context_items]]
+name = "ending_intro_2"
+text = "You carefully set the items down on the grave. <p>'Now, '<p> Doug starts, transfixed <p>'complete the loop!'<p>"
+
+
+[[context_items.choices]]
+text = "Trace your finger from focus to items and back again
+"
+goto_context = "ending_intro_3"
+
+[[context_items]]
+name = "ending_intro_3"
+text = "The moment you complete the loop a terrible billow of purple energy spews forth from the grave. The loop you traced is fixed in place, seemingly focusing the immense energy as it rises to hover in the air. 
+
+<p>'Ha ha ha ha! Oh you've done well my pupil! With this I shall live again to continue my research while those fools who sealed me all those years ago remain long dead! I can feel my essence being made more powerful by the second!<p> Your feet are glued to the floor, leaving you unable to flee. <p>'I'll have you serve me well, but not as my apprentice. I think your living body will make an excellent new home for this old spirit! If you wanted me to keep my promise you should have made me sign a magical contract like I did to that stupid crab!<p>"
+
+
+[[context_items.choices]]
+text = "Something in the ritual shifts"
+goto_context = "good0"
+
+
+[[context_items]]
+name = "good0"
+text = "The very moment Doug Skullery boasts his evil plan, it becomes clear something isn't going the way he wanted. The energy of the items you gathered seems to be containing the ghost's power rather than focusing it. You watch as the purple smoke is trapped within your alchemical loop and begin to slowly diminish. There is a bright flash of light and the smoke has cleared entirely save for a small orb that falls upon the ground devoid of malice. The soil itself seems to form around the orb into the shape of a small figure. 
+
+You have foiled the ancient alchemist's plan as well as gained a useful assistant."
+
+[[context_items.choices]]
+text = "Game Over"
+[[context_items.choices.execute]]
+Leave = {}
