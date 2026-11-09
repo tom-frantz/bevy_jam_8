@@ -29,7 +29,7 @@ pub struct Ingredient {
 #[derive(Debug, Clone, Deserialize)]
 pub struct Recipe {
     name: String,
-    inputs_aspects: Vec<Aspects>,
+    input_aspects: Vec<Aspects>,
     output: Item,
 }
 
@@ -111,20 +111,15 @@ mod tests {
 
     #[test]
     fn recipes_parse() {
-        for entry in read_dir(Path::new("assets/recipes")).unwrap() {
-            let path = entry.unwrap().path();
-            if !path.is_file() {
-                continue;
-            }
-            let asset: Result<Recipe, _> = toml::from_str(&read_to_string(path).unwrap());
+        let asset: Result<Recipes, _> =
+            toml::from_str(include_str!("../../assets/recipes.rec.toml"));
 
-            if let Err(val) = &asset {
-                dbg!(val);
-            };
-            if let Ok(val) = &asset {
-                dbg!(val);
-            }
-            assert!(asset.is_ok())
+        if let Err(val) = &asset {
+            dbg!(val);
+        };
+        if let Ok(val) = &asset {
+            dbg!(val);
         }
+        assert!(asset.is_ok())
     }
 }
