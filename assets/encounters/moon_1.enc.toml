@@ -115,6 +115,7 @@ text = "The crab hops from one side to the other, snapping its pincers in the ai
 text = "Check out whats on the counter"
 goto_context = "crab_contract"
 MarkQuest = "Started"
+[[context_items.choices.execute]]
 
 # crab_contract
 [[context_items]]
@@ -129,13 +130,16 @@ goto_context = "crab_questcomplete1"
 alt_text= "(I need some way to read the invisible ink...)"
 req_items= ["MagicLens"]
 MarkQuest="Complete"
+[[context_items.choices.execute]]
 
 # crab_contract choice 1
 [[context_items.choices]]
 text = "I could just burn the contract, what's the worst that could happen?"
 goto_context = "crab_questskip"
 AddItem="LastBreathOfInnocent"
+[[context_items.choices.execute]]
 MarkQuest="Complete"
+[[context_items.choices.execute]]
 
 # crab_contract choice 2
 [[context_items.choices]]
@@ -150,6 +154,7 @@ text = "You arrive at the brilliant field to find that it is comprised entirely 
 text = "Take some of the flowers"
 goto_context = "arrival2"
 AddItem="IgnisAster"
+[[context_items.choices.execute]]
 
 # crab_contract choice 2
 [[context_items.choices]]
@@ -164,6 +169,7 @@ text = "Fly to the edge of the moon. The small clouds look solid enough to grab 
 text = "Grab some clouds"
 goto_context = "arrival2"
 AddItem="CloudCandy"
+[[context_items.choices.execute]]
 
 # crab_contract choice 2
 [[context_items.choices]]
@@ -178,6 +184,7 @@ text = "You put the Magic Lens up to your eye and look back at the contract on t
 [[context_items.choices]]
 text = "Gather the wisp of energy"
 Leave = {}
+[[context_items.choices.execute]]
 
 # moon_questcomplete
 [[context_items]]
@@ -187,3 +194,4 @@ text= "You pick up the contract and toss it into the fireplace beside you. Glanc
 [[context_items.choices]]
 text = "Take the bottle and leave"
 Leave = {}
+[[context_items.choices.execute]]
