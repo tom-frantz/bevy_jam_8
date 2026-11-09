@@ -1,0 +1,73 @@
+name = "Night"
+
+# Opening Scene
+[[context_items]]
+name = "night"
+text = "Its night time. Shit is dark man."
+
+# moon quest 
+[[context_items.choices]]
+text = "Ask about the moon"
+goto_context = "moon_not_started"
+[context_items.choices.requires_quest_state]
+island = "MOON"
+required_state = "NotStarted"
+
+[[context_items.choices]]
+text = "Look up at the moon and think of the crab"
+goto_context = "moon_started"
+[context_items.choices.requires_quest_state]
+island = "MOON"
+required_state = "Started"
+
+[[context_items.choices]]
+text = "Wonder if the crab is happy"
+goto_context = "moon_good_complete"
+[context_items.choices.requires_quest_state]
+island = "MOON"
+required_state = "GoodComplete"
+
+[[context_items.choices]]
+text = "Wonder about how much you ruined the poor crab's life"
+goto_context = "moon_bad_complete"
+[context_items.choices.requires_quest_state]
+island = "MOON"
+required_state = "BadComplete"
+
+[[context_items.choices]]
+text = "Go to sleep"
+[[context_items.choices.execute]]
+Leave = {}
+
+# moon quest not started
+[[context_items]]
+name = "moon_not_started"
+text = "MOON QUEST NOT STARTED"
+[[context_items.choices]]
+text = "continue..."
+goto_context = "night"
+
+
+# moon quest started
+[[context_items]]
+name = "moon_started"
+text = "MOON QUEST HAS BEEN STARTED!"
+[[context_items.choices]]
+text = "continue..."
+goto_context = "night"
+
+
+# moon quest good complete
+[[context_items]]
+name = "moon_good_complete"
+text = "MOON QUEST HAS BEEN COMPLETED (GOOD ENDING!)"
+[[context_items.choices]]
+text = "continue..."
+goto_context = "night"
+
+[[context_items]]
+name = "moon_bad_complete"
+text = "MOON QUEST HAS BEEN COMPLETED (BAD ENDING!)"
+[[context_items.choices]]
+text = "continue..."
+goto_context = "night"

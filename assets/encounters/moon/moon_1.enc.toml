@@ -1,4 +1,4 @@
-name = "Mushroom Forest"
+name = "Moon"
 
 
 # arrival
@@ -10,6 +10,12 @@ text = "As you rise upward above even the highest clouds, the boundless blue of 
 [[context_items.choices]]
 text = "Get a better look of the surroundings"
 goto_context = "house1"
+
+# arrival choice 2
+[[context_items.choices]]
+text = "Leave"
+[[context_items.choices.execute]]
+Leave = {}
 
 [[context_items]]
 name = "arrival2"
@@ -33,7 +39,8 @@ goto_context = "cloud"
 # arrival choice 3
 [[context_items.choices]]
 text = "Leave"
-goto_context = "map"
+[[context_items.choices.execute]]
+Leave = {}
 
 # house1
 [[context_items]]
@@ -114,8 +121,8 @@ text = "The crab hops from one side to the other, snapping its pincers in the ai
 [[context_items.choices]]
 text = "Check out whats on the counter"
 goto_context = "crab_contract"
-MarkQuest = "Started"
 [[context_items.choices.execute]]
+MarkQuest = "Started"
 
 # crab_contract
 [[context_items]]
@@ -129,21 +136,22 @@ goto_context = "crab_questcomplete"
 [context_items.choices.requires]
 alt_text= "(I need some way to read the invisible ink...)"
 req_items= ["MagicLens"]
-MarkQuest="Complete"
 [[context_items.choices.execute]]
+MarkQuest="GoodComplete"
 
 # crab_contract choice 1
 [[context_items.choices]]
 text = "I could just burn the contract, what's the worst that could happen?"
 goto_context = "crab_questskip"
+[[context_items.choices.execute]]
 AddItem="LastBreathOfInnocent"
 [[context_items.choices.execute]]
-MarkQuest="Complete"
-[[context_items.choices.execute]]
+MarkQuest="BadComplete"
 
 # crab_contract choice 2
 [[context_items.choices]]
 text = "Leave"
+[[context_items.choices.execute]]
 Leave = {}
 
 # 
@@ -153,8 +161,8 @@ text = "You arrive at the brilliant field to find that it is comprised entirely 
 [[context_items.choices]]
 text = "Take some of the flowers"
 goto_context = "arrival2"
-AddItem="IgnisAster"
 [[context_items.choices.execute]]
+AddItem="IgnisAster"
 
 # crab_contract choice 2
 [[context_items.choices]]
@@ -168,8 +176,8 @@ text = "Fly to the edge of the moon. The small clouds look solid enough to grab 
 [[context_items.choices]]
 text = "Grab some clouds"
 goto_context = "arrival2"
-AddItem="CloudCandy"
 [[context_items.choices.execute]]
+AddItem="CloudCandy"
 
 # crab_contract choice 2
 [[context_items.choices]]
@@ -183,8 +191,8 @@ name = "crab_questcomplete"
 text = "You put the Magic Lens up to your eye and look back at the contract on the counter. Clear as day you can now make out the instructions for setting Ferris free! <m>'Spin once counter-clockwise, three times clockwise, damage some property and then let out a deep breath while you think about home'<m> you turn to face the crab after reading out the instructions just as it manages to flip the coffee table over with enough force to smash the globe that rested there. As Ferris exhales a shimmering wisp of energy is formed in the air in front of it. Uninterested, Ferris gives you a small nod before rapidly scuttling across the room and out the door. It immediately bee-lines and hops right off the moon! You're sure it'll make it back home."
 [[context_items.choices]]
 text = "Gather the wisp of energy"
-Leave = {}
 [[context_items.choices.execute]]
+Leave = {}
 
 # moon_questcomplete
 [[context_items]]
@@ -193,5 +201,5 @@ text= "You pick up the contract and toss it into the fireplace beside you. Glanc
 
 [[context_items.choices]]
 text = "Take the bottle and leave"
-Leave = {}
 [[context_items.choices.execute]]
+Leave = {}

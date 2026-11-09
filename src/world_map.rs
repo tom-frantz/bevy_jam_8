@@ -23,6 +23,7 @@ use bevy::{
     transform::components::Transform,
     ui::{Node, Val, widget::Text},
 };
+use serde::Deserialize;
 
 use crate::{AppState, InGameScreen, PlayerLocation};
 
@@ -74,25 +75,25 @@ fn enter_world_map(mut commands: Commands) {
         Pickable::IGNORE
         --
         @island()
-        IslandId(0)
+        Islands::TREE.id()
         Transform {
             translation: Vec3::new(50., 100., 0.)
         }
         --
         @island()
-        IslandId(1)
+        Islands::MOON.id()
         Transform {
             translation: Vec3::new(300., 0., 0.)
         }
         --
         @island()
-        IslandId(2)
+        Islands::RUINS.id()
         Transform {
             translation: Vec3::new(-200., -100., 0.)
         }
         --
         @island()
-        IslandId(3)
+        Islands::PARTY.id()
         Transform {
             translation: Vec3::new(-400., 50., 0.)
         }
@@ -125,4 +126,25 @@ fn island_click_observer(
     next_state.set(PlayerLocation::Island(*island_id));
     // TODO the setup for the encounter on the island
     next_screen.set(InGameScreen::Encounter);
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub enum Islands {
+    NIGHT,
+    TREE,
+    MOON,
+    RUINS,
+    PARTY,
+}
+
+impl Islands {
+    pub fn id(&self) -> IslandId {
+        match self {
+            Islands::NIGHT => IslandId(0),
+            Islands::TREE => IslandId(1),
+            Islands::MOON => IslandId(2),
+            Islands::RUINS => IslandId(3),
+            Islands::PARTY => IslandId(4),
+        }
+    }
 }
