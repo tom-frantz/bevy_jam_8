@@ -4,9 +4,18 @@ name = "Mushroom Forest"
 # arrival
 [[context_items]]
 name = "arrival"
-text = "As you rise upward above even the highest clouds, the boundless blue of sky retreats into myriad pinprick constellations against an inky canvas, the gentle breeze replaced by a silent and serene calm. At the very tip of the moon's pointed crescent you spot a small cottage with windows lit by warm orange and a chimney lazily billowing a thin trail of smoke balancing precariously. From this vantage point you see that a large portion of the lunar surface is dominated by a field of red, orange and yellow. By harsh clifflike edges you can see strange shimmering clouds."
+text = "As you rise upward above even the highest clouds, the boundless blue of sky retreats into myriad pinprick constellations against an inky canvas, the gentle breeze replaced by a silent and serene calm. At the very tip of the moon's pointed crescent you spot a small cottage with windows lit by warm orange and a chimney lazily billowing a thin trail of smoke balancing precariously."
 
 # arrival choice 1
+[[context_items.choices]]
+text = "Get a better look of the surroundings"
+goto_context = "house1"
+
+[[context_items]]
+name = "arrival2"
+text = "One the moon's tip the cottage remains as perfectly balanced as ever. Further inward a large portion of the lunar surface is dominated by a field of red, orange and yellow. By the harsh clifflike edges you can see strange shimmering clouds."
+
+# arrival2 choice 1
 [[context_items.choices]]
 text = "Drift towards the front door of the cottage"
 goto_context = "house1"
@@ -94,7 +103,7 @@ text = "Peering over at the papers in order to understand what the crab is tryin
 # crab_questgive2 choice 1
 [[context_items.choices]]
 text = "'You want... to leave the moon and go to the ocean?'"
-goto_context = ""
+goto_context = "crab_questgive3"
 
 # crab_questgive3
 [[context_items]]
@@ -118,18 +127,44 @@ text = "Peer through the Magic Lens"
 goto_context = "crab_questcomplete1"
 [context_items.choices.requires]
 alt_text= "(I need some way to read the invisible ink...)"
-# TODO: magic lens
-req_items= ["magic_lens"]
+req_items= ["MagicLens"]
 
 # crab_contract choice 1
 [[context_items.choices]]
-text = "I could just throw the contract in the fire, but I'm not sure what would happen"
+text = "I could just burn the contract, what's the worst that could happen?"
 goto_context = "crab_questskip"
 AddItem="LastBreathOfInnocent"
 MarkQuest="Complete"
 
-
 # crab_contract choice 2
 [[context_items.choices]]
 text = "Leave"
-goto_context = "map"
+Leave = {}
+
+# 
+[[context_items]]
+name = "ignis"
+text = "You arrive at the brilliant field to find that it is comprised entirely of a small type of flower that has a tiny torch of light where its petals would be"
+[[context_items.choices]]
+text = "Take some of the flowers"
+goto_context = "arrival2"
+AddItem="IgnisAster"
+
+# crab_contract choice 2
+[[context_items.choices]]
+text = "Back"
+goto_context="arrival2"
+
+[[context_items]]
+name = "ignis"
+text = "Fly to the edge of the moon. The small clouds look solid enough to grab and weirdly... tasty?."
+
+[[context_items.choices]]
+text = "Grab some clouds"
+goto_context = "arrival2"
+AddItem="CloudCandy"
+
+# crab_contract choice 2
+[[context_items.choices]]
+text = "Back"
+goto_context="arrival2"
