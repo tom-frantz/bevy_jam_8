@@ -1,85 +1,72 @@
+```toml
 [[ingredients]]
 name="Struby"
 description="TODO"
 [[ingredients.aspects]]
-primary=["TODO", 1]
+primary=["Fire", 1]
 # secondary=["TODO", 1]
 
 [[ingredients]]
 name="CrystalWater"
 description="TODO"
 [[ingredients.aspects]]
-primary=["TODO", 1]
-# secondary=["TODO", 1]
+primary=["Water", 1]
+secondary=["Magic", 1]
 
 [[ingredients]]
 name="FrogSlime"
 description="TODO"
 [[ingredients.aspects]]
-primary=["TODO", 1]
+primary=["Nature", 1]
 # secondary=["TODO", 1]
 
 [[ingredients]]
 name="AngryMushrooms"
 description="TODO"
 [[ingredients.aspects]]
-primary=["TODO", 1]
-# secondary=["TODO", 1]
+primary=["Energy", 1]
+secondary=["Nature", 1]
 
 [[ingredients]]
-name="SleepJuice"
+name="SleepCloud"
 description="TODO"
 [[ingredients.aspects]]
-primary=["TODO", 1]
-# secondary=["TODO", 1]
+primary=["Inert", 1]
+secondary=["Air", 1]
 
 [[ingredients]]
 name="WillOWisps"
 description="TODO"
 [[ingredients.aspects]]
-primary=["TODO", 1]
-# secondary=["TODO", 1]
+primary=["Light", 1]
+secondary=["Magic", 1]
 
 [[ingredients]]
 name="TreeMedicine"
 description="TODO"
 [[ingredients.aspects]]
-primary=["TODO", 1]
-# secondary=["TODO", 1]
+primary=["Nature", 1]
+secondary=["Water", 1]
 
 [[ingredients]]
 name="IgnisAster"
 description="TODO"
 [[ingredients.aspects]]
-primary=["TODO", 1]
-# secondary=["TODO", 1]
+primary=["Light", 1]
+secondary=["Nature", 1]
 
 [[ingredients]]
 name="CloudCandy"
 description="TODO"
 [[ingredients.aspects]]
-primary=["TODO", 1]
-# secondary=["TODO", 1]
+primary=["Air", 1]
+secondary=["Water", 1]
 
 [[ingredients]]
 name="LuminoTruant"
 description="TODO"
 [[ingredients.aspects]]
-primary=["TODO", 1]
-# secondary=["TODO", 1]
-
-[[ingredients]]  # TODO maybe just remove this.
-name="Mushroom"
-description="TODO"
-[[ingredients.aspects]]
-primary=["TODO", 1]
-# secondary=["TODO", 1]
-
-[[ingredeints]]
-name="Heliopal"
-description="TODO"
-[[ingredients.aspects]]
-primary=["TODO", 1]
+primary=["Dark", 1]
 # secondary=["TODO", 1]
 
 # Craftables
@@ -87,29 +74,30 @@ primary=["TODO", 1]
 name="StopSand"
 description="TODO"
 [[ingredients.aspects]]
-primary=["TODO", 1]
+primary=["Inert", 1]
 # secondary=["TODO", 1]
 
 [[ingredients]]
 name="SleepGas"
 description="TODO"
 [[ingredients.aspects]]
-primary=["TODO", 1]
-# secondary=["TODO", 1]
+primary=["Inert", 1]
+# secondary=["Air", 1]
 
 [[ingredients]]
 name="MagicLens"
 description="TODO"
 [[ingredients.aspects]]
-primary=["TODO", 1]
-# secondary=["TODO", 1]
+primary=["Magic", 1]
+secondary=["Light", 1]
+tertiary=["Dark", 1]
 
 [[ingredients]]
 name="BoomBottle"
 description="TODO"
 [[ingredients.aspects]]
-primary=["TODO", 1]
-# secondary=["TODO", 1]
+primary=["Fire", 1]
+# secondary=["Energy", 1]
 
 # Rewards / Punishments
 # World tree
@@ -117,14 +105,14 @@ primary=["TODO", 1]
 name="WorldTreeBlood"
 description="TODO"
 [[ingredients.aspects]]
-primary=["TODO", 1]
+primary=["Magic", 1]
 # secondary=["TODO", 1]
 
 [[ingredients]]
 name="TaintedWorldTreeBlood"
 description="TODO"
 [[ingredients.aspects]]
-primary=["TODO", 1]
+primary=["Magic", 1]
 # secondary=["TODO", 1]
 
 # Moon
@@ -132,14 +120,14 @@ primary=["TODO", 1]
 name="LastBreathOfInnocent"
 description="TODO"
 [[ingredients.aspects]]
-primary=["TODO", 1]
+primary=["Magic", 1]
 # secondary=["TODO", 1]
 
 [[ingredients]]
 name="BillowOfAFreeSpirit"
 description="TODO"
 [[ingredients.aspects]]
-primary=["TODO", 1]
+primary=["Magic", 1]
 # secondary=["TODO", 1]
 
 # Mushroom Party
@@ -147,29 +135,29 @@ primary=["TODO", 1]
 name="CrystallisedEffort"
 description="TODO"
 [[ingredients.aspects]]
-primary=["TODO", 1]
+primary=["Magic", 1]
 # secondary=["TODO", 1]
 
 [[ingredients]]
 name="FastJuice"
 description="TODO"
 [[ingredients.aspects]]
-primary=["TODO", 1]
-# secondary=["TODO", 1]
+primary=["Energy", 1]
+secondary=["Magic", 1]
 
 # Ruins
 [[ingredients]]
 name="AncientNotes"
 description="TODO"
 [[ingredients.aspects]]
-primary=["TODO", 1]
+primary=["Magic", 1]
 # secondary=["TODO", 1]
 
 [[ingredients]]
 name="ModernNotes"
 description="TODO"
 [[ingredients.aspects]]
-primary=["TODO", 1]
+primary=["Magic", 1]
 # secondary=["TODO", 1]
 
 # Outcomes
@@ -179,4 +167,4 @@ description="TODO"
 [[ingredients.aspects]]
 primary=["TODO", 1]
 # secondary=["TODO", 1]
-
+```
