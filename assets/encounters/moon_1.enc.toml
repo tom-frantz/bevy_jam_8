@@ -4,7 +4,7 @@ name = "Mushroom Forest"
 # arrival
 [[context_items]]
 name = "arrival"
-text = "As you rise upward above even the highest clouds, the boundless blue of sky retreats into myriad pinprick constellations against an inky canvas, the gentle breeze replaced by a silent and serene calm. Now at its level, you spot nestled upon the crescent moon a small cottage with windows lit by warm orange and a chimney lazily billowing a thin trail of smoke. On the the very tip of the moon's pointed arc you can see strange yellow flickering. You drift towards the dwelling and step off your broom as you consider what to do next."
+text = "As you rise upward above even the highest clouds, the boundless blue of sky retreats into myriad pinprick constellations against an inky canvas, the gentle breeze replaced by a silent and serene calm. At the very tip of the moon's pointed crescent you spot a small cottage with windows lit by warm orange and a chimney lazily billowing a thin trail of smoke balancing precariously. From this vantage point you see that a large portion of the lunar surface is dominated by a field of red, orange and yellow. By harsh clifflike edges you can see strange shimmering clouds."
 
 # arrival choice 1
 [[context_items.choices]]
@@ -13,8 +13,13 @@ goto_context = "house1"
 
 # arrival choice 2
 [[context_items.choices]]
-text = "Check out the flicker (not yet implemented)"
-goto_context = ""
+text = "Approach the fields"
+goto_context = "ignis"
+
+# arrival choice 3
+[[context_items.choices]]
+text = "Fly by the clouds"
+goto_context = "cloud"
 
 # arrival choice 3
 [[context_items.choices]]
@@ -100,20 +105,29 @@ text = "The crab hops from one side to the other, snapping its pincers in the ai
 [[context_items.choices]]
 text = "Check out whats on the counter"
 goto_context = "crab_contract"
+MarkQuest = "Started"
 
 # crab_contract
 [[context_items]]
 name = "crab_contract"
-text = "Sitting neatly on the counter is a small sheet of parchment. A contract to serve as the live-in caretaker for the lunar cottage is penned neatly in a shimmering script. A line at the bottom bears the squiggly signature of a \"Kray Z. Crabb\". Interestingly, the section that should detail the method for the contract's termination leaves an odd blank line and a half in the middle of the document. Running your hand along the page you clearly feel the magic from alchemical ink even in the missing portion. There must be something written there that you can't see!"
+text = "Sitting neatly on the counter is a small sheet of parchment. A contract to serve as the live-in caretaker for the lunar cottage is penned neatly in a shimmering script. A line at the bottom bears the squiggly signature of that reads "Ferris". Interestingly, the section that should detail the method for the contract's termination leaves an odd blank line and a half in the middle of the document. Running your hand along the page you clearly feel the magic from alchemical ink even in the missing portion. There must be something written there that you can't see!"
 
 # crab_contract choice 1
 [[context_items.choices]]
-text = "Not yet implemented!"
+text = "Peer through the Magic Lens"
 goto_context = "crab_questcomplete1"
 [context_items.choices.requires]
 alt_text= "(I need some way to read the invisible ink...)"
 # TODO: magic lens
-req_items= ["Heliopal"]
+req_items= ["magic_lens"]
+
+# crab_contract choice 1
+[[context_items.choices]]
+text = "I could just throw the contract in the fire, but I'm not sure what would happen"
+goto_context = "crab_questskip"
+AddItem="LastBreathOfInnocent"
+MarkQuest="Complete"
+
 
 # crab_contract choice 2
 [[context_items.choices]]
