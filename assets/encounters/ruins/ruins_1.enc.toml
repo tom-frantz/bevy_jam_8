@@ -85,7 +85,7 @@ goto_context = "ruins_questcomplete"
 alt_text= "(I need something to blast open this wall)"
 req_items= ["BoomBottle"]
 [[context_items.choices.execute]]
-MarkQuest = "Complete"
+MarkQuest = "GoodComplete"
 [[context_items.choices.execute]]
 AddItem = "AncientNotes"
 
@@ -93,7 +93,7 @@ AddItem = "AncientNotes"
   text = "Skip breaking the wall and just swipe the researcher's notes"
   goto_context = "ruins_questskip"
 [[context_items.choices.execute]]
-MarkQuest = "Complete"
+MarkQuest = "BadComplete"
 [[context_items.choices.execute]]
 AddItem = "ModernNotes"
 [[context_items.choices]]

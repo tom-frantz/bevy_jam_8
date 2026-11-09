@@ -68,12 +68,11 @@ text = "Give the tree the medicine"
 goto_context = "tree_questcomplete"
 [context_items.choices.requires]
 alt_text= "(I need something to heal the tree)"
-# TODO: tree_medicine
 req_items= ["TreeMedicine"]
 [[context_items.choices.execute]]
 AddItem="WorldTreeBlood"
 [[context_items.choices.execute]]
-MarkQuest="Complete"
+MarkQuest="GoodComplete"
 
 # tree_questgive3 choice 1
 [[context_items.choices]]
@@ -82,7 +81,7 @@ goto_context = "tree_questskip"
 [[context_items.choices.execute]]
 AddItem="TaintedWorldTreeBlood"
 [[context_items.choices.execute]]
-MarkQuest="Complete"
+MarkQuest="BadComplete"
 
 # tree_questgive3 choice 2
 [[context_items.choices]]
@@ -99,16 +98,12 @@ text = "You stand by the banks of the glittering oasis. The crystalline water gl
 text = "Take some Crystal Water"
 goto_context = "arrival2"
 [[context_items.choices.execute]]
-# TODO: crystal water
-[[context_items.choices.execute]]
 AddItem="CrystalWater"
 
 # pond choice 2
 [[context_items.choices]]
 text = "Scoop up some frog slime"
 goto_context = "arrival2"
-[[context_items.choices.execute]]
-# TODO: crystal water
 [[context_items.choices.execute]]
 AddItem="FrogSlime"
 
