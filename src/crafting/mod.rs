@@ -726,7 +726,9 @@ fn on_philosophers_end_drag_successful(
 ) {
     info!("on_philosophers_end_drag_successful");
     let crafting = crafting_state.try_craft();
-    todo!()
+    let Ok(crafting) = crafting else {
+        return;
+    };
 }
 
 /// Called after `on_philosophers_end_drag_successful`, regardless of it it reaches back to the right spot

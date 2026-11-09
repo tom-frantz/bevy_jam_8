@@ -18,6 +18,4 @@ name = "boomtown"
 output = "BoomBottle"
 input_aspects = ["Fire", "Energy"]
 
-# [crafting_state.Refine]
-# items = ["Struby", "Struby", "Struby"]
 

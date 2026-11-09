@@ -78,13 +78,6 @@ primary=["Inert", 1]
 # secondary=["TODO", 1]
 
 [[ingredients]]
-name="SleepGas"
-description="TODO"
-[[ingredients.aspects]]
-primary=["Inert", 1]
-# secondary=["Air", 1]
-
-[[ingredients]]
 name="MagicLens"
 description="TODO"
 [[ingredients.aspects]]
@@ -160,11 +153,4 @@ description="TODO"
 primary=["Magic", 1]
 # secondary=["TODO", 1]
 
-# Outcomes
-[[ingredients]]
-name="Golem"
-description="TODO"
-[[ingredients.aspects]]
-primary=["TODO", 1]
-# secondary=["TODO", 1]
 ```

@@ -106,7 +106,7 @@ fn spawn_ui_overlay(mut commands: Commands) {
             height: Val::Percent(100.),
             flex_direction: FlexDirection::Row,
             align_items: AlignItems::FlexEnd,
-            justify_content: JustifyContent::FlexEnd
+            justify_content: JustifyContent::FlexStart
         }
         ZIndex(1000)
         Pickable::IGNORE
@@ -132,17 +132,17 @@ fn spawn_ui_overlay(mut commands: Commands) {
             on(|_: On<PointerClick>, mut screen: ResMut<NextState<InGameScreen>>| {
                 screen.set(InGameScreen::WorldMap);
             })
-            --
-            ImageNode {
-                image: "encounter.png"
-            }
-            Node {
-                max_width: Val::Px(100.)
+            // --
+            // ImageNode {
+            //     image: "encounter.png"
+            // }
+            // Node {
+            //     max_width: Val::Px(100.)
 
-            }
-            on(|_: On<PointerClick>, mut screen: ResMut<NextState<InGameScreen>>| {
-                screen.set(InGameScreen::Encounter);
-            })
+            // }
+            // on(|_: On<PointerClick>, mut screen: ResMut<NextState<InGameScreen>>| {
+            //     screen.set(InGameScreen::Encounter);
+            // })
         ]
     });
 }
