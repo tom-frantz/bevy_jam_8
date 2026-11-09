@@ -114,8 +114,8 @@ text = "The crab hops from one side to the other, snapping its pincers in the ai
 [[context_items.choices]]
 text = "Check out whats on the counter"
 goto_context = "crab_contract"
-MarkQuest = "Started"
 [[context_items.choices.execute]]
+MarkQuest = "Started"
 
 # crab_contract
 [[context_items]]
@@ -125,21 +125,21 @@ text = "Sitting neatly on the counter is a small sheet of parchment. A contract 
 # crab_contract choice 1
 [[context_items.choices]]
 text = "Peer through the Magic Lens"
-goto_context = "crab_questcomplete1"
+goto_context = "moon_questcomplete"
 [context_items.choices.requires]
 alt_text= "(I need some way to read the invisible ink...)"
 req_items= ["MagicLens"]
-MarkQuest="Complete"
 [[context_items.choices.execute]]
+MarkQuest="Complete"
 
 # crab_contract choice 1
 [[context_items.choices]]
 text = "I could just burn the contract, what's the worst that could happen?"
-goto_context = "crab_questskip"
+goto_context = "moon_questskip"
+[[context_items.choices.execute]]
 AddItem="LastBreathOfInnocent"
 [[context_items.choices.execute]]
 MarkQuest="Complete"
-[[context_items.choices.execute]]
 
 # crab_contract choice 2
 [[context_items.choices]]
@@ -153,8 +153,8 @@ text = "You arrive at the brilliant field to find that it is comprised entirely 
 [[context_items.choices]]
 text = "Take some of the flowers"
 goto_context = "arrival2"
-AddItem="IgnisAster"
 [[context_items.choices.execute]]
+AddItem="IgnisAster"
 
 # crab_contract choice 2
 [[context_items.choices]]
@@ -168,8 +168,8 @@ text = "Fly to the edge of the moon. The small clouds look solid enough to grab 
 [[context_items.choices]]
 text = "Grab some clouds"
 goto_context = "arrival2"
-AddItem="CloudCandy"
 [[context_items.choices.execute]]
+AddItem="CloudCandy"
 
 # crab_contract choice 2
 [[context_items.choices]]
@@ -183,8 +183,8 @@ name = "moon_questcomplete"
 text = "You put the Magic Lens up to your eye and look back at the contract on the counter. Clear as day you can now make out the instructions for setting Ferris free! <m>'Spin once counter-clockwise, three times clockwise, damage some property and then let out a deep breath while you think about home'<m> you turn to face the crab after reading out the instructions just as it manages to flip the coffee table over with enough force to smash the globe that rested there. As Ferris exhales a shimmering wisp of energy is formed in the air in front of it. Uninterested, Ferris gives you a small nod before rapidly scuttling across the room and out the door. It immediately bee-lines and hops right off the moon! You're sure it'll make it back home."
 [[context_items.choices]]
 text = "Gather the wisp of energy"
-Leave = {}
 [[context_items.choices.execute]]
+Leave = {}
 
 # moon_questcomplete
 [[context_items]]
@@ -193,5 +193,5 @@ text= "You pick up the contract and toss it into the fireplace beside you. Glanc
 
 [[context_items.choices]]
 text = "Take the bottle and leave"
-Leave = {}
 [[context_items.choices.execute]]
+Leave = {}

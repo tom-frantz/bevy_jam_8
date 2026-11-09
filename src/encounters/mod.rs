@@ -176,6 +176,9 @@ fn load_assets(mut encounters: ResMut<Encounters>, asset_server: Res<AssetServer
 #[derive(Component, Debug, Clone, Copy)]
 struct ChoiceIndex(usize);
 
+#[derive(Component, Debug, Clone, Copy)]
+struct ChoiceRequirementsMet(bool);
+
 // TODO make this an option?
 #[derive(Resource, Default, Debug, Clone)]
 pub struct EncounterState {
@@ -338,25 +341,27 @@ fn choice_scene(
     choice: &Choice,
     fulfilled_requirements: bool,
 ) -> impl Scene {
-    let text = if !fulfilled_requirements {
+    let (text, colour) = if !fulfilled_requirements {
         let reqs = choice
             .requires
             .clone()
             .expect("Didn't meet nonexistent requirements, uh oh!");
-        reqs.alt_text
+        (reqs.alt_text, Color::Srgba(tailwind::STONE_950))
     } else {
-        choice.text.clone()
+        (choice.text.clone(), Color::srgb(1.0, 1.0, 1.0))
     };
 
     let enumarated_choice_text = format!("{display_index}. {text}");
     let c = choice.clone();
     let choice_index = ChoiceIndex(real_index);
+    let available = ChoiceRequirementsMet(fulfilled_requirements);
     bsn! {
         Pickable
         c
         choice_index
+        available
         Text(enumarated_choice_text)
-        TextColor(Color::srgb(1.0, 1.0, 1.0))
+        TextColor(colour)
         on(choice_click_observer)
         on(choice_pointer_enter_observer)
         on(choice_pointer_exit_observer)
@@ -390,23 +395,29 @@ fn choice_click_observer(
 
 fn choice_pointer_enter_observer(
     event: On<PointerOver>,
-    mut choices: Query<(&Choice, &mut TextColor)>,
+    mut choices: Query<(&ChoiceRequirementsMet, &mut TextColor), With<Choice>>,
 ) {
     let selected_choice_entity = event.event_target();
-    let (_, mut text) = choices
+    let (available, mut text) = choices
         .get_mut(selected_choice_entity)
         .expect("No choice present for hover target");
+    if !available.0 {
+        return;
+    }
     *text = TextColor(FancyTextColor::HIGHLIGHT.to_bevy_color());
 }
 
 fn choice_pointer_exit_observer(
     event: On<PointerLeave>,
-    mut choices: Query<(&Choice, &mut TextColor)>,
+    mut choices: Query<(&ChoiceRequirementsMet, &mut TextColor), With<Choice>>,
 ) {
     let selected_choice_entity = event.event_target();
-    let (_, mut text) = choices
+    let (available, mut text) = choices
         .get_mut(selected_choice_entity)
         .expect("No choice present for leave hover target");
+    if !available.0 {
+        return;
+    }
     *text = TextColor(FancyTextColor::DEFAULT.to_bevy_color());
 }
 
